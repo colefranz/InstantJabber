@@ -1,18 +1,12 @@
 module.exports = function(grunt) {
 
   grunt.initConfig({
-    express: {
-      dev: {
-        options: {
-          script: 'index.js'
-        }
-      }
-    },
+    clean: ['app/dev'],
 
     uglify: {
       dev: {
         files: {
-          'app/jabber.min.js': [
+          'app/dev/jabber.min.js': [
             'app/js/**/*.js'
           ]
         }
@@ -27,15 +21,35 @@ module.exports = function(grunt) {
           optimization: 2
         },
         files: {
-          'app/css/styles.css': 'app/less/main.less',
-          'app/css/bootstrap.css': 'app/bower_components/bootstrap/less/bootstrap.less',
+          'app/dev/css/main.css': 'app/less/main.less',
+          'app/dev/css/bootstrap.css': 'app/bower_components/bootstrap/less/bootstrap.less'
         }
       }
     },
 
     autoprefixer: {
       dev: {
-        src: 'app/css/main.css'
+        src: 'app/dev/css/main.css'
+      }
+    },
+
+    shell: {
+      mongodb: {
+        command: 'mongod --dbpath=./data --port 27017',
+        options: {
+          async: true,
+          stdout: false,
+          stderr: true,
+          failOnError: true
+        }
+      }
+    },
+
+    express: {
+      dev: {
+        options: {
+          script: 'index.js'
+        }
       }
     },
 
@@ -66,7 +80,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-express-server');
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-autoprefixer');
+  grunt.loadNpmTasks('grunt-shell-spawn');
+  grunt.loadNpmTasks('grunt-contrib-clean');
 
   // register tasks
-  grunt.registerTask('serve', ['uglify', 'less', 'autoprefixer', 'express:dev', 'watch']);
+  grunt.registerTask('serve', ['clean', 'uglify', 'less', 'autoprefixer', 'shell', 'express:dev', 'watch']);
+  grunt.registerTask('cleanup', ['clean']);
 };

@@ -16,8 +16,9 @@
     }
   ])
 
-  .controller('mainController', [function() {
+  .controller('mainController', ['$scope', '$http', function($scope, $http) {
     // Depending on how we move forward this would be the main entry point for the application.
+    $scope.test = 'hi';
   }]);
 
 })(angular, io);
