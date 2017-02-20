@@ -3,26 +3,31 @@
 
   let express = require('express');
   let path = require('path');
-  let MongoClient = require('mongodb').MongoClient;
+  let database = require('./server/database');
 
   let app = express();
-  let database;
-
-  MongoClient.connect("mongodb://localhost:27017/instantjabber", function(err, db) {
-    if (err) {
-      return console.dir(err);
-    }
-
-    database = db;
-});
 
   // if asked for a file, look for it in app
-  app.use(express.static('app'));
+  app.use(express.static(path.join(__dirname, 'app')));
 
-  // no matter the path we redirect the user to the angular
-  // application.
+  // if that file isn't found serve up the html as we want
+  // the app the handle every other route
   app.get('*', function(req, res) {
     res.sendFile(path.join(__dirname, 'app', 'index.html'));
+  });
+
+  // API REQUEST
+  // find the chat id
+  app.get('/api/chat/:id', function(req, res) {
+    res.send(req.params.id);
+    // database.getChat(req.params.id);
+  });
+  
+  // API REQUEST
+  // edit/create the chat id
+  app.post('/api/chat/:id', function(req, res) {
+    res.send(req.params.id);
+    // database.setChat(req.params.id);
   });
 
   // begin listening for connections

@@ -2,6 +2,9 @@
 <html>
   <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, shrink-to-fit=no, initial-scale=1">
+
     <title>Instant Jabber</title>
     <script src="bower_components/angular/angular.min.js"></script>
     <script src="bower_components/angular-route/angular-route.min.js"></script>
@@ -11,7 +14,30 @@
     <link rel="stylesheet" type="text/css" href="dev/css/main.css">
     <base href="/">
   </head>
-  <body ng-app="jabber">
-    <div ng-view id="main" class="jumbotron"></div>
+  <body ng-app="jabber" ng-controller="mainController">
+    <!--fixed nav header-->
+    <nav class="navbar navbar-default navbar-fixed-top">
+    </nav>
+    <!--sidebar-->
+    <!--I imagine that this will be toggleable-->
+    <div id="sidebar-wrapper">
+      <!--<button class="toggle-button">Toggle</button>-->
+      <ul class="sidebar-nav">
+        <li class="sidebar-brand">
+          <a href="#">
+              Start Bootstrap
+          </a>
+        </li>
+        <li class="sidebar-brand"
+            ng-repeat="chat in chats">
+          <a ng-href="/chat?id={{chat.id}}">
+              {{chat.name}}
+          </a>
+      </ul>
+    </div>
+    <!--main body for application - changes based on url-->
+    <div class="container">
+      <div ng-view id="main" class="jumbotron"></div>
+    </div>
   </body>
 </html>
