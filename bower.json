@@ -19,9 +19,9 @@
     "tests"
   ],
   "dependencies": {
-    "socket.io-client": "^1.7.2",
     "angular-route": "1.6.1",
     "angular": "1.6.1",
-    "bootstrap": "^3.3.7"
+    "bootstrap": "^3.3.7",
+    "lodash": "^4.17.4"
   }
 }
