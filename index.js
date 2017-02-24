@@ -17,10 +17,20 @@
       database.login(creds);
       // this whole workflow might be busted - not familiar with
       // how to do a secure login
-      console.log(creds.user + ' connected!!');
-      userID = creds;
+      console.log(creds.id + ' connected!!');
+      userID = creds.id;
 
-      socket.emit('your-contacts', database.getContacts(creds.email));
+      socket.emit('your-contacts', database.getContacts(userID));
+
+      socket.on('add-contact', function(id) {
+        database.addContact(userID, id);
+      });
+
+      //TODO REMOVE
+      // for development purposes to delete entire database.
+      socket.on('gitResetHard', function() {
+        database.gitResetHard();
+      });
 
       socket.on('message-from-user', function(id, message) {
         // ADD MESSAGE TO DATABASE

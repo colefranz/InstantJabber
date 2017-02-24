@@ -36,7 +36,7 @@
       *
       * expects
       * creds: {
-      *   email,
+      *   id,
       *   pass
       * }
       */
@@ -107,10 +107,10 @@
       * Add a contact to your list.
       * 
       * expects
-      * email: email of the user to add
+      * id: id of the user to add
       */
-      self.addContact = function(email) {
-        io.emit('add-contact', email);
+      self.addContact = function(id) {
+        socket.emit('add-contact', id);
       };
 
       /*
@@ -134,7 +134,13 @@
       // connect to chat would be called by the maincontroller when the user
       // is logged in, or using cookies (if that's required?)
       // for now we will just pass in some dummy data
-      self.connectToChat({email: 'test', pass: 'test'});
+      self.connectToChat({id: 'test', pass: 'test'});
+
+      //TODO REMOVE
+      // for development purposes to delete entire database.
+      self.gitResetHard = function() {
+        socket.emit('gitResetHard');
+      };
 
       return self;
     }

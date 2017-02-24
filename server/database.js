@@ -3,6 +3,7 @@ module.exports = (function() {
   
   let MongoClient = require('mongodb').MongoClient;
   let database;
+  let exportable = {};
 
   /* schema
 
@@ -64,28 +65,30 @@ module.exports = (function() {
     database = db;
   });
 
-  function login(creds) {
+  exportable.login = function login(creds) {
     var collection = database.collection('users');
     collection.insertOne({
-      id: creds.email,
+      id: creds.id,
+      contacts: [],
+      info: {
+        name: undefined,
+      },
       private: {
         password: creds.pass
       }
-    }, function(err, r) {
-
     });
 
   }
 
-  function getChat() {
+  exportable.getChat = function getChat() {
 
   }
 
-  function setChat() {
+  exportable.setChat = function setChat() {
 
   }
 
-  function getContacts(user) {
+  exportable.getContacts = function getContacts(user) {
     var collection = database.collection('users');
 
     return collection.findOne({id: user}).then(function(doc) {
@@ -94,15 +97,33 @@ module.exports = (function() {
     });
   }
 
-  function addContact(id) {
-
+  exportable.addContact = function addContact(userId, id) {
+    var collection = database.collection('users');
+    
+    // make sure the id exists in the list
+    // then add it to the contacts of the userid.
+    return collection.findOne({id: userId}).then(function(doc) {
+      if (doc !== undefined) {
+        collection.findOneAndUpdate(
+          {id: userId},
+          {$push: {contacts: id}}).then(function(doc) {
+          
+          console.log(doc);
+          return doc;
+        });
+      } else {
+        console.log('that shit aint in here');
+      }
+    });
   }
 
-  return {
-    login: login,
-    getChat: getChat,
-    setChat: setChat,
-    getInformation: getInformation,
-    addContact: addContact
-  };
+  exportable.gitResetHard = function gitResetHard() {
+    var collection = database.collection('users');
+
+    collection.remove({}, function() {
+      console.log('muahahah');
+    });
+  }
+
+  return exportable;
 })();

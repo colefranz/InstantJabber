@@ -34,6 +34,10 @@
       chatService.addContact('test');
     };
 
+    $scope.gitResetHard = function() {
+      chatService.gitResetHard();
+    };
+
     $scope.setSidebar = function(state) {
       // $scope.sidebarState = $scope.sidebarState === 'contacts' ? 'chats' : 'contacts';
       $scope.sidebarState = state;
@@ -48,15 +52,15 @@
     // $http.get('/api/chats/${userID}', ...);
     $scope.chats = [
       {
-        email: 'chat1',
+        id: 'chat1',
         name: 'billy'
       },
       {
-        email: 'chat2',
+        id: 'chat2',
         name: 'tommy'
       },
       {
-        email: 'chat3',
+        id: 'chat3',
         name: 'sally'
       }
     ];
