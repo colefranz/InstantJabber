@@ -26,6 +26,7 @@
     "grunt-contrib-watch": "^1.0.0",
     "grunt-express-server": "^0.5.3",
     "grunt-shell-spawn": "^0.3.10",
-    "mongodb": "^2.2.24"
+    "mongodb": "^2.2.24",
+    "socket.io": "^1.7.3"
   }
 }

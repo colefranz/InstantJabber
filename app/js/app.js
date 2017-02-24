@@ -1,4 +1,4 @@
-(function(angular, io) {
+(function(angular) {
   'use strict';
 
   angular.module('jabber', ['ngRoute'])
@@ -22,22 +22,41 @@
     }
   ])
 
-  .controller('mainController', ['$scope', '$http', function($scope, $http) {
-    // Depending on how we move forward this would be the main entry point for the application.
+  .controller('mainController', ['$scope', '$http', 'chatService', function($scope, $http, chatService) {
+    $scope.sidebarState = 'chats';
+    $scope.sidebarStates = ['chats', 'contacts'];
 
+    $scope.openChat = function(id) {
+
+    };
+
+    $scope.addContact = function() {
+      chatService.addContact('test');
+    };
+
+    $scope.setSidebar = function(state) {
+      // $scope.sidebarState = $scope.sidebarState === 'contacts' ? 'chats' : 'contacts';
+      $scope.sidebarState = state;
+    };
+
+    // immediately get contacts and chats
+    // chatService.getActiveInformationWhenReady(handleInformation)
+    // function handleInformation(information) {
+    //      do something
+    // }
     // this would be a get from the server
     // $http.get('/api/chats/${userID}', ...);
     $scope.chats = [
       {
-        id: 'chat1',
+        email: 'chat1',
         name: 'billy'
       },
       {
-        id: 'chat2',
+        email: 'chat2',
         name: 'tommy'
       },
       {
-        id: 'chat3',
+        email: 'chat3',
         name: 'sally'
       }
     ];
@@ -48,9 +67,30 @@
     $scope.test = 'hi';
   }])
 
-  .controller('chatController', ['$scope', '$http', '$route', function($scope, $http, $route) {
-    // Depending on how we move forward this would be the main entry point for the application.
-    $scope.id = $route.current.params.id;
+  .controller('chatController', [
+    '$scope',
+    '$http',
+    '$route',
+    'chatService',
+    function(
+      $scope,
+      $http,
+      $route,
+      chatService
+    ) {
+      $scope.messages = [];
+
+      const messageCallback = function(message) {
+        $scope.messages.push(message);
+      };
+      // Depending on how we move forward this would be the main entry point for the application.
+      $scope.id = $route.current.params.id;
+
+      chatService.subcribeToMessages(messageCallback, $scope.id);
+
+      $scope.$on('$destroy', function() {
+        chatService.deregisterFromMessages(messageCallback, $scope.id);
+    });
   }]);
 
-})(angular, io);
+})(angular);

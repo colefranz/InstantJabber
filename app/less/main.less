@@ -1,4 +1,59 @@
 // All of our css goes here
-body {
-  padding-top: 70px;
+@header-padding: 70px;
+
+//TODO someone with artistic talent please list-style
+// colours go here
+@color-main: purple;
+@color-secondary: gold;
+@color-main-button: lighten(@color-main, 20%);
+@color-secondary-button: lighten(@color-secondary, 20%);
+@color-main-tinted: tint(@color-main, 10%);
+
+* {
+  box-sizing: border-box;
+}
+
+#main {
+  position: absolute;
+  top: @header-padding;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+
+  #sidebar-wrapper {
+    background: @color-secondary;
+    padding: 6px;
+
+    ul {
+      display: flex;
+      list-style: none;
+      padding: 0;
+    }
+    
+    .sidebar-options {
+      li {
+        padding: 5px;
+
+        button {
+          width: 50px;
+          height: 50px;
+          border-radius: 5px;
+          outline: none;
+          background: @color-main-button;
+
+          &:hover {
+            background: @color-main-tinted;
+          }
+        }
+      }
+    }
+    
+    .sidebar-nav {
+      flex-direction: column;
+      li {
+        padding: 5px;
+      }
+    }
+  }
 }

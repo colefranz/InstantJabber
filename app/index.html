@@ -9,6 +9,8 @@
     <script src="bower_components/angular/angular.min.js"></script>
     <script src="bower_components/angular-route/angular-route.min.js"></script>
     <script src="bower_components/socket.io-client/dist/socket.io.min.js"></script>
+    <script src="bower_components/lodash/dist/lodash.min.js"></script>
+    <script src="socket.io/socket.io.js"></script>
     <script src="dev/jabber.min.js"></script>
     <link rel="stylesheet" type="text/css" href="dev/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="dev/css/main.css">
@@ -17,27 +19,53 @@
   <body ng-app="jabber" ng-controller="mainController">
     <!--fixed nav header-->
     <nav class="navbar navbar-default navbar-fixed-top">
+      <a ng-href="/">TAKE ME HOME</a>
     </nav>
     <!--sidebar-->
     <!--I imagine that this will be toggleable-->
-    <div id="sidebar-wrapper">
-      <!--<button class="toggle-button">Toggle</button>-->
-      <ul class="sidebar-nav">
-        <li class="sidebar-brand">
-          <a href="#">
-              Start Bootstrap
-          </a>
-        </li>
-        <li class="sidebar-brand"
-            ng-repeat="chat in chats">
-          <a ng-href="/chat?id={{chat.id}}">
-              {{chat.name}}
-          </a>
-      </ul>
-    </div>
-    <!--main body for application - changes based on url-->
-    <div class="container">
-      <div ng-view id="main" class="jumbotron"></div>
+    <div id="main">
+      <div id="sidebar-wrapper">
+        <ul class="sidebar-options">
+          <li id="add-contact">
+            <button ng-click="addContact()"
+                title="Add Contact"></button>
+            <!--requires image asset-->
+          </li>
+          <li id="create-group">
+            <button title="Create Group"></button>
+            <!--requires image asset-->
+          </li>
+        </ul>
+        <ul class="sidebar-options">
+          <li ng-repeat="state in sidebarStates">
+            <button title="View {{state}}"
+                ng-class="{active: sidebarState === state}"
+                ng-click="setSidebar(state)">{{state}}
+            </button>
+          </li>
+        </ul>
+        <!--<button class="toggle-button">Toggle</button>-->
+        <ul class="sidebar-nav">
+          <li ng-if="sidebarState==='contacts'"
+              class="sidebar-brand"
+              ng-repeat="contact in contacts">
+            <a ng-href="/chat?id={{chat.id}}">
+                {{chat.name}}
+            </a>
+          </li>
+          <li ng-if="sidebarState==='chats'"
+              class="sidebar-brand"
+              ng-repeat="chat in chats">
+            <a ng-href="/chat?id={{chat.id}}">
+                {{chat.name}}
+            </a>
+          </li>
+        </ul>
+      </div>
+      <!--main body for application - changes based on url-->
+      <div class="container">
+        <div ng-view class="jumbotron"></div>
+      </div>
     </div>
   </body>
 </html>
