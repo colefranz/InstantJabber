@@ -67,18 +67,22 @@ module.exports = (function() {
 
   exportable.login = function login(creds) {
     var collection = database.collection('users');
-    collection.insertOne({
-      id: creds.id,
-      contacts: [],
-      info: {
-        name: undefined,
-      },
-      private: {
-        password: creds.pass
+
+    collection.findOne({id: creds.id}, {}).then(function(docs) {
+      if (docs === null) {
+        collection.insertOne({
+          id: creds.id,
+          contacts: [],
+          info: {
+            name: undefined,
+          },
+          private: {
+            password: creds.pass
+          }
+        });
       }
     });
-
-  }
+  };
 
   exportable.getChat = function getChat() {
 
@@ -88,31 +92,46 @@ module.exports = (function() {
 
   }
 
-  exportable.getContacts = function getContacts(user) {
+  exportable.getContacts = function getContacts(user, callback) {
     var collection = database.collection('users');
 
-    return collection.findOne({id: user}).then(function(doc) {
-      console.log(doc);
-      return doc;
+    // find user and get contacts from it
+    // use those id's to get the names of all the contacts
+    return collection.findOne({id: user}, {contacts: 1}).then(function(docs) {
+      collection = database.collection('users');
+      collection.find({
+          id: {
+            $in: docs.contacts
+          }
+        }, {
+          id: 1,
+          info: 1
+        }).toArray().then(function(doc) {
+          callback(doc);
+        // return doc;
+      });
     });
-  }
+  };
 
   exportable.addContact = function addContact(userId, id) {
     var collection = database.collection('users');
     
+    if (userId === id) {
+      console.log('You cant add yourself!');
+    }
     // make sure the id exists in the list
     // then add it to the contacts of the userid.
+    // TODO make sure it adds to the other person as well
     return collection.findOne({id: userId}).then(function(doc) {
       if (doc !== undefined) {
         collection.findOneAndUpdate(
           {id: userId},
           {$push: {contacts: id}}).then(function(doc) {
-          
-          console.log(doc);
+            console.log(doc);
           return doc;
         });
       } else {
-        console.log('that shit aint in here');
+        console.log('that aint in here');
       }
     });
   }
@@ -121,9 +140,45 @@ module.exports = (function() {
     var collection = database.collection('users');
 
     collection.remove({}, function() {
-      console.log('muahahah');
+    // add a couple back in so we have something to work with
+      collection.findOne({id: 'test1'}, {}).then(function(docs) {
+        if (docs === null) {
+          collection.insertMany([
+            {
+              id: 'test1',
+              contacts: [],
+              info: {
+                name: 'Cole',
+              },
+              private: {
+                password: 'test1'
+              }
+            },
+            {
+              id: 'test2',
+              contacts: [],
+              info: {
+                name: 'Silas',
+              },
+              private: {
+                password: 'test2'
+              }
+            },
+            {
+              id: 'test3',
+              contacts: [],
+              info: {
+                name: 'Jun',
+              },
+              private: {
+                password: 'test3'
+              }
+            }
+          ]);
+        }
+      });
     });
-  }
+  };
 
   return exportable;
 })();

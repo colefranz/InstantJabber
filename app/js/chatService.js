@@ -14,19 +14,19 @@
           socket = io(),
           activeInformationCallbacks = [];
 
-      socket.on('your-contacts', function(contacts) {
+      socket.on('your-contacts', function(contacts, chatIds) {
         console.log(contacts);
-        // contacts = information.contacts;
-        // activeChatIds = information.chatIds;
+        contacts = contacts;
+        activeChatIds = chatIds;
 
-        // _.forEach(activeInformationCallbacks, function(callback) {
-        //   callback(contacts, activeChatIds);
-        // });
+        _.forEach(activeInformationCallbacks, function(callback) {
+          callback({contacts: contacts, chats: activeChatIds});
+        });
       });
 
 
       self.subscribeToActiveInformation = function(callback) {
-        callback(contacts, activeChatIds);
+        callback({contacts: contacts, chats: activeChatIds});
         activeInformationCallbacks.push(callback);
       };
       

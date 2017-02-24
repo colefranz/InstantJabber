@@ -13,14 +13,19 @@
     let userID;
 
     socket.on('login', function(creds) {
-      // check if login is successful
+      // TODO check if login is successful
+      // this likely needs to be moved into a different event
+      // altogehter - this is mostly hacked together to help aid
+      // the rest of the initial development.
       database.login(creds);
-      // this whole workflow might be busted - not familiar with
-      // how to do a secure login
-      console.log(creds.id + ' connected!!');
+      
       userID = creds.id;
 
-      socket.emit('your-contacts', database.getContacts(userID));
+      // get contacts
+      // TODO get chats
+      database.getContacts(userID, function(contacts) {
+        socket.emit('your-contacts', contacts);
+      });
 
       socket.on('add-contact', function(id) {
         database.addContact(userID, id);

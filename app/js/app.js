@@ -31,7 +31,7 @@
     };
 
     $scope.addContact = function() {
-      chatService.addContact('test');
+      chatService.addContact('test1');
     };
 
     $scope.gitResetHard = function() {
@@ -39,15 +39,16 @@
     };
 
     $scope.setSidebar = function(state) {
-      // $scope.sidebarState = $scope.sidebarState === 'contacts' ? 'chats' : 'contacts';
       $scope.sidebarState = state;
     };
 
     // immediately get contacts and chats
-    // chatService.getActiveInformationWhenReady(handleInformation)
-    // function handleInformation(information) {
-    //      do something
-    // }
+    chatService.subscribeToActiveInformation(handleInformation)
+    function handleInformation(information) {
+        //  $scope.chats = information.chats;
+        $scope.contacts = information.contacts;
+        console.log('?', information);
+    }
     // this would be a get from the server
     // $http.get('/api/chats/${userID}', ...);
     $scope.chats = [

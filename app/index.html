@@ -51,7 +51,7 @@
               class="sidebar-brand"
               ng-repeat="contact in contacts">
             <a ng-href="/chat?id={{chat.id}}">
-                {{chat.name}}
+                {{contact.id}}
             </a>
           </li>
           <li ng-if="sidebarState==='chats'"
