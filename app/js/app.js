@@ -1,7 +1,19 @@
-(function(angular) {
+(function(angular, io) {
   'use strict';
 
-  angular.module('jabber', ['ngRoute'])
+  angular.module('jabber', ['ngRoute', 'ngTouch'])
+
+  .run(['$location', '$rootScope', function($location, $rootScope) {
+    $rootScope.$on('$routeChangeStart', function(event) {
+      // if not logged in
+      $location.path('/');
+    });
+  }])
+
+  // create somewhere for all services to get access to our websocket.
+  .factory('socket', [function() {
+    return io();
+  }])
 
   // serve up a different page and controller depending on
   // the path.
@@ -25,6 +37,8 @@
   .controller('mainController', ['$scope', '$http', 'chatService', function($scope, $http, chatService) {
     $scope.sidebarState = 'chats';
     $scope.sidebarStates = ['chats', 'contacts'];
+    $scope.chats = [];
+    $scope.contacts = [];
 
     $scope.openChat = function(id) {
 
@@ -43,33 +57,20 @@
     };
 
     // immediately get contacts and chats
-    chatService.subscribeToActiveInformation(handleInformation)
+    chatService.subscribeToActiveInformation(handleInformation);
+
     function handleInformation(information) {
-        //  $scope.chats = information.chats;
-        $scope.contacts = information.contacts;
-        console.log('?', information);
+      // $scope.chats = information.chats;
+      $scope.chats = [{id: '1', name: '1'}];
+      $scope.contacts = information.contacts;
+      console.log('new information ', information);
     }
-    // this would be a get from the server
-    // $http.get('/api/chats/${userID}', ...);
-    $scope.chats = [
-      {
-        id: 'chat1',
-        name: 'billy'
-      },
-      {
-        id: 'chat2',
-        name: 'tommy'
-      },
-      {
-        id: 'chat3',
-        name: 'sally'
-      }
-    ];
+    
   }])
 
   .controller('homeController', ['$scope', '$http', function($scope, $http) {
     // Depending on how we move forward this would be the main entry point for the application.
-    $scope.test = 'hi';
+    
   }])
 
   .controller('chatController', [
@@ -98,4 +99,4 @@
     });
   }]);
 
-})(angular);
+})(angular, io);

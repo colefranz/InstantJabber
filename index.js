@@ -11,12 +11,15 @@
 
   io.sockets.on('connection', function(socket) {
     let userID;
+    console.log('user connected');
 
     socket.on('login', function(creds) {
+      socket.removeAllListeners('login');
       // TODO check if login is successful
       // this likely needs to be moved into a different event
       // altogehter - this is mostly hacked together to help aid
       // the rest of the initial development.
+      socket.emit('login-result', true);
       database.login(creds);
       
       userID = creds.id;

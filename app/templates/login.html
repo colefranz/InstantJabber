@@ -1,0 +1,22 @@
+<div id="login" ng-if="!isLoggedIn">
+  <div ng-if="loginType === 'none'">
+    <span>Login as </span>
+    <button ng-repeat="type in loginTypes"
+            ng-click="switchLogin(type)">{{type}}</button>
+  </div>
+  <div ng-if="loginType !== 'none'">
+    <button ng-click="switchLogin('none')">Back</button>
+  </div>
+  <div ng-if="loginType === 'user'">
+    <form ng-submit="handleLoginAttempt()">
+      <input ng-model="email" type="email" placeholder="Email" />
+      <input ng-model="pass" type="text" placeholder="Password" />
+      <input type="submit" value="Login" />
+    </form>
+  </div>
+  <div ng-if="loginType === 'guest'">
+    <p>Continuing as a guest will allow you to participate in discussions,
+        but all of your information will be lost when you exit the seesion</p>
+    <button>Continue</button>
+  </div>
+</div>

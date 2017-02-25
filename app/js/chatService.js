@@ -3,7 +3,7 @@
 
   angular.module('jabber')
 
-  .factory('chatService', [function() {
+  .factory('chatService', ['socket', function(socket) {
     function ChatService() {
       var self = this,
           subscriptions = {
@@ -11,11 +11,9 @@
           },
           contacts = [],
           activeChatIds = [],
-          socket = io(),
           activeInformationCallbacks = [];
 
       socket.on('your-contacts', function(contacts, chatIds) {
-        console.log(contacts);
         contacts = contacts;
         activeChatIds = chatIds;
 
@@ -29,25 +27,6 @@
         callback({contacts: contacts, chats: activeChatIds});
         activeInformationCallbacks.push(callback);
       };
-      
-      /*
-      * initial handshake with server for it to start
-      * listening and sending events to the user
-      *
-      * expects
-      * creds: {
-      *   id,
-      *   pass
-      * }
-      */
-
-      self.connectToChat = function(creds) {
-        socket.emit('login', creds);
-      };
-
-      socket.on('login-failed', function() {
-        //tell the user that login-failed
-      });
 
       /*
       * sends chat to the server
@@ -130,11 +109,6 @@
           callback(message);
         });
       });
-
-      // connect to chat would be called by the maincontroller when the user
-      // is logged in, or using cookies (if that's required?)
-      // for now we will just pass in some dummy data
-      self.connectToChat({id: 'test', pass: 'test'});
 
       //TODO REMOVE
       // for development purposes to delete entire database.

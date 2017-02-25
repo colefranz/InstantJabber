@@ -66,7 +66,7 @@ module.exports = (function() {
   });
 
   exportable.login = function login(creds) {
-    var collection = database.collection('users');
+    let collection = database.collection('users');
 
     collection.findOne({id: creds.id}, {}).then(function(docs) {
       if (docs === null) {
@@ -93,7 +93,7 @@ module.exports = (function() {
   }
 
   exportable.getContacts = function getContacts(user, callback) {
-    var collection = database.collection('users');
+    let collection = database.collection('users');
 
     // find user and get contacts from it
     // use those id's to get the names of all the contacts
@@ -114,7 +114,7 @@ module.exports = (function() {
   };
 
   exportable.addContact = function addContact(userId, id) {
-    var collection = database.collection('users');
+    let collection = database.collection('users');
     
     if (userId === id) {
       console.log('You cant add yourself!');
@@ -126,8 +126,9 @@ module.exports = (function() {
       if (doc !== undefined) {
         collection.findOneAndUpdate(
           {id: userId},
-          {$push: {contacts: id}}).then(function(doc) {
-            console.log(doc);
+          {$push: {contacts: id}}
+        ).then(function(doc) {
+          console.log(doc);
           return doc;
         });
       } else {
@@ -137,7 +138,7 @@ module.exports = (function() {
   }
 
   exportable.gitResetHard = function gitResetHard() {
-    var collection = database.collection('users');
+    let collection = database.collection('users');
 
     collection.remove({}, function() {
     // add a couple back in so we have something to work with
