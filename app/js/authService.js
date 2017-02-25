@@ -6,14 +6,16 @@
   .factory('authService', ['socket', function(socket) {
     function AuthService() {
       var self = this,
-          loginStateChangedHandlers = [];
+          loginStateChangedHandlers = [],
+          userIsLoggedIn = false;
 
-      self.loggedIn = false;
       
+      self.isLoggedIn = function() {
+        return userIsLoggedIn;
+      };
 
       /*
-      * initial handshake with server for it to start
-      * listening and sending events to the user
+      * login to the server
       *
       * expects
       * creds: {
@@ -23,10 +25,32 @@
       */
 
       self.login = function(creds) {
+        console.log('login', creds);
         socket.emit('login', creds);
 
         socket.on('login-result', function(wasLoggedIn) {
-          self.loggedIn = wasLoggedIn;
+          userIsLoggedIn = wasLoggedIn;
+          socket.removeAllListeners('login-result');
+          loginStateChanged(wasLoggedIn);
+        });
+      };
+
+      /*
+      * attempt to create an account
+      *
+      * expects
+      * creds: {
+      *   id,
+      *   pass,
+      *   name
+      * }
+      */
+
+      self.create = function(creds) {
+        socket.emit('create-account', creds);
+
+        socket.on('login-result', function(wasLoggedIn) {
+          userIsLoggedIn = wasLoggedIn;
           socket.removeAllListeners('login-result');
           loginStateChanged(wasLoggedIn);
         });
@@ -34,7 +58,7 @@
 
       self.registerLoginStateObserver = function(callback) {
         loginStateChangedHandlers.push(callback);
-        callback(self.loggedInState)
+        callback(userIsLoggedIn)
       }
 
       function loginStateChanged(isLoggedIn) {
@@ -46,11 +70,6 @@
       socket.on('login-failed', function() {
         //tell the user that login failed
       });
-
-      // connect to chat would be called by the maincontroller when the user
-      // is logged in, or using cookies (if that's required?)
-      // for now we will just pass in some dummy data
-      // self.login({id: 'test', pass: 'test'});
       
       return self;
     }

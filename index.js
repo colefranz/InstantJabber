@@ -11,18 +11,31 @@
 
   io.sockets.on('connection', function(socket) {
     let userID;
-    console.log('user connected');
 
     socket.on('login', function(creds) {
-      socket.removeAllListeners('login');
+      database.login(creds, function(wasLoggedIn) {
+        socket.emit('login-result', wasLoggedIn);
+        if (wasLoggedIn) {
+          handleAccount(creds);
+        }
+      });
+    });
+
+    socket.on('create-account', function(creds) {
+      database.create(creds);
+      socket.emit('login-result', true);
+      handleAccount(creds);
+    });
+
+    function handleAccount(creds) {
       // TODO check if login is successful
       // this likely needs to be moved into a different event
       // altogehter - this is mostly hacked together to help aid
       // the rest of the initial development.
-      socket.emit('login-result', true);
-      database.login(creds);
       
       userID = creds.id;
+      // socket.emit('new-contact-requests', database.getNewRequests(userID));
+      // socket.emit('new-messages', database.getNewMessages(userID));
 
       // get contacts
       // TODO get chats
@@ -47,7 +60,7 @@
         //    maybe dynamically subscribe to chats?? and then io.sockets.emit('message' + id)
         //      I kind of prefer the second one, but it's more work for the client.
       });
-    });
+    }
   });
 
 // honestly everything in here could just be converted

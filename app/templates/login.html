@@ -1,4 +1,4 @@
-<div id="login" ng-if="!isLoggedIn">
+<div id="login">
   <div ng-if="loginType === 'none'">
     <span>Login as </span>
     <button ng-repeat="type in loginTypes"
@@ -7,10 +7,18 @@
   <div ng-if="loginType !== 'none'">
     <button ng-click="switchLogin('none')">Back</button>
   </div>
+  <div ng-if="loginType === 'create'">
+    <form ng-submit="handleCreateAttempt()">
+      <input ng-model="form.email" type="email" placeholder="Email" />
+      <input ng-model="form.pass" type="text" placeholder="Password" />
+      <input ng-model="form.name" type="text" placeholder="Full Name" />
+      <input type="submit" value="Create Account" />
+    </form>
+  </div>
   <div ng-if="loginType === 'user'">
     <form ng-submit="handleLoginAttempt()">
-      <input ng-model="email" type="email" placeholder="Email" />
-      <input ng-model="pass" type="text" placeholder="Password" />
+      <input ng-model="form.email" type="email" placeholder="Email" />
+      <input ng-model="form.pass" type="text" placeholder="Password" />
       <input type="submit" value="Login" />
     </form>
   </div>

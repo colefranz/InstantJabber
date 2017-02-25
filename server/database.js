@@ -65,7 +65,21 @@ module.exports = (function() {
     database = db;
   });
 
-  exportable.login = function login(creds) {
+  exportable.login = function login(creds, callback) {
+    let collection = database.collection('users');
+    
+    collection.findOne({id: creds.id}, {}).then(function(docs) {
+      if (docs === null) {
+        console.log('YOU NO EXIST');
+      } else {
+        console.log('YOU EXIST');
+      }
+
+      callback(docs !== null);
+    });
+  }
+
+  exportable.create = function create(creds, callback) {
     let collection = database.collection('users');
 
     collection.findOne({id: creds.id}, {}).then(function(docs) {

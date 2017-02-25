@@ -3,20 +3,25 @@
 
   angular.module('jabber')
 
-  .directive('login', ['$timeout', 'authService',
-    function($timeout, authService) {
+  .directive('login', ['authService',
+    function(authService) {
     return {
       replace: true,
       templateUrl: 'templates/login.html',
       link: function(scope, element) {
         const loginTypes = {
           user: 'user',
-          guest: 'guest'
+          guest: 'guest',
+          create: 'create'
+        };
+
+        scope.form = {
+          email: 'test@test.test',
+          pass: 'test'
         };
 
         scope.loginType = 'none';
         scope.loginTypes = loginTypes;
-        scope.isLoggedIn = false;
 
         scope.switchLogin = function(type) {
           scope.loginType = type;
@@ -24,24 +29,18 @@
 
         scope.handleLoginAttempt = function() {
           authService.login({
-            email: scope.email,
-            pass: scope.pass
+            id: scope.form.email,
+            pass: scope.form.pass
           });
         };
 
-        function handleLoginStateChange(isLoggedIn) {
-          $timeout(function() {
-            scope.isLoggedIn = isLoggedIn;
-            
-            if (!isLoggedIn) {
-              // handle failure
-            }
-          }, 0);
-
-        }
-
-        //initialize
-        authService.registerLoginStateObserver(handleLoginStateChange);
+        scope.handleCreateAttempt = function() {
+          authService.create({
+            id: scope.form.email,
+            pass: scope.form.pass,
+            name: scope.form.name
+          });
+        };
       }
     }
   }]);

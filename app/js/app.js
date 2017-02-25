@@ -3,12 +3,21 @@
 
   angular.module('jabber', ['ngRoute', 'ngTouch'])
 
-  .run(['$location', '$rootScope', function($location, $rootScope) {
-    $rootScope.$on('$routeChangeStart', function(event) {
-      // if not logged in
-      $location.path('/');
-    });
-  }])
+  .run(['$location',
+    '$rootScope',
+    'authService',
+    function(
+      $location,
+      $rootScope,
+      authService
+    ) {
+      $rootScope.$on('$routeChangeStart', function(event) {
+        if (!authService.isLoggedIn()){
+          $location.path('/');
+        }
+      });
+    }
+  ])
 
   // create somewhere for all services to get access to our websocket.
   .factory('socket', [function() {
@@ -34,39 +43,63 @@
     }
   ])
 
-  .controller('mainController', ['$scope', '$http', 'chatService', function($scope, $http, chatService) {
-    $scope.sidebarState = 'chats';
-    $scope.sidebarStates = ['chats', 'contacts'];
-    $scope.chats = [];
-    $scope.contacts = [];
+  .controller('mainController', [
+    '$scope',
+    '$timeout',
+    'authService',
+    'chatService',
+    function(
+      $scope,
+      $timeout,
+      authService,
+      chatService
+    ) {
+      $scope.sidebarState = 'chats';
+      $scope.sidebarStates = ['chats', 'contacts'];
+      $scope.chats = [];
+      $scope.contacts = [];
+      $scope.isLoggedIn = false;
 
-    $scope.openChat = function(id) {
+      $scope.openChat = function(id) {
 
-    };
+      };
 
-    $scope.addContact = function() {
-      chatService.addContact('test1');
-    };
+      $scope.addContact = function() {
+        chatService.addContact('test1');
+      };
 
-    $scope.gitResetHard = function() {
-      chatService.gitResetHard();
-    };
+      $scope.gitResetHard = function() {
+        chatService.gitResetHard();
+      };
 
-    $scope.setSidebar = function(state) {
-      $scope.sidebarState = state;
-    };
+      $scope.setSidebar = function(state) {
+        $scope.sidebarState = state;
+      };
 
-    // immediately get contacts and chats
-    chatService.subscribeToActiveInformation(handleInformation);
+      function handleInformation(information) {
+        // $scope.chats = information.chats;
+        $scope.chats = [{id: '1', name: '1'}];
+        $scope.contacts = information.contacts;
+        console.log('new information ', information);
+      }
 
-    function handleInformation(information) {
-      // $scope.chats = information.chats;
-      $scope.chats = [{id: '1', name: '1'}];
-      $scope.contacts = information.contacts;
-      console.log('new information ', information);
+      function handleLoginStateChange(isLoggedIn) {
+        $timeout(function() {
+          $scope.isLoggedIn = isLoggedIn;
+          
+          if (!isLoggedIn) {
+            // handle failure
+          }
+        }, 0);
+      }
+
+      //initialize
+      (function initialize() {
+        authService.registerLoginStateObserver(handleLoginStateChange);
+        chatService.subscribeToActiveInformation(handleInformation);
+      })();
     }
-    
-  }])
+  ])
 
   .controller('homeController', ['$scope', '$http', function($scope, $http) {
     // Depending on how we move forward this would be the main entry point for the application.
