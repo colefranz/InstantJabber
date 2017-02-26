@@ -4,7 +4,7 @@
   let express = require('express');
   let path = require('path');
   let database = require('./server/database');
-
+  
   let app = express();
   let server = require('http').createServer(app);
   let io = require('socket.io')(server);
@@ -13,21 +13,26 @@
     let userID;
 
     socket.on('login', function(creds) {
-      database.login(creds, function(wasLoggedIn) {
-        socket.emit('login-result', wasLoggedIn);
-        if (wasLoggedIn) {
-          handleAccount(creds);
-        }
-      });
+      database.login(creds, handleLoginOrCreationAttempt);
     });
 
     socket.on('create-account', function(creds) {
-      database.create(creds);
-      socket.emit('login-result', true);
-      handleAccount(creds);
+      database.create(creds, handleLoginOrCreationAttempt);
     });
 
-    function handleAccount(creds) {
+    function handleLoginOrCreationAttempt(wasLoggedIn) {
+      socket.emit('login-result', wasLoggedIn);
+
+      if (wasLoggedIn) {
+        manageLoggedInListeners(creds);
+      }
+    };
+
+    function manageLoggedInListeners(creds) {
+      // once we have logged in we can stop listening
+      socket.removeAllListeners('login');
+      socket.removeAllListeners('create-account');
+
       // TODO check if login is successful
       // this likely needs to be moved into a different event
       // altogehter - this is mostly hacked together to help aid

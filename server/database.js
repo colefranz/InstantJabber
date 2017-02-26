@@ -67,14 +67,8 @@ module.exports = (function() {
 
   exportable.login = function login(creds, callback) {
     let collection = database.collection('users');
-    
-    collection.findOne({id: creds.id}, {}).then(function(docs) {
-      if (docs === null) {
-        console.log('YOU NO EXIST');
-      } else {
-        console.log('YOU EXIST');
-      }
 
+    collection.findOne({id: creds.id}, {}).then(function(docs) {
       callback(docs !== null);
     });
   }
@@ -88,13 +82,18 @@ module.exports = (function() {
           id: creds.id,
           contacts: [],
           info: {
-            name: undefined,
+            name: creds.name
           },
           private: {
             password: creds.pass
           }
         });
+      } else {
+        // the user ID is taken
+        
       }
+
+      callback(docs !== null);
     });
   };
 

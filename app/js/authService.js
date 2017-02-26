@@ -25,7 +25,6 @@
       */
 
       self.login = function(creds) {
-        console.log('login', creds);
         socket.emit('login', creds);
 
         socket.on('login-result', function(wasLoggedIn) {

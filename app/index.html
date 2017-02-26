@@ -24,7 +24,7 @@
     <div id="main">
       <!--sidebar-->
       <!--I imagine that this will be toggleable-->
-      <div side-bar></div>
+      <div side-bar ng-if="isLoggedIn"></div>
       <!--main body for application - changes based on url-->
       <div class="container">
         <div ng-view class="jumbotron"></div>
