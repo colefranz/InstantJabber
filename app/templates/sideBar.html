@@ -11,25 +11,21 @@
       <!--requires image asset-->
     </li>
   </ul>
-  <ul class="sidebar-options">
-    <li ng-repeat="state in sidebarStates">
-      <button title="View {{state}}"
-          ng-class="{active: sidebarState === state}"
-          ng-click="setSidebar(state)">{{state}}
-      </button>
-    </li>
-  </ul>
   <!--<button class="toggle-button">Toggle</button>-->
   <ul class="sidebar-nav">
-    <li ng-if="sidebarState==='contacts'"
-        class="sidebar-brand"
-        ng-repeat="contact in contacts">
+    <li class="sidebar-brand"
+        ng-repeat="request in requests">
       <a>
-          {{contact.id}}
+          {{request.info.name}}
       </a>
     </li>
-    <li ng-if="sidebarState==='chats'"
-        class="sidebar-brand"
+    <li class="sidebar-brand"
+        ng-repeat="contact in contacts">
+      <a>
+          {{contact.name}}
+      </a>
+    </li>
+    <li class="sidebar-brand"
         ng-repeat="chat in chats">
       <a ng-href="/chat?id={{chat.id}}">
           {{chat.name}}

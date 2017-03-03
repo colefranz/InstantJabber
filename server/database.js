@@ -8,7 +8,7 @@ module.exports = (function() {
   /* schema
 
   database: {
-    chats: { // UUIDS
+    COLLECTION chats: { // UUIDS
       xxx: {
         users: [ id1, id2, id3 ],
         name: 'SENG 513 Group',
@@ -30,8 +30,8 @@ module.exports = (function() {
       xxy: {
         ...
       },
-    }
-    users: { // emails
+    },
+    COLLECTION users: { // emails
       {
         id: id1
         chats: [xxx, xxy],
@@ -52,6 +52,19 @@ module.exports = (function() {
         id: id3
         ...
       }
+    },
+    COLLECTION contact-requests: {
+      {
+        // id1 wants to befriend id2
+        requester: id1
+        requestee: id2
+      },
+      {
+        // id2 wants to befriend id3
+        id: id2
+        contact: id3
+      }
+      ...
     }
   }
   */
@@ -66,19 +79,19 @@ module.exports = (function() {
   });
 
   exportable.login = function login(creds, callback) {
-    let collection = database.collection('users');
+    let users = database.collection('users');
 
-    collection.findOne({id: creds.id}, {}).then(function(docs) {
+    users.findOne({id: creds.id}, {}).then(function(docs) {
       callback(docs !== null);
     });
   }
 
   exportable.create = function create(creds, callback) {
-    let collection = database.collection('users');
+    let users = database.collection('users');
 
-    collection.findOne({id: creds.id}, {}).then(function(docs) {
+    users.findOne({id: creds.id}, {}).then(function(docs) {
       if (docs === null) {
-        collection.insertOne({
+        users.insertOne({
           id: creds.id,
           contacts: [],
           info: {
@@ -87,79 +100,139 @@ module.exports = (function() {
           private: {
             password: creds.pass
           }
+        }, function(err) {
+          callback(err === null);
         });
       } else {
         // the user ID is taken
         
       }
 
-      callback(docs !== null);
     });
   };
 
   exportable.getChat = function getChat() {
 
-  }
+  };
 
   exportable.setChat = function setChat() {
 
-  }
+  };
 
   exportable.getContacts = function getContacts(user, callback) {
-    let collection = database.collection('users');
+    let users = database.collection('users');
 
     // find user and get contacts from it
     // use those id's to get the names of all the contacts
-    return collection.findOne({id: user}, {contacts: 1}).then(function(docs) {
-      collection = database.collection('users');
-      collection.find({
-          id: {
-            $in: docs.contacts
-          }
-        }, {
-          id: 1,
-          info: 1
-        }).toArray().then(function(doc) {
-          callback(doc);
-        // return doc;
+    return users.findOne({id: user}, {contacts: 1}).then(function(docs) {
+      users.find({
+        id: {
+          $in: docs.contacts
+        }
+      }, {
+        id: 1,
+        info: 1
+      }).toArray().then(function(doc) {
+        callback(doc);
+      // return doc;
       });
     });
   };
 
-  exportable.addContact = function addContact(userId, id) {
-    let collection = database.collection('users');
+  exportable.addContact = function addContact(requester, requestee) {
+    let users = database.collection('users');
     
-    if (userId === id) {
+    if (requester === requestee) {
       console.log('You cant add yourself!');
+      return false;
     }
-    // make sure the id exists in the list
-    // then add it to the contacts of the userid.
-    // TODO make sure it adds to the other person as well
-    return collection.findOne({id: userId}).then(function(doc) {
-      if (doc !== undefined) {
-        collection.findOneAndUpdate(
-          {id: userId},
-          {$push: {contacts: id}}
-        ).then(function(doc) {
-          console.log(doc);
-          return doc;
-        });
-      } else {
-        console.log('that aint in here');
+
+    users.findOne({id: requestee}).then(function(doc) {
+      if (doc === undefined) {
+        console.log('That person doesn\'t exist!');
+        return false;
       }
+
+      users.findOne({id: requester}).then(function(doc) {
+        if (doc !== undefined && doc.contacts.indexOf(requestee) === -1) {
+          let contactRequests = database.collection('contact-requests');
+        
+          contactRequests.insertOne({
+            requester: requester,
+            requestee: requestee
+          }, function(err, doc) {
+            console.log(doc.insertedCount);
+          });
+        } else {
+          console.log('that aint in here || already friends');
+        }
+      });
     });
-  }
+  };
+
+  exportable.findRequests = function findRequests(id, callback) {
+    let contactRequests = database.collection('contact-requests'),
+        users = database.collection('users');
+
+    contactRequests.find(
+      { requestee: id },
+      { requester: 1 }
+    ).toArray().then(function(docs) {
+      let ids = [];
+
+      docs.forEach(function(user) {
+        ids.push(user.requester);
+      });
+
+      users.find({
+        id: {
+          $in: ids
+        }
+      }, {
+        id: 1,
+        info: 1
+      }).toArray().then(function(doc) {
+        callback(doc);
+      });
+    });
+  };
+
+  exportable.acceptRequest = function acceptRequest(requestee, requester) {
+    let users = database.collection('users'),
+        contactRequests = database.collection('contact-requests');
+
+    users.findOneAndUpdate(
+      {id: requestee},
+      {$push: {contacts: requester}}
+    ).then(function(doc) {
+      console.log('updated requestee');
+    });
+
+    users.findOneAndUpdate(
+      {id: requester},
+      {$push: {contacts: requestee}}
+    ).then(function(doc) {
+      console.log('updated requester');
+    });
+
+    contactRequests.deleteOne({
+      requester: requester,
+      requestee: requestee
+    }).then(function() {
+      console.log('request deleted');
+    });
+  };
 
   exportable.gitResetHard = function gitResetHard() {
-    let collection = database.collection('users');
+    let users = database.collection('users');
 
-    collection.remove({}, function() {
+    users.remove({}, function() {
     // add a couple back in so we have something to work with
-      collection.findOne({id: 'test1'}, {}).then(function(docs) {
+      users.findOne({id: 'test1'}, {}).then(function(docs) {
         if (docs === null) {
-          collection.insertMany([
+          users.insertMany([
             {
-              id: 'test1',
+              id: 'test1@test.com',
               contacts: [],
               info: {
                 name: 'Cole',
@@ -169,7 +242,7 @@ module.exports = (function() {
               }
             },
             {
-              id: 'test2',
+              id: 'test2@test.com',
               contacts: [],
               info: {
                 name: 'Silas',
@@ -179,7 +252,7 @@ module.exports = (function() {
               }
             },
             {
-              id: 'test3',
+              id: 'test3@test.com',
               contacts: [],
               info: {
                 name: 'Jun',

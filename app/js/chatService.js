@@ -11,16 +11,26 @@
           },
           contacts = [],
           activeChatIds = [],
+          requests = [],
           activeInformationCallbacks = [];
 
-      socket.on('your-contacts', function(contacts, chatIds) {
-        contacts = contacts;
-        activeChatIds = chatIds;
-
-        _.forEach(activeInformationCallbacks, function(callback) {
-          callback({contacts: contacts, chats: activeChatIds});
-        });
+      socket.on('your-contacts', function(dbContacts) {
+        contacts = dbContacts;
+        _.forEach(activeInformationCallbacks, activeInformationCallback);
       });
+
+      socket.on('new-requests', function(dbRequests) {
+        requests = dbRequests;
+        _.forEach(activeInformationCallbacks, activeInformationCallback);
+      });
+
+      function activeInformationCallback(callback) {
+        callback({
+          contacts: contacts,
+          chats: activeChatIds,
+          requests: requests
+        });
+      }
 
 
       self.subscribeToActiveInformation = function(callback) {

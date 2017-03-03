@@ -54,8 +54,6 @@
       authService,
       chatService
     ) {
-      $scope.sidebarState = 'chats';
-      $scope.sidebarStates = ['chats', 'contacts'];
       $scope.chats = [];
       $scope.contacts = [];
       $scope.isLoggedIn = false;
@@ -65,28 +63,25 @@
       };
 
       $scope.addContact = function() {
-        chatService.addContact('test1');
+        chatService.addContact('test1@test.com');
       };
 
       $scope.gitResetHard = function() {
         chatService.gitResetHard();
       };
 
-      $scope.setSidebar = function(state) {
-        $scope.sidebarState = state;
-      };
-
       function handleInformation(information) {
         // $scope.chats = information.chats;
         $scope.chats = [{id: '1', name: '1'}];
         $scope.contacts = information.contacts;
+        $scope.requests = information.requests;
         console.log('new information ', information);
       }
 
       function handleLoginStateChange(isLoggedIn) {
         $timeout(function() {
           $scope.isLoggedIn = isLoggedIn;
-          
+          console.log(isLoggedIn);
           if (!isLoggedIn) {
             // handle failure
           }
