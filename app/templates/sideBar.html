@@ -1,4 +1,5 @@
 <div id="sidebar-wrapper">
+  <!--<button class="toggle-button">Toggle</button>-->
   <ul class="sidebar-options">
     <li id="add-contact">
       <button ng-click="addContact()"
@@ -11,25 +12,23 @@
       <!--requires image asset-->
     </li>
   </ul>
-  <!--<button class="toggle-button">Toggle</button>-->
   <ul class="sidebar-nav">
+    <li class="sidebar-nav-header">contact requests</li>
     <li class="sidebar-brand"
         ng-repeat="request in requests">
-      <a>
-          {{request.info.name}}
-      </a>
+      <span>{{request.info.name}}</span>
+      <button ng-click="addContactResponse(request.id, true)">Accept</button>
+      <button ng-click="addContactResponse(request.id, false)">Decline</button>
     </li>
-    <li class="sidebar-brand"
-        ng-repeat="contact in contacts">
-      <a>
-          {{contact.name}}
-      </a>
-    </li>
+    <li class="sidebar-nav-header">chats</li>
     <li class="sidebar-brand"
         ng-repeat="chat in chats">
-      <a ng-href="/chat?id={{chat.id}}">
-          {{chat.name}}
-      </a>
+      <a ng-href="/chat?id={{chat.id}}">{{chat.name}}</a>
+    </li>
+    <li class="sidebar-nav-header">contacts</li>
+    <li class="sidebar-brand"
+        ng-repeat="contact in contacts">
+      <a>{{contact.info.name}}</a>
     </li>
   </ul>
 </div>

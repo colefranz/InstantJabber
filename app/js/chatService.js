@@ -93,13 +93,24 @@
       };
 
       /*
-      * Add a contact to your list.
+      * Send request to add a contact to your list.
       * 
       * expects
       * id: id of the user to add
       */
-      self.addContact = function(id) {
-        socket.emit('add-contact', id);
+      self.addContactRequest = function(id) {
+        socket.emit('add-contact-request', id);
+      };
+
+      /*
+      * Respond to a users contact request
+      * 
+      * expects
+      * requester: id of the user who sent the request
+      * acceptedRequest: boolean value if they accept or not
+      */
+      self.addContactResponse = function(requester, acceptedRequest) {
+        socket.emit('add-contact-response', requester, acceptedRequest);
       };
 
       /*

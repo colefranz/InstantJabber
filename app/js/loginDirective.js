@@ -16,7 +16,7 @@
         };
 
         scope.form = {
-          email: 'test@test.test',
+          email: 'test@test.com',
           pass: 'test'
         };
 

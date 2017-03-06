@@ -9,7 +9,7 @@
   let server = require('http').createServer(app);
   let io = require('socket.io')(server);
 
-
+  // BIG TODO: SWITCH FROM CALLBACKS TO PROMISES
   io.sockets.on('connection', function(socket) {
     try {
       var userID,
@@ -53,8 +53,12 @@
           socket.emit('new-requests', userIds);
         });
 
-        socket.on('add-contact', function(id) {
-          database.addContact(userID, id);
+        socket.on('add-contact-request', function(id) {
+          database.addContactRequest(userID, id);
+        });
+
+        socket.on('add-contact-response', function(requester, acceptedRequest) {
+          database.addContactResponse(userID, requester, acceptedRequest);
         });
 
         //TODO REMOVE

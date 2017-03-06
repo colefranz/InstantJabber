@@ -78,15 +78,16 @@ module.exports = (function() {
     database = db;
   });
 
-  exportable.login = function login(creds, callback) {
+  exportable.login = function(creds, callback) {
     let users = database.collection('users');
 
     users.findOne({id: creds.id}, {}).then(function(docs) {
+      console.log(docs);
       callback(docs !== null);
     });
   }
 
-  exportable.create = function create(creds, callback) {
+  exportable.create = function(creds, callback) {
     let users = database.collection('users');
 
     users.findOne({id: creds.id}, {}).then(function(docs) {
@@ -111,15 +112,15 @@ module.exports = (function() {
     });
   };
 
-  exportable.getChat = function getChat() {
+  exportable.getChat = function() {
 
   };
 
-  exportable.setChat = function setChat() {
+  exportable.setChat = function() {
 
   };
 
-  exportable.getContacts = function getContacts(user, callback) {
+  exportable.getContacts = function(user, callback) {
     let users = database.collection('users');
 
     // find user and get contacts from it
@@ -139,7 +140,7 @@ module.exports = (function() {
     });
   };
 
-  exportable.addContact = function addContact(requester, requestee) {
+  exportable.addContactRequest = function(requester, requestee) {
     let users = database.collection('users');
     
     if (requester === requestee) {
@@ -170,7 +171,7 @@ module.exports = (function() {
     });
   };
 
-  exportable.findRequests = function findRequests(id, callback) {
+  exportable.findRequests = function(id, callback) {
     let contactRequests = database.collection('contact-requests'),
         users = database.collection('users');
 
@@ -197,24 +198,26 @@ module.exports = (function() {
     });
   };
 
-  exportable.acceptRequest = function acceptRequest(requestee, requester) {
+  exportable.addContactResponse = function(requestee, requester, acceptedRequest) {
     let users = database.collection('users'),
         contactRequests = database.collection('contact-requests');
 
-    users.findOneAndUpdate(
-      {id: requestee},
-      {$push: {contacts: requester}}
-    ).then(function(doc) {
-      console.log('updated requestee');
-    });
+    if (acceptedRequest) {
+      users.findOneAndUpdate(
+        {id: requestee},
+        {$push: {contacts: requester}}
+      ).then(function(doc) {
+        console.log('updated requestee');
+      });
 
-    users.findOneAndUpdate(
-      {id: requester},
-      {$push: {contacts: requestee}}
-    ).then(function(doc) {
-      console.log('updated requester');
-    });
-
+      users.findOneAndUpdate(
+        {id: requester},
+        {$push: {contacts: requestee}}
+      ).then(function(doc) {
+        console.log('updated requester');
+      });
+    }
+    
     contactRequests.deleteOne({
       requester: requester,
       requestee: requestee
