@@ -22,7 +22,7 @@
     </li>
     <li class="sidebar-nav-header">chats</li>
     <li class="sidebar-brand"
-        ng-repeat="chat in chats">
+        ng-repeat="chat in chats track by $id">
       <a ng-href="/chat?id={{chat.id}}">{{chat.name}}</a>
     </li>
     <li class="sidebar-nav-header">contacts</li>

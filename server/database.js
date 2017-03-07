@@ -1,9 +1,10 @@
 module.exports = (function() {
   'use strict';
   
-  let MongoClient = require('mongodb').MongoClient;
-  let database;
-  let exportable = {};
+  let MongoClient = require('mongodb').MongoClient,
+      Q = require('q'),
+      database,
+      exportable = {};
 
   /* schema
 
@@ -87,7 +88,7 @@ module.exports = (function() {
     });
   }
 
-  exportable.create = function(creds, callback) {
+  exportable.createAccount = function(creds, callback) {
     let users = database.collection('users');
 
     users.findOne({id: creds.id}, {}).then(function(docs) {
@@ -120,25 +121,37 @@ module.exports = (function() {
 
   };
 
-  exportable.getContacts = function(user, callback) {
-    let users = database.collection('users');
-
+  exportable.getContacts = function(user) {
+    let users = database.collection('users'),
+        deferred = Q.defer();
+    
     // find user and get contacts from it
     // use those id's to get the names of all the contacts
-    return users.findOne({id: user}, {contacts: 1}).then(function(docs) {
-      users.find({
-        id: {
-          $in: docs.contacts
-        }
-      }, {
-        id: 1,
-        info: 1
-      }).toArray().then(function(doc) {
-        callback(doc);
-      // return doc;
-      });
+    users.findOne({id: user}, {contacts: 1}).then(function(docs) {
+      deferred.resolve(createNamesArrayFromContacts(docs.contacts));
     });
+
+    return deferred.promise;
   };
+
+  function createNamesArrayFromContacts(contacts) {
+    let users = database.collection('users'),
+        deferred = Q.defer();
+
+    users.find({
+      id: {
+        $in: contacts
+      }
+    }, {
+      id: 1,
+      info: 1
+    }).toArray().then(function(doc) {
+      console.log(doc);
+      deferred.resolve(doc);
+    });
+
+    return deferred.promise;
+  }
 
   exportable.addContactRequest = function(requester, requestee) {
     let users = database.collection('users');
@@ -171,9 +184,10 @@ module.exports = (function() {
     });
   };
 
-  exportable.findRequests = function(id, callback) {
+  exportable.findRequests = function(id) {
     let contactRequests = database.collection('contact-requests'),
-        users = database.collection('users');
+        users = database.collection('users'),
+        deferred = Q.defer();
 
     contactRequests.find(
       { requestee: id },
@@ -193,21 +207,29 @@ module.exports = (function() {
         id: 1,
         info: 1
       }).toArray().then(function(doc) {
-        callback(doc);
+        deferred.resolve(doc);
       });
     });
+
+    return deferred.promise;
   };
 
   exportable.addContactResponse = function(requestee, requester, acceptedRequest) {
     let users = database.collection('users'),
-        contactRequests = database.collection('contact-requests');
+        contactRequests = database.collection('contact-requests'),
+        deferred = Q.defer();
 
     if (acceptedRequest) {
       users.findOneAndUpdate(
         {id: requestee},
-        {$push: {contacts: requester}}
+        {$push: {contacts: requester}},
+        {
+          returnOriginal: false,
+          projection: {contacts: 1}
+        }
       ).then(function(doc) {
-        console.log('updated requestee');
+        console.log('updated requestee: ', doc);
+        deferred.resolve(createNamesArrayFromContacts(doc.value.contacts));
       });
 
       users.findOneAndUpdate(
@@ -224,6 +246,8 @@ module.exports = (function() {
     }).then(function() {
       console.log('request deleted');
     });
+
+    return deferred.promise;
   };
 
   exportable.gitResetHard = function gitResetHard() {

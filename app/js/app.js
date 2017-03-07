@@ -71,17 +71,18 @@
       };
 
       function handleInformation(information) {
-        // $scope.chats = information.chats;
-        $scope.chats = [{id: '1', name: '1'}];
-        $scope.contacts = information.contacts;
-        $scope.requests = information.requests;
-        console.log('new information ', information);
+        $timeout(function() {
+          // $scope.chats = information.chats;
+          $scope.contacts = information.contacts;
+          $scope.requests = information.requests;
+          console.log('new information ', information);
+        }, 0);
       }
 
       function handleLoginStateChange(isLoggedIn) {
         $timeout(function() {
           $scope.isLoggedIn = isLoggedIn;
-          console.log(isLoggedIn);
+          
           if (!isLoggedIn) {
             // handle failure
           }

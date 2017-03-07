@@ -1,21 +1,22 @@
 (function() {
   'use strict';
 
-  let express = require('express');
-  let path = require('path');
-  let database = require('./server/database');
-  
-  let app = express();
-  let server = require('http').createServer(app);
-  let io = require('socket.io')(server);
+  let express = require('express'),
+      path = require('path'),
+      database = require('./server/database'),
+      Q = require('q'),
+      
+      app = express(),
+      server = require('http').createServer(app),
+      io = require('socket.io')(server);
 
   // BIG TODO: SWITCH FROM CALLBACKS TO PROMISES
   io.sockets.on('connection', function(socket) {
-    try {
-      var userID,
-          handleLoginOrCreationAttempt,
-          manageLoggedInListeners;
+    var userID,
+        handleLoginOrCreationAttempt,
+        manageLoggedInListeners;
 
+    try {
       socket.on('login', function(creds) {
         userID = creds.id;
         database.login(creds, handleLoginOrCreationAttempt);
@@ -23,7 +24,7 @@
 
       socket.on('create-account', function(creds) {
         userID = creds.id;
-        database.create(creds, handleLoginOrCreationAttempt);
+        database.createAccount(creds, handleLoginOrCreationAttempt);
       });
 
       handleLoginOrCreationAttempt = function(wasLoggedIn) {
@@ -34,8 +35,7 @@
         }
       };
 
-      manageLoggedInListeners = function() { 
-        console.log('we in');
+      manageLoggedInListeners = function() {
         // once we have logged in we can stop listening
         socket.removeAllListeners('login');
         socket.removeAllListeners('create-account');
@@ -44,12 +44,13 @@
 
         // get contacts
         // TODO get chats
-        database.getContacts(userID, function(contacts) {
+        database.getContacts(userID).then(function(contacts) {
+          console.log('CONTACTS:', contacts);
           socket.emit('your-contacts', contacts);
         });
 
-        database.findRequests(userID, function(userIds) {
-          console.log(userIds);
+        database.findRequests(userID).then(function(userIds) {
+          console.log('REQUESTS:', userIds);
           socket.emit('new-requests', userIds);
         });
 
@@ -58,7 +59,10 @@
         });
 
         socket.on('add-contact-response', function(requester, acceptedRequest) {
-          database.addContactResponse(userID, requester, acceptedRequest);
+          database.addContactResponse(userID, requester, acceptedRequest)
+            .then(function(contacts) {
+              socket.emit('your-contacts', contacts);
+            })
         });
 
         //TODO REMOVE
