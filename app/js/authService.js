@@ -14,15 +14,15 @@
         return userIsLoggedIn;
       };
 
-      /*
-      * login to the server
-      *
-      * expects
-      * creds: {
-      *   id,
-      *   pass
-      * }
-      */
+      /**
+       * login to the server
+       *
+       * expects
+       * creds: {
+       *   id,
+       *   pass
+       * }
+       */
 
       self.login = function(creds) {
         socket.emit('login', creds);
@@ -34,16 +34,16 @@
         });
       };
 
-      /*
-      * attempt to create an account
-      *
-      * expects
-      * creds: {
-      *   id,
-      *   pass,
-      *   name
-      * }
-      */
+      /**
+       * attempt to create an account
+       *
+       * expects
+       * creds: {
+       *   id,
+       *   pass,
+       *   name
+       * }
+       */
 
       self.create = function(creds) {
         socket.emit('create-account', creds);
