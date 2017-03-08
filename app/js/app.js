@@ -43,6 +43,8 @@
     }
   ])
 
+  // main controller should be the main talking point for the whole application
+  // in order to prevent coupling between services and such.
   .controller('mainController', [
     '$scope',
     '$timeout',
@@ -81,6 +83,10 @@
           
           if (!isLoggedIn) {
             // handle failure
+          } else {
+            chatService.registerToMessageForUserId(
+              authService.getUserID()
+            );
           }
         }, 0);
       }
@@ -96,45 +102,5 @@
   .controller('homeController', ['$scope', '$http', function($scope, $http) {
     
   }])
-
-  .controller('chatController', [
-    '$scope',
-    '$http',
-    '$route',
-    'chatService',
-    function(
-      $scope,
-      $http,
-      $route,
-      chatService
-    ) {
-      $scope.messages = [];
-      $scope.id = $route.current.params.id;
-
-      function messageCallback(message) {
-        $scope.messages.push(message);
-      }
-      
-      function getUsersObjectFromChat(chat) {
-        var usersObj = {};
-
-        _.forEach(chat.users, function(user) {
-          usersObj[user.id] = user.info.name;
-        });
-
-        return usersObj;
-      }
-      
-      chatService.subcribeToMessages(messageCallback, $scope.id);
-
-      chatService.getChat($scope.id).then(function(chat) {
-        $scope.chat = chat;
-        $scope.users = getUsersObjectFromChat(chat);
-      });
-
-      $scope.$on('$destroy', function() {
-        chatService.deregisterFromMessages(messageCallback, $scope.id);
-    });
-  }]);
 
 })(angular, io);

@@ -129,8 +129,15 @@
     return deferred.promise;
   };
   
-  exports.setChat = function() {
+  exports.saveNewChatMessage = function(chatID, message) {
+    let chats = database.collection('chats');
 
+    chats.findOneAndUpdate(
+      {_id: ObjectID(chatID)},
+      {$push: {log: message}}
+    ).then(function(doc) {
+      console.log('added new chat message!!');
+    });
   };
 
   exports.getContacts = function(user) {
@@ -322,7 +329,6 @@
     });
 
     users.remove({}, function() {
-      console.log('wtf');
     // add a couple back in so we have something to work with
       users.insertMany([
         {

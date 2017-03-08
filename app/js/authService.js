@@ -7,11 +7,16 @@
     function AuthService() {
       var self = this,
           loginStateChangedHandlers = [],
-          userIsLoggedIn = false;
+          userIsLoggedIn = false,
+          userID;
 
       
       self.isLoggedIn = function() {
         return userIsLoggedIn;
+      };
+
+      self.getUserID = function() {
+        return userID;
       };
 
       /**
@@ -28,6 +33,10 @@
         socket.emit('login', creds);
 
         socket.on('login-result', function(wasLoggedIn) {
+          if (wasLoggedIn) {
+            userID = creds.id;
+          }
+          
           userIsLoggedIn = wasLoggedIn;
           socket.removeAllListeners('login-result');
           loginStateChanged(wasLoggedIn);
@@ -49,6 +58,10 @@
         socket.emit('create-account', creds);
 
         socket.on('login-result', function(wasLoggedIn) {
+          if (wasLoggedIn) {
+            userID = creds.id;
+          }
+
           userIsLoggedIn = wasLoggedIn;
           socket.removeAllListeners('login-result');
           loginStateChanged(wasLoggedIn);
@@ -59,16 +72,13 @@
         loginStateChangedHandlers.push(callback);
         callback(userIsLoggedIn)
       };
+      
 
       function loginStateChanged(isLoggedIn) {
         _.forEach(loginStateChangedHandlers, function(handler) {
           handler(isLoggedIn);
         });
       }
-
-      socket.on('login-failed', function() {
-        //tell the user that login failed
-      });
       
       return self;
     }

@@ -3,7 +3,8 @@
 
   let express = require('express'),
       path = require('path'),
-      database = require('./server/database'),
+      dbUtils = require('./server/database'),
+      Message = require('./server/message').Message,
       Q = require('q'),
       
       app = express(),
@@ -18,12 +19,12 @@
     try {
       socket.on('login', function(creds) {
         userID = creds.id;
-        database.login(creds).then(handleLoginOrCreationAttempt);
+        dbUtils.login(creds).then(handleLoginOrCreationAttempt);
       });
 
       socket.on('create-account', function(creds) {
         userID = creds.id;
-        database.createAccount(creds).then(handleLoginOrCreationAttempt);
+        dbUtils.createAccount(creds).then(handleLoginOrCreationAttempt);
       });
 
       handleLoginOrCreationAttempt = function(wasLoggedIn) {
@@ -43,32 +44,32 @@
 
         // get contacts
         // TODO get chats
-        database.getContacts(userID).then(function(contacts) {
+        dbUtils.getContacts(userID).then(function(contacts) {
           console.log('CONTACTS:', contacts);
           socket.emit('your-contacts', contacts);
         });
 
-        database.getRequests(userID).then(function(userIds) {
+        dbUtils.getRequests(userID).then(function(userIds) {
           console.log('REQUESTS:', userIds);
           socket.emit('new-requests', userIds);
         });
 
-        database.getChats(userID).then(function(chats) {
+        dbUtils.getChats(userID).then(function(chats) {
           socket.emit('your-chats', chats);
         });
 
         socket.on('get-chat', function(chatID) {
-          database.getChat(chatID).then(function(chat) {
+          dbUtils.getChat(chatID).then(function(chat) {
             socket.emit('get-chat', chat);
           });
         });
 
         socket.on('add-contact-request', function(id) {
-          database.addContactRequest(userID, id);
+          dbUtils.addContactRequest(userID, id);
         });
 
         socket.on('add-contact-response', function(requester, acceptedRequest) {
-          database.addContactResponse(userID, requester, acceptedRequest)
+          dbUtils.addContactResponse(userID, requester, acceptedRequest)
           .then(function(info) {
             console.log('FINISHED ADD-CONTACT-RESPONSE FOR: ', userID);
             if (info.contacts !== undefined) {
@@ -77,18 +78,18 @@
             if (info.requests !== undefined) {
               socket.emit('new-requests', info.requests);
             }
-          }, function(err) {
-            console.log('something got fucked');
           });
         });
 
         //TODO REMOVE
         // for development purposes to delete entire database.
         socket.on('gitResetHard', function() {
-          database.gitResetHard();
+          dbUtils.gitResetHard();
         });
 
-        socket.on('message-from-user', function(id, message) {
+        socket.on('message-from-user', function(chatID, message) {
+          var formattedMessage = new Message(userID, message);
+          dbUtils.saveNewChatMessage(chatID, formattedMessage);
           // ADD MESSAGE TO DATABASE
           // NOTIFY SOCKETS THAT CARE SOMEHOW
           //    maybe just send to everyone??? io.sockets.emit('message-to-user')
@@ -112,20 +113,6 @@
   // the app the handle every other route
   app.get('*', function(req, res) {
     res.sendFile(path.join(__dirname, 'app', 'index.html'));
-  });
-
-  // API REQUEST
-  // find the chat id
-  app.get('/api/chat/:id', function(req, res) {
-    res.send(req.params.id);
-    // database.getChat(req.params.id);
-  });
-  
-  // API REQUEST
-  // edit/create the chat id
-  app.post('/api/chat/:id', function(req, res) {
-    res.send(req.params.id);
-    // database.setChat(req.params.id);
   });
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
