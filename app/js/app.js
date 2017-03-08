@@ -46,11 +46,13 @@
   // main controller should be the main talking point for the whole application
   // in order to prevent coupling between services and such.
   .controller('mainController', [
+    '$location',
     '$scope',
     '$timeout',
     'authService',
     'chatService',
     function(
+      $location,
       $scope,
       $timeout,
       authService,
@@ -61,7 +63,9 @@
       $scope.isLoggedIn = false;
 
       $scope.openChat = function(id) {
-
+        chatService.getChatForID(id).then(function(chatID) {
+          $location.path('/chat-' + chatID);
+        });
       };
 
       $scope.gitResetHard = function() {

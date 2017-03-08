@@ -158,6 +158,19 @@
           });
         };
 
+        self.getChatForID = function(userID) {
+          var deferred = $q.defer(),
+              responseHandler = function(chatID) {
+                deferred.resolve(chatID);
+                socket.removeListener('get-or-create-chat', responseHandler);
+              };
+
+          socket.emit('get-or-create-chat', [userID]);
+          socket.on('get-or-create-chat', responseHandler);
+
+          return deferred.promise;
+        };
+
         //TODO REMOVE
         // for development purposes to delete entire database.
         self.gitResetHard = function() {

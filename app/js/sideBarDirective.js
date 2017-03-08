@@ -27,7 +27,7 @@
         };
 
         scope.addContact = function() {
-          chatService.addContactRequest('test1@test.com');
+          chatService.addContactRequest(scope.contactEmail);
           scope.contactEmail = '';
           manageSentMessage();
         };

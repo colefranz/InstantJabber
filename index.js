@@ -64,6 +64,13 @@
           });
         });
 
+        socket.on('get-or-create-chat', function(idArray) {
+          idArray.push(userID);
+          dbUtils.getOrCreateChat(idArray).then(function(chat) {
+            socket.emit('get-or-create-chat', chat._id);
+          });
+        });
+
         socket.on('add-contact-request', function(id) {
           dbUtils.addContactRequest(userID, id);
         });
@@ -81,12 +88,6 @@
           });
         });
 
-        //TODO REMOVE
-        // for development purposes to delete entire database.
-        socket.on('gitResetHard', function() {
-          dbUtils.gitResetHard();
-        });
-
         socket.on('message-from-user', function(chatID, message) {
           var formattedMessage = new Message(userID, message);
           dbUtils.saveNewChatMessage(chatID, formattedMessage).then(function(chat) {
@@ -95,11 +96,12 @@
               io.sockets.emit('message-to-user-' + user, chatID, formattedMessage);
             });
           });
-          // ADD MESSAGE TO DATABASE
-          // NOTIFY SOCKETS THAT CARE SOMEHOW
-          //    maybe just send to everyone??? io.sockets.emit('message-to-user')
-          //    maybe dynamically subscribe to chats?? and then io.sockets.emit('message' + id)
-          //      I kind of prefer the second one, but it's more work for the client.
+        });
+
+        //TODO REMOVE
+        // for development purposes to delete entire database.
+        socket.on('gitResetHard', function() {
+          dbUtils.gitResetHard();
         });
       };
     } catch(e) {

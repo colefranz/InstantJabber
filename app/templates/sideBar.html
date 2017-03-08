@@ -35,13 +35,13 @@
     </li>
     <li class="sidebar-nav-header">chats</li>
     <li class="sidebar-brand"
-        ng-repeat="chat in chats track by $id">
+        ng-repeat="chat in chats track by $index">
       <a ng-href="/chat-{{chat._id}}">{{chat.name}}</a>
     </li>
     <li class="sidebar-nav-header">contacts</li>
     <li class="sidebar-brand"
         ng-repeat="contact in contacts">
-      <a>{{contact.info.name}}</a>
+      <a ng-click="openChat(contact.id)">{{contact.info.name}}</a>
     </li>
   </ul>
 </div>

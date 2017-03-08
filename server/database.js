@@ -189,6 +189,46 @@
     return deferred.promise;
   };
 
+  exports.getOrCreateChat = function(idArray) {
+    var chats = database.collection('chats'),
+        deferred = Q.defer();
+
+    chats.findOne(
+      {
+        users: {
+          $size: 2,
+          $all: idArray
+        }
+      },
+      {fields: {_id: 1}}
+    ).then(function(doc) {
+      if (doc === null) {
+        createNamesArrayFromIdArray(idArray).then(function(users) {
+          var chatName = '';
+
+          users.forEach(function(user, index) {
+            if (index === 0) {
+              chatName += user.info.name;
+            } else {
+              chatName += ', ' + user.info.name;
+            }
+          });
+          chats.insertOne({
+            users: idArray,
+            name: chatName,
+            log: []
+          }).then(function(doc) {
+            deferred.resolve(doc.ops[0]);
+          });
+        });
+      } else {
+        deferred.resolve(doc);
+      }
+    });
+
+    return deferred.promise;
+  };
+
   exports.addContactRequest = function(requester, requestee) {
     let users = database.collection('users');
     
