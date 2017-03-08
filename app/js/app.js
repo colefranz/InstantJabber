@@ -31,7 +31,7 @@
       $routeProvider.when('/', {
         templateUrl: 'templates/home.html',
         controller: 'homeController'
-      }).when('/chat', {
+      }).when('/chat-:id', {
         templateUrl: 'templates/chat.html',
         controller: 'chatController'
       }).otherwise({
@@ -68,7 +68,7 @@
 
       function handleInformation(information) {
         $timeout(function() {
-          // $scope.chats = information.chats;
+          $scope.chats = information.chats;
           $scope.contacts = information.contacts;
           $scope.requests = information.requests;
           console.log('new information ', information);
@@ -109,14 +109,28 @@
       chatService
     ) {
       $scope.messages = [];
-
-      const messageCallback = function(message) {
-        $scope.messages.push(message);
-      };
-      // Depending on how we move forward this would be the main entry point for the application.
       $scope.id = $route.current.params.id;
 
+      function messageCallback(message) {
+        $scope.messages.push(message);
+      }
+      
+      function getUsersObjectFromChat(chat) {
+        var usersObj = {};
+
+        _.forEach(chat.users, function(user) {
+          usersObj[user.id] = user.info.name;
+        });
+
+        return usersObj;
+      }
+      
       chatService.subcribeToMessages(messageCallback, $scope.id);
+
+      chatService.getChat($scope.id).then(function(chat) {
+        $scope.chat = chat;
+        $scope.users = getUsersObjectFromChat(chat);
+      });
 
       $scope.$on('$destroy', function() {
         chatService.deregisterFromMessages(messageCallback, $scope.id);

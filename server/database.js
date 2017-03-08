@@ -2,6 +2,7 @@ module.exports = (function() {
   'use strict';
   
   let MongoClient = require('mongodb').MongoClient,
+      ObjectID = require('mongodb').ObjectID,
       Q = require('q'),
       database,
       exportable = {};
@@ -111,10 +112,20 @@ module.exports = (function() {
     });
   };
 
-  exportable.getChat = function() {
+  exportable.getChat = function(id) {
+    let chats = database.collection('chats'),
+        deferred = Q.defer();
+        
+    chats.findOne({_id: ObjectID(id)}).then(function(doc) {
+      createNamesArrayFromIdArray(doc.users).then(function(users) {
+        doc.users = users;
+        deferred.resolve(doc);
+      });
+    });
 
+    return deferred.promise;
   };
-
+  
   exportable.setChat = function() {
 
   };
@@ -126,13 +137,13 @@ module.exports = (function() {
     // find user and get contacts from it
     // use those id's to get the names of all the contacts
     users.findOne({id: user}, {contacts: 1}).then(function(docs) {
-      deferred.resolve(createNamesArrayFromContacts(docs.contacts));
+      deferred.resolve(createNamesArrayFromIdArray(docs.contacts));
     });
 
     return deferred.promise;
   };
 
-  function createNamesArrayFromContacts(contacts) {
+  function createNamesArrayFromIdArray(contacts) {
     let users = database.collection('users'),
         deferred = Q.defer();
 
@@ -154,9 +165,9 @@ module.exports = (function() {
     let chats = database.collection('chats'),
         deferred = Q.defer();
         
-    chats.find({
-      users: id
-    }).toArray().then(function(doc) {
+    chats.find(
+      {users: id}
+    ).project({name: 1}).toArray().then(function(doc) {
       console.log('CHATS: ', doc);
       deferred.resolve(doc);
     });
@@ -251,7 +262,7 @@ module.exports = (function() {
           projection: {contacts: 1}
         }
       ).then(function(doc) {
-        userDefer.resolve(createNamesArrayFromContacts(doc.value.contacts));
+        userDefer.resolve(createNamesArrayFromIdArray(doc.value.contacts));
       });
 
       users.findOneAndUpdate(
@@ -292,18 +303,16 @@ module.exports = (function() {
           users: ['test@test.com', 'test1@test.com', 'test2@test.com', 'test3@test.com'],
           name: 'SENG 513 Group',
           log: [
-            [
-              {
-                msg: 'Hi friends',
-                timestamp: '12:01 Feb 23',
-                user: 'test@test.com'
-              },
-              {
-                msg: 'No',
-                timestamp: '12:04 Feb 23',
-                user: 'test1@test.com'
-              }
-            ]
+            {
+              msg: 'Hi friends',
+              timestamp: '12:01 Feb 23',
+              user: 'test@test.com'
+            },
+            {
+              msg: 'No',
+              timestamp: '12:04 Feb 23',
+              user: 'test1@test.com'
+            }
           ]
         }
       ]);

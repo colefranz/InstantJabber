@@ -1,2 +1,3 @@
 <h1>{{id}}</h1>
 <p>This is a shell for the  page!</p>
+<p ng-repeat="message in chat.log">{{users[message.user]}}:{{message.msg}} ({{message.timestamp}})</p>

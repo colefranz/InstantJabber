@@ -54,7 +54,13 @@
         });
 
         database.getChats(userID).then(function(chats) {
-          
+          socket.emit('your-chats', chats);
+        });
+
+        socket.on('get-chat', function(chatID) {
+          database.getChat(chatID).then(function(chat) {
+            socket.emit('get-chat', chat);
+          });
         });
 
         socket.on('add-contact-request', function(id) {

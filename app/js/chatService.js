@@ -3,14 +3,14 @@
 
   angular.module('jabber')
 
-  .factory('chatService', ['socket', function(socket) {
+  .factory('chatService', ['$q', 'socket', function($q, socket) {
     function ChatService() {
       var self = this,
           subscriptions = {
             all: []
           },
           contacts = [],
-          activeChatIds = [],
+          chats = [],
           requests = [],
           activeInformationCallbacks = [];
 
@@ -24,18 +24,42 @@
         _.forEach(activeInformationCallbacks, activeInformationCallback);
       });
 
+      socket.on('your-chats', function(dbChats) {
+        chats = dbChats;
+        _.forEach(activeInformationCallbacks, activeInformationCallback);
+      });
+
       function activeInformationCallback(callback) {
         callback({
           contacts: contacts,
-          chats: activeChatIds,
+          chats: chats,
           requests: requests
         });
       }
 
 
       self.subscribeToActiveInformation = function(callback) {
-        callback({contacts: contacts, chats: activeChatIds});
+        activeInformationCallback(callback);
         activeInformationCallbacks.push(callback);
+      };
+
+      /**
+       * get a chat from the server
+       *
+       * expects
+       * id: id of the chat
+       */
+      self.getChat = function(id) {
+        var deferred = $q.defer(),
+            chatHandler = function(chat) {
+              deferred.resolve(chat);
+              socket.removeListener('get-chat', chatHandler);
+            };
+
+        socket.emit('get-chat', id);
+        socket.on('get-chat', chatHandler);
+
+        return deferred.promise;
       };
 
       /**

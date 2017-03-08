@@ -5,6 +5,10 @@ module.exports = function(grunt) {
 
     uglify: {
       dev: {
+        options: {
+          beautify: true,
+          mangle: false
+        },
         files: {
           'app/dev/jabber.min.js': [
             'app/js/**/*.js'
