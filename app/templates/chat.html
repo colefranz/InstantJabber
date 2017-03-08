@@ -1,6 +1,6 @@
 <h1>{{chat.name}}</h1>
 <p ng-repeat="message in chat.log">
-  {{users[message.user]}}:{{message.msg}} ({{message.timestamp}})
+  {{users[message.user]}}: {{message.msg}} ({{message.timestamp}})
 </p>
 <form ng-submit="sendChat()">
 <input type="text"

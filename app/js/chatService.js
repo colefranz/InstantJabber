@@ -143,12 +143,12 @@
            * handler for recieving a new message
            * send to all watchers
            */
-          socket.on('message-to-user-' + id, function(message) {
-            if (!(message._id !== undefined && subscriptions[message._id] !== undefined)) {
+          socket.on('message-to-user-' + id, function(chatID, message) {
+            if (chatID === undefined) {
               return;
             }
             
-            _.forEach(subscriptions[message._id], function(callback) {
+            _.forEach(subscriptions[chatID], function(callback) {
               callback(message);
             });
 

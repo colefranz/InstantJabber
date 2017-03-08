@@ -130,14 +130,18 @@
   };
   
   exports.saveNewChatMessage = function(chatID, message) {
-    let chats = database.collection('chats');
+    let chats = database.collection('chats'),
+        deferred = Q.defer();
 
     chats.findOneAndUpdate(
       {_id: ObjectID(chatID)},
-      {$push: {log: message}}
+      {$push: {log: message}},
+      {projection: {users: 1}}
     ).then(function(doc) {
-      console.log('added new chat message!!');
+      deferred.resolve(doc.value);
     });
+
+    return deferred.promise;
   };
 
   exports.getContacts = function(user) {
@@ -211,7 +215,7 @@
             requester: requester,
             requestee: requestee
           }, {upsert: true}, function(err, doc) {
-            console.log(doc);
+            console.log('Added contact request');
           });
         } else {
           console.log('that aint in here || already friends');

@@ -89,7 +89,12 @@
 
         socket.on('message-from-user', function(chatID, message) {
           var formattedMessage = new Message(userID, message);
-          dbUtils.saveNewChatMessage(chatID, formattedMessage);
+          dbUtils.saveNewChatMessage(chatID, formattedMessage).then(function(chat) {
+            // message the efffected users
+            chat.users.forEach(function(user) {
+              io.sockets.emit('message-to-user-' + user, chatID, formattedMessage);
+            });
+          });
           // ADD MESSAGE TO DATABASE
           // NOTIFY SOCKETS THAT CARE SOMEHOW
           //    maybe just send to everyone??? io.sockets.emit('message-to-user')

@@ -26,7 +26,8 @@
       };
 
       function messageCallback(message) {
-        $scope.messages.push(message);
+        $scope.chat.log.push(message);
+        $scope.$apply();
       }
       
       function getUsersObjectFromChat(chat) {
