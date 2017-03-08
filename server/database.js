@@ -1,11 +1,10 @@
-module.exports = (function() {
+(function(exports) {
   'use strict';
   
   let MongoClient = require('mongodb').MongoClient,
       ObjectID = require('mongodb').ObjectID,
       Q = require('q'),
-      database,
-      exportable = {};
+      database;
 
   /* schema
 
@@ -79,7 +78,7 @@ module.exports = (function() {
     database = db;
   });
 
-  exportable.login = function(creds, callback) {
+  exports.login = function(creds, callback) {
     let users = database.collection('users');
 
     users.findOne({id: creds.id}, {}).then(function(docs) {
@@ -87,7 +86,7 @@ module.exports = (function() {
     });
   }
 
-  exportable.createAccount = function(creds, callback) {
+  exports.createAccount = function(creds, callback) {
     let users = database.collection('users');
 
     users.findOne({id: creds.id}, {}).then(function(docs) {
@@ -112,7 +111,7 @@ module.exports = (function() {
     });
   };
 
-  exportable.getChat = function(id) {
+  exports.getChat = function(id) {
     let chats = database.collection('chats'),
         deferred = Q.defer();
         
@@ -126,11 +125,11 @@ module.exports = (function() {
     return deferred.promise;
   };
   
-  exportable.setChat = function() {
+  exports.setChat = function() {
 
   };
 
-  exportable.getContacts = function(user) {
+  exports.getContacts = function(user) {
     let users = database.collection('users'),
         deferred = Q.defer();
     
@@ -161,7 +160,7 @@ module.exports = (function() {
     return deferred.promise;
   }
 
-  exportable.getChats = function(id) {
+  exports.getChats = function(id) {
     let chats = database.collection('chats'),
         deferred = Q.defer();
         
@@ -175,7 +174,7 @@ module.exports = (function() {
     return deferred.promise;
   };
 
-  exportable.addContactRequest = function(requester, requestee) {
+  exports.addContactRequest = function(requester, requestee) {
     let users = database.collection('users');
     
     if (requester === requestee) {
@@ -210,7 +209,7 @@ module.exports = (function() {
     });
   };
 
-  exportable.getRequests = function(id) {
+  exports.getRequests = function(id) {
     let contactRequests = database.collection('contact-requests'),
         users = database.collection('users'),
         deferred = Q.defer();
@@ -246,7 +245,7 @@ module.exports = (function() {
    * Returns an object containing the new contact list and contact
    * requests for the requestee (user who is responding to the request).
    */
-  exportable.addContactResponse = function(requestee, requester, acceptedRequest) {
+  exports.addContactResponse = function(requestee, requester, acceptedRequest) {
     var users = database.collection('users'),
         contactRequests = database.collection('contact-requests'),
         userDefer = Q.defer(),
@@ -278,7 +277,7 @@ module.exports = (function() {
       requester: requester,
       requestee: requestee
     }).then(function(result) {
-      exportable.findRequests(requestee).then(function(requests) {
+      exports.findRequests(requestee).then(function(requests) {
         requestDefer.resolve(requests);
       });
     });
@@ -291,7 +290,7 @@ module.exports = (function() {
     });
   };
 
-  exportable.gitResetHard = function gitResetHard() {
+  exports.gitResetHard = function gitResetHard() {
     let users = database.collection('users'),
         contactRequests = database.collection('contact-requests'),
         chats = database.collection('chats');
@@ -355,6 +354,4 @@ module.exports = (function() {
       ]);
     });
   };
-
-  return exportable;
-})();
+})(exports);
