@@ -35,7 +35,7 @@
     </li>
     <li class="sidebar-nav-header">chats</li>
     <li class="sidebar-brand"
-        ng-repeat="chat in chats track by $index">
+        ng-repeat="chat in chats track by chat._id">
       <a ng-href="/chat-{{chat._id}}">{{chat.name}}</a>
     </li>
     <li class="sidebar-nav-header">contacts</li>

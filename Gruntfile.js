@@ -61,9 +61,13 @@ module.exports = function(grunt) {
       options: {
         livereload: true
       },
+      client: {
+        files: ['app/**/*.js', 'app/**/*.html'],
+        tasks:  ['uglify']
+      },
       express: {
-        files:  ['app/**/*.js', 'server/**/*.js', '*.js', 'app/**/*.html'],
-        tasks:  ['uglify', 'express:dev'],
+        files:  ['server/**/*.js', '*.js'],
+        tasks:  ['express:dev'],
         options: {
           spawn: false
         }
