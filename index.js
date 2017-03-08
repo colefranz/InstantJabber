@@ -18,12 +18,12 @@
     try {
       socket.on('login', function(creds) {
         userID = creds.id;
-        database.login(creds, handleLoginOrCreationAttempt);
+        database.login(creds).then(handleLoginOrCreationAttempt);
       });
 
       socket.on('create-account', function(creds) {
         userID = creds.id;
-        database.createAccount(creds, handleLoginOrCreationAttempt);
+        database.createAccount(creds).then(handleLoginOrCreationAttempt);
       });
 
       handleLoginOrCreationAttempt = function(wasLoggedIn) {
@@ -77,6 +77,8 @@
             if (info.requests !== undefined) {
               socket.emit('new-requests', info.requests);
             }
+          }, function(err) {
+            console.log('something got fucked');
           });
         });
 
