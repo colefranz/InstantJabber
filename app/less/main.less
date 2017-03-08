@@ -13,6 +13,15 @@
   box-sizing: border-box;
 }
 
+ul {
+  list-style: none;
+}
+
+.columned-flex {
+  display: flex;
+  flex-direction: column;
+}
+
 #main {
   position: absolute;
   top: @header-padding;
@@ -25,9 +34,8 @@
     background: @color-secondary;
     padding: 6px;
 
-    ul {
+    > ul {
       display: flex;
-      list-style: none;
       padding: 0;
     }
     
@@ -36,7 +44,6 @@
         padding: 5px;
 
         button {
-          width: 50px;
           height: 50px;
           border-radius: 5px;
           outline: none;
@@ -48,7 +55,49 @@
         }
       }
     }
-    
+
+    .dropdown {
+      flex-direction: column;
+
+      .account-dropdown {
+        padding: 4px;
+        display: flex;
+        flex-direction: column;
+
+        .dropdown-item {
+          padding: 3px;
+          background: @color-secondary-button;
+          cursor: pointer;
+
+          &:hover {
+            background: darken(@color-secondary-button, 20%);
+          }
+
+          &:active {
+            background: darken(@color-secondary-button, 40%);
+          }
+        }
+        
+        form {
+          align-content: center;
+
+          input[type="email"] {
+            width: 100%;
+          }
+
+          span {
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.8s ease;
+            &.active {
+              visibility: visible;
+              opacity: 1;
+            }
+          }
+        }
+      }
+    }
+
     .sidebar-nav {
       flex-direction: column;
       li {

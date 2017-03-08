@@ -58,7 +58,7 @@
       self.registerLoginStateObserver = function(callback) {
         loginStateChangedHandlers.push(callback);
         callback(userIsLoggedIn)
-      }
+      };
 
       function loginStateChanged(isLoggedIn) {
         _.forEach(loginStateChangedHandlers, function(handler) {

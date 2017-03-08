@@ -10,7 +10,6 @@
       server = require('http').createServer(app),
       io = require('socket.io')(server);
 
-  // BIG TODO: SWITCH FROM CALLBACKS TO PROMISES
   io.sockets.on('connection', function(socket) {
     var userID,
         handleLoginOrCreationAttempt,
@@ -49,9 +48,13 @@
           socket.emit('your-contacts', contacts);
         });
 
-        database.findRequests(userID).then(function(userIds) {
+        database.getRequests(userID).then(function(userIds) {
           console.log('REQUESTS:', userIds);
           socket.emit('new-requests', userIds);
+        });
+
+        database.getChats(userID).then(function(chats) {
+          
         });
 
         socket.on('add-contact-request', function(id) {
@@ -60,9 +63,15 @@
 
         socket.on('add-contact-response', function(requester, acceptedRequest) {
           database.addContactResponse(userID, requester, acceptedRequest)
-            .then(function(contacts) {
-              socket.emit('your-contacts', contacts);
-            })
+          .then(function(info) {
+            console.log('FINISHED ADD-CONTACT-RESPONSE FOR: ', userID);
+            if (info.contacts !== undefined) {
+              socket.emit('your-contacts', info.contacts);
+            }
+            if (info.requests !== undefined) {
+              socket.emit('new-requests', info.requests);
+            }
+          });
         });
 
         //TODO REMOVE

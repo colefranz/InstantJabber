@@ -35,7 +35,6 @@ module.exports = (function() {
     COLLECTION users: { // emails
       {
         id: id1
-        chats: [xxx, xxy],
         contacts: [id2, id3],
         info: { // basically only the public information goes here
           name: 'Cole',
@@ -83,7 +82,6 @@ module.exports = (function() {
     let users = database.collection('users');
 
     users.findOne({id: creds.id}, {}).then(function(docs) {
-      console.log(docs);
       callback(docs !== null);
     });
   }
@@ -146,12 +144,25 @@ module.exports = (function() {
       id: 1,
       info: 1
     }).toArray().then(function(doc) {
-      console.log(doc);
       deferred.resolve(doc);
     });
 
     return deferred.promise;
   }
+
+  exportable.getChats = function(id) {
+    let chats = database.collection('chats'),
+        deferred = Q.defer();
+        
+    chats.find({
+      users: id
+    }).toArray().then(function(doc) {
+      console.log('CHATS: ', doc);
+      deferred.resolve(doc);
+    });
+
+    return deferred.promise;
+  };
 
   exportable.addContactRequest = function(requester, requestee) {
     let users = database.collection('users');
@@ -171,11 +182,15 @@ module.exports = (function() {
         if (doc !== undefined && doc.contacts.indexOf(requestee) === -1) {
           let contactRequests = database.collection('contact-requests');
         
-          contactRequests.insertOne({
+          // look for the document, if it doesn't exist make it so
+          contactRequests.findOneAndReplace({
             requester: requester,
             requestee: requestee
-          }, function(err, doc) {
-            console.log(doc.insertedCount);
+          }, {
+            requester: requester,
+            requestee: requestee
+          }, {upsert: true}, function(err, doc) {
+            console.log(doc);
           });
         } else {
           console.log('that aint in here || already friends');
@@ -184,7 +199,7 @@ module.exports = (function() {
     });
   };
 
-  exportable.findRequests = function(id) {
+  exportable.getRequests = function(id) {
     let contactRequests = database.collection('contact-requests'),
         users = database.collection('users'),
         deferred = Q.defer();
@@ -214,10 +229,18 @@ module.exports = (function() {
     return deferred.promise;
   };
 
+  /**
+   * Respond to a contact request
+   * 
+   * Returns an object containing the new contact list and contact
+   * requests for the requestee (user who is responding to the request).
+   */
   exportable.addContactResponse = function(requestee, requester, acceptedRequest) {
-    let users = database.collection('users'),
+    var users = database.collection('users'),
         contactRequests = database.collection('contact-requests'),
-        deferred = Q.defer();
+        userDefer = Q.defer(),
+        requestDefer = Q.defer(),
+        deferred = Q.all([userDefer.promise, requestDefer.promise]);
 
     if (acceptedRequest) {
       users.findOneAndUpdate(
@@ -228,69 +251,99 @@ module.exports = (function() {
           projection: {contacts: 1}
         }
       ).then(function(doc) {
-        console.log('updated requestee: ', doc);
-        deferred.resolve(createNamesArrayFromContacts(doc.value.contacts));
+        userDefer.resolve(createNamesArrayFromContacts(doc.value.contacts));
       });
 
       users.findOneAndUpdate(
         {id: requester},
         {$push: {contacts: requestee}}
       ).then(function(doc) {
-        console.log('updated requester');
       });
+    } else {
+      userDefer.resolve();
     }
     
     contactRequests.deleteOne({
       requester: requester,
       requestee: requestee
-    }).then(function() {
-      console.log('request deleted');
+    }).then(function(result) {
+      exportable.findRequests(requestee).then(function(requests) {
+        requestDefer.resolve(requests);
+      });
     });
 
-    return deferred.promise;
+    return deferred.spread(function(contacts, requests) {
+      return {
+        contacts: contacts,
+        requests: requests
+      };
+    });
   };
 
   exportable.gitResetHard = function gitResetHard() {
-    let users = database.collection('users');
+    let users = database.collection('users'),
+        contactRequests = database.collection('contact-requests'),
+        chats = database.collection('chats');
+
+    contactRequests.remove({});
+    chats.remove({}, function() {
+      chats.insertMany([
+        {
+          users: ['test@test.com', 'test1@test.com', 'test2@test.com', 'test3@test.com'],
+          name: 'SENG 513 Group',
+          log: [
+            [
+              {
+                msg: 'Hi friends',
+                timestamp: '12:01 Feb 23',
+                user: 'test@test.com'
+              },
+              {
+                msg: 'No',
+                timestamp: '12:04 Feb 23',
+                user: 'test1@test.com'
+              }
+            ]
+          ]
+        }
+      ]);
+    });
 
     users.remove({}, function() {
+      console.log('wtf');
     // add a couple back in so we have something to work with
-      users.findOne({id: 'test1'}, {}).then(function(docs) {
-        if (docs === null) {
-          users.insertMany([
-            {
-              id: 'test1@test.com',
-              contacts: [],
-              info: {
-                name: 'Cole',
-              },
-              private: {
-                password: 'test1'
-              }
-            },
-            {
-              id: 'test2@test.com',
-              contacts: [],
-              info: {
-                name: 'Silas',
-              },
-              private: {
-                password: 'test2'
-              }
-            },
-            {
-              id: 'test3@test.com',
-              contacts: [],
-              info: {
-                name: 'Jun',
-              },
-              private: {
-                password: 'test3'
-              }
-            }
-          ]);
+      users.insertMany([
+        {
+          id: 'test1@test.com',
+          contacts: [],
+          info: {
+            name: 'Cole',
+          },
+          private: {
+            password: 'test1'
+          }
+        },
+        {
+          id: 'test2@test.com',
+          contacts: [],
+          info: {
+            name: 'Silas',
+          },
+          private: {
+            password: 'test2'
+          }
+        },
+        {
+          id: 'test3@test.com',
+          contacts: [],
+          info: {
+            name: 'Jun',
+          },
+          private: {
+            password: 'test3'
+          }
         }
-      });
+      ]);
     });
   };
 

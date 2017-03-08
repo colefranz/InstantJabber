@@ -62,10 +62,6 @@
 
       };
 
-      $scope.addContact = function() {
-        chatService.addContactRequest('test1@test.com');
-      };
-
       $scope.gitResetHard = function() {
         chatService.gitResetHard();
       };

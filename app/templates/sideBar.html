@@ -1,11 +1,24 @@
 <div id="sidebar-wrapper">
   <!--<button class="toggle-button">Toggle</button>-->
+  <ul class="dropdown columned-flex">
+    <button ng-click="toggleAccountDropdownVisibility()">
+      Account
+    </button>
+    <div class="account-dropdown"
+        ng-show="accountDropdownVisible">
+      <div class="dropdown-item"
+          ng-click="toggleAddContactVisibility()">Add Contact</div>
+      <form ng-show="addContactVisible"
+          ng-submit="addContact()">
+        <input type="email" ng-model="contactEmail" placeholder="Contact E-mail" />
+        <input type="submit" value="Send" />
+        <span ng-class="{active: sentMessageVisible}">Sent!</span>
+      </form>
+      <div class="dropdown-item">Account Settings</div>
+      <div class="dropdown-item">Log Out</div>
+    </div>
+  </ul>
   <ul class="sidebar-options">
-    <li id="add-contact">
-      <button ng-click="addContact()"
-          title="Add Contact">Add Contact</button>
-      <!--requires image asset-->
-    </li>
     <li id="create-group">
       <button ng-click="gitResetHard()
           "title="Create Group">DELETE ALL</button>
