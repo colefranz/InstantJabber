@@ -78,16 +78,20 @@
     database = db;
   });
 
-  exports.login = function(creds, callback) {
-    let users = database.collection('users');
+  exports.login = function(creds) {
+    let users = database.collection('users'),
+        deferred = Q.defer();
 
     users.findOne({id: creds.id}, {}).then(function(docs) {
-      callback(docs !== null);
+      deferred.resolve(docs !== null);
     });
-  }
 
-  exports.createAccount = function(creds, callback) {
-    let users = database.collection('users');
+    return deferred.promise;
+  };
+
+  exports.createAccount = function(creds) {
+    let users = database.collection('users'),
+        deferred = Q.defer();
 
     users.findOne({id: creds.id}, {}).then(function(docs) {
       if (docs === null) {
@@ -101,14 +105,14 @@
             password: creds.pass
           }
         }, function(err) {
-          callback(err === null);
+          deferred.resolve(err === null);
         });
       } else {
-        // the user ID is taken
-        
+        deferred.reject();
       }
-
     });
+
+    return deferred.promise;
   };
 
   exports.getChat = function(id) {
@@ -277,7 +281,7 @@
       requester: requester,
       requestee: requestee
     }).then(function(result) {
-      exports.findRequests(requestee).then(function(requests) {
+      exports.getRequests(requestee).then(function(requests) {
         requestDefer.resolve(requests);
       });
     });
