@@ -87,8 +87,7 @@
       {id: creds.id},
       { $set: {socket: socketID}}
     ).then(function(docs) {
-      console.log(docs);
-      deferred.resolve(docs !== null);
+      deferred.resolve(docs.value !== null);
     });
 
     return deferred.promise;
@@ -98,17 +97,19 @@
   // we will want to add this again if we want to see who is
   // online at any given time, but I don't think we need to
   // do that for this project?
+  // - whatever it's back in, we will see lol
   // ******
-  // exports.logout = function(creds) {
-  //   let users = database.collection('users');
+  exports.logout = function(userID) {
+    let users = database.collection('users');
 
-  //   users.findOneAndUpdate(
-  //     {id: creds.id},
-  //     { $set: {socket: null}}
-  //   ).then(function(docs) {
-  //     console.log('logged out');
-  //   });
-  // };
+    users.findOneAndUpdate(
+      {id: userID},
+      {$unset: {socket: ''}},
+      {returnOriginal: false}
+    ).then(function(docs) {
+      console.log('logged out');
+    });
+  };
 
   exports.createAccount = function(creds, socketID) {
     let users = database.collection('users'),
@@ -206,7 +207,7 @@
 
     chats.find(
       {users: id}
-    ).project({name: 1}).toArray().then(function(doc) {
+    ).project({name: 1, users: 1}).toArray().then(function(doc) {
       console.log('CHATS: ', doc);
       deferred.resolve(doc);
     });
@@ -231,13 +232,16 @@
         createUserArrayFromIdArray(idArray).then(function(users) {
           var chatName = '';
 
-          users.forEach(function(user, index) {
-            if (index === 0) {
-              chatName += user.info.name;
-            } else {
-              chatName += ', ' + user.info.name;
-            }
-          });
+          if (users.length > 2) {
+            users.forEach(function(user, index) {
+              if (index === 0) {
+                chatName += user.info.name;
+              } else {
+                chatName += ', ' + user.info.name;
+              }
+            });
+          }
+
           chats.insertOne({
             users: idArray,
             name: chatName,
@@ -269,9 +273,9 @@
       }
 
       users.findOne({id: requester}).then(function(doc) {
+          console.log(doc);
         if (doc !== undefined && doc.contacts.indexOf(requestee) === -1) {
           let contactRequests = database.collection('contact-requests');
-
           // look for the document, if it doesn't exist make it so
           contactRequests.findOneAndReplace({
             requester: requester,

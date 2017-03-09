@@ -29,7 +29,7 @@
 
       handleLoginOrCreationAttempt = function(wasLoggedIn) {
         socket.emit('login-result', wasLoggedIn);
-
+        console.log(wasLoggedIn);
         if (wasLoggedIn) {
           manageLoggedInListeners();
         }
@@ -102,9 +102,9 @@
           });
         });
 
-        // socket.on('disconnect', function() {
-        //   dbUtils.logout(userID);
-        // });
+        socket.on('disconnect', function() {
+          dbUtils.logout(userID);
+        });
 
         //TODO REMOVE
         // for development purposes to delete entire database.
