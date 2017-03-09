@@ -36,6 +36,7 @@
       {
         id: id1
         contacts: [id2, id3],
+        socket: undefined or HSDADUICBN12387adas
         info: { // basically only the public information goes here
           name: 'Cole',
           others: ???
@@ -78,18 +79,38 @@
     database = db;
   });
 
-  exports.login = function(creds) {
+  exports.login = function(creds, socketID) {
     let users = database.collection('users'),
         deferred = Q.defer();
 
-    users.findOne({id: creds.id}, {}).then(function(docs) {
+    users.findOneAndUpdate(
+      {id: creds.id},
+      { $set: {socket: socketID}}
+    ).then(function(docs) {
+      console.log(docs);
       deferred.resolve(docs !== null);
     });
 
     return deferred.promise;
   };
 
-  exports.createAccount = function(creds) {
+  // ******
+  // we will want to add this again if we want to see who is
+  // online at any given time, but I don't think we need to
+  // do that for this project?
+  // ******
+  // exports.logout = function(creds) {
+  //   let users = database.collection('users');
+
+  //   users.findOneAndUpdate(
+  //     {id: creds.id},
+  //     { $set: {socket: null}}
+  //   ).then(function(docs) {
+  //     console.log('logged out');
+  //   });
+  // };
+
+  exports.createAccount = function(creds, socketID) {
     let users = database.collection('users'),
         deferred = Q.defer();
 
@@ -98,6 +119,7 @@
         users.insertOne({
           id: creds.id,
           contacts: [],
+          socket: socketID,
           info: {
             name: creds.name
           },
@@ -120,7 +142,7 @@
         deferred = Q.defer();
         
     chats.findOne({_id: ObjectID(id)}).then(function(doc) {
-      createNamesArrayFromIdArray(doc.users).then(function(users) {
+      createUserArrayFromIdArray(doc.users).then(function(users) {
         doc.users = users;
         deferred.resolve(doc);
       });
@@ -138,7 +160,9 @@
       {$push: {log: message}},
       {projection: {users: 1}}
     ).then(function(doc) {
-      deferred.resolve(doc.value);
+      createUserArrayFromIdArray(doc.value.users).then(function(users) {
+        deferred.resolve(users);
+      });
     });
 
     return deferred.promise;
@@ -151,13 +175,13 @@
     // find user and get contacts from it
     // use those id's to get the names of all the contacts
     users.findOne({id: user}, {contacts: 1}).then(function(docs) {
-      deferred.resolve(createNamesArrayFromIdArray(docs.contacts));
+      deferred.resolve(createUserArrayFromIdArray(docs.contacts));
     });
 
     return deferred.promise;
   };
 
-  function createNamesArrayFromIdArray(contacts) {
+  function createUserArrayFromIdArray(contacts) {
     let users = database.collection('users'),
         deferred = Q.defer();
 
@@ -167,6 +191,7 @@
       }
     }, {
       id: 1,
+      socket: 1,
       info: 1
     }).toArray().then(function(doc) {
       deferred.resolve(doc);
@@ -203,7 +228,7 @@
       {fields: {_id: 1}}
     ).then(function(doc) {
       if (doc === null) {
-        createNamesArrayFromIdArray(idArray).then(function(users) {
+        createUserArrayFromIdArray(idArray).then(function(users) {
           var chatName = '';
 
           users.forEach(function(user, index) {
@@ -316,7 +341,7 @@
           projection: {contacts: 1}
         }
       ).then(function(doc) {
-        userDefer.resolve(createNamesArrayFromIdArray(doc.value.contacts));
+        userDefer.resolve(createUserArrayFromIdArray(doc.value.contacts));
       });
 
       users.findOneAndUpdate(

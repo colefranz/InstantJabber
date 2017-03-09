@@ -71,7 +71,7 @@
          * message: message to be sent
          */
         self.sendChat = function(chatID, message) {
-          socket.emit('message-from-user', chatID, message);
+          socket.emit('message', chatID, message);
         };
 
         /**
@@ -138,25 +138,23 @@
           socket.emit('add-contact-response', requester, acceptedRequest);
         };
 
-        self.registerToMessageForUserId = function(id) {
-          /**
-           * handler for recieving a new message
-           * send to all watchers
-           */
-          socket.on('message-to-user-' + id, function(chatID, message) {
-            if (chatID === undefined) {
-              return;
-            }
-            
-            _.forEach(subscriptions[chatID], function(callback) {
-              callback(message);
-            });
-
-            _.forEach(subscriptions.all, function(callback) {
-              callback(message);
-            });
+        /**
+         * handler for recieving a new message
+         * send to all watchers
+         */
+        socket.on('message', function(chatID, message) {
+          if (chatID === undefined) {
+            return;
+          }
+          
+          _.forEach(subscriptions[chatID], function(callback) {
+            callback(message);
           });
-        };
+
+          _.forEach(subscriptions.all, function(callback) {
+            callback(message);
+          });
+        });
 
         self.getChatForID = function(userID) {
           var deferred = $q.defer(),

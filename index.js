@@ -19,12 +19,12 @@
     try {
       socket.on('login', function(creds) {
         userID = creds.id;
-        dbUtils.login(creds).then(handleLoginOrCreationAttempt);
+        dbUtils.login(creds, socket.id).then(handleLoginOrCreationAttempt);
       });
 
       socket.on('create-account', function(creds) {
         userID = creds.id;
-        dbUtils.createAccount(creds).then(handleLoginOrCreationAttempt);
+        dbUtils.createAccount(creds, socket.id).then(handleLoginOrCreationAttempt);
       });
 
       handleLoginOrCreationAttempt = function(wasLoggedIn) {
@@ -88,14 +88,22 @@
           });
         });
 
-        socket.on('message-from-user', function(chatID, message) {
+        socket.on('message', function(chatID, message) {
           var formattedMessage = new Message(userID, message);
-          dbUtils.saveNewChatMessage(chatID, formattedMessage).then(function(chat) {
+          dbUtils.saveNewChatMessage(chatID, formattedMessage).then(function(users) {
             // message the efffected users
-            chat.users.forEach(function(user) {
-              io.sockets.emit('message-to-user-' + user, chatID, formattedMessage);
+            users.forEach(function(user) {
+              let userSocket = io.sockets.connected[user.socket];
+
+              if (userSocket) {
+                userSocket.emit('message', chatID, formattedMessage);
+              }
             });
           });
+        });
+
+        socket.on('disconnect', function() {
+          dbUtils.logout(userID);
         });
 
         //TODO REMOVE

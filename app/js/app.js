@@ -87,10 +87,6 @@
           
           if (!isLoggedIn) {
             // handle failure
-          } else {
-            chatService.registerToMessageForUserId(
-              authService.getUserID()
-            );
           }
         }, 0);
       }
