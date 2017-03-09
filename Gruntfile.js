@@ -62,7 +62,7 @@ module.exports = function(grunt) {
         livereload: true
       },
       client: {
-        files: ['app/**/*.js', 'app/**/*.html'],
+        files: ['app/**/*.js', 'app/**/*.html', '!app/dev/jabber.min.js'],
         tasks:  ['uglify']
       },
       express: {
