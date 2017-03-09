@@ -163,7 +163,7 @@
             return;
           }
 
-          index = _.map(scope.chats, function(chat) {
+          index = _.map(chats, function(chat) {
             return chat._id;
           }).indexOf(chatID);
 

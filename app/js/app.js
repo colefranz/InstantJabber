@@ -32,8 +32,7 @@
         templateUrl: 'templates/home.html',
         controller: 'homeController'
       }).when('/chat-:id', {
-        templateUrl: 'templates/chat.html',
-        controller: 'chatController'
+        template: '<chat></chat>'
       }).otherwise({
         templateUrl: 'templates/home.html',
         controller: 'homeController'
