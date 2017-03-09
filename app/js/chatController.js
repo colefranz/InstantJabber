@@ -5,9 +5,11 @@
 
   .factory('chatController', [
     '$route',
+    '$timeout',
     'chatService',
     function(
       $route,
+      $timeout,
       chatService
     ) {
       return function($scope) {
@@ -22,8 +24,9 @@
         };
 
         function messageCallback(message) {
-          $scope.chat.log.push(message);
-          $scope.$apply();
+          $timeout(function() {
+            $scope.chat.log.push(message);
+          }, 0);
         }
 
         function getUsersObjectFromChat(chat) {

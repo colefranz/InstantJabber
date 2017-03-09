@@ -32,21 +32,6 @@
           manageSentMessage();
         };
 
-        // Get the name of the other person in the chat if there
-        // is no name for the chat (only occurs if the chat has 2 people)
-        scope.findChatName = function(chat) {
-          var i,
-              myID = authService.getUserID(),
-              contactIDs = _.map(scope.contacts, function(contact) {
-                return contact.id;
-              });
-          for (i = 0; i < chat.users.length; i++) {
-            if (chat.users[i] !== myID) {
-              return scope.contacts[contactIDs.indexOf(chat.users[i])].info.name;
-            }
-          }
-        };
-
         chatService.subcribeToMessages(function(message, chatID) {
           // toast notification or something
         });

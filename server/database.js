@@ -232,15 +232,13 @@
         createUserArrayFromIdArray(idArray).then(function(users) {
           var chatName = '';
 
-          if (users.length > 2) {
-            users.forEach(function(user, index) {
-              if (index === 0) {
-                chatName += user.info.name;
-              } else {
-                chatName += ', ' + user.info.name;
-              }
-            });
-          }
+          users.forEach(function(user, index) {
+            if (index === 0) {
+              chatName += user.info.name;
+            } else {
+              chatName += ', ' + user.info.name;
+            }
+          });
 
           chats.insertOne({
             users: idArray,
