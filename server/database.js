@@ -1,6 +1,6 @@
 (function(exports) {
   'use strict';
-  
+
   let MongoClient = require('mongodb').MongoClient,
       ObjectID = require('mongodb').ObjectID,
       Q = require('q'),
@@ -140,7 +140,7 @@
   exports.getChat = function(id) {
     let chats = database.collection('chats'),
         deferred = Q.defer();
-        
+
     chats.findOne({_id: ObjectID(id)}).then(function(doc) {
       createUserArrayFromIdArray(doc.users).then(function(users) {
         doc.users = users;
@@ -150,7 +150,7 @@
 
     return deferred.promise;
   };
-  
+
   exports.saveNewChatMessage = function(chatID, message) {
     let chats = database.collection('chats'),
         deferred = Q.defer();
@@ -171,7 +171,7 @@
   exports.getContacts = function(user) {
     let users = database.collection('users'),
         deferred = Q.defer();
-    
+
     // find user and get contacts from it
     // use those id's to get the names of all the contacts
     users.findOne({id: user}, {contacts: 1}).then(function(docs) {
@@ -203,7 +203,7 @@
   exports.getChats = function(id) {
     let chats = database.collection('chats'),
         deferred = Q.defer();
-        
+
     chats.find(
       {users: id}
     ).project({name: 1}).toArray().then(function(doc) {
@@ -256,7 +256,7 @@
 
   exports.addContactRequest = function(requester, requestee) {
     let users = database.collection('users');
-    
+
     if (requester === requestee) {
       console.log('You cant add yourself!');
       return false;
@@ -271,7 +271,7 @@
       users.findOne({id: requester}).then(function(doc) {
         if (doc !== undefined && doc.contacts.indexOf(requestee) === -1) {
           let contactRequests = database.collection('contact-requests');
-        
+
           // look for the document, if it doesn't exist make it so
           contactRequests.findOneAndReplace({
             requester: requester,
@@ -321,7 +321,7 @@
 
   /**
    * Respond to a contact request
-   * 
+   *
    * Returns an object containing the new contact list and contact
    * requests for the requestee (user who is responding to the request).
    */
@@ -352,7 +352,7 @@
     } else {
       userDefer.resolve();
     }
-    
+
     contactRequests.deleteOne({
       requester: requester,
       requestee: requestee

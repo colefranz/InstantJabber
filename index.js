@@ -6,7 +6,7 @@
       dbUtils = require('./server/database'),
       Message = require('./server/message').Message,
       Q = require('q'),
-      
+
       app = express(),
       server = require('http').createServer(app),
       io = require('socket.io')(server);
@@ -39,7 +39,7 @@
         // once we have logged in we can stop listening
         socket.removeAllListeners('login');
         socket.removeAllListeners('create-account');
-        
+
         // socket.emit('new-messages', database.getNewMessages(userID));
 
         // get contacts
@@ -117,10 +117,6 @@
     }
   });
 
-// honestly everything in here could just be converted
-// to a socket message. I don't know if that's better or worse,
-// but it sounds better to me.
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // if asked for a file, look for it in app
   app.use(express.static(path.join(__dirname, 'app')));
 
@@ -129,11 +125,10 @@
   app.get('*', function(req, res) {
     res.sendFile(path.join(__dirname, 'app', 'index.html'));
   });
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   // begin listening for connections
   server.listen(3000, function() {
     console.log('Server on port 3000');
   });
-  
+
 })();

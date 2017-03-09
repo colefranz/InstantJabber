@@ -32,6 +32,10 @@
           manageSentMessage();
         };
 
+        chatService.subcribeToMessages(function(message, chatID) {
+          // toast notification or something
+        });
+
         function manageSentMessage() {
           scope.sentMessageVisible = true;
           $timeout(function() {

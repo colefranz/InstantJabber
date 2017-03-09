@@ -84,7 +84,7 @@
       function handleLoginStateChange(isLoggedIn) {
         $timeout(function() {
           $scope.isLoggedIn = isLoggedIn;
-          
+
           if (!isLoggedIn) {
             // handle failure
           }
@@ -100,7 +100,7 @@
   ])
 
   .controller('homeController', ['$scope', '$http', function($scope, $http) {
-    
-  }])
+
+  }]);
 
 })(angular, io);

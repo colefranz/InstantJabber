@@ -2,7 +2,7 @@
   'use strict';
 
   angular.module('jabber')
-  
+
   .controller('chatController', [
     '$scope',
     '$http',
@@ -29,7 +29,7 @@
         $scope.chat.log.push(message);
         $scope.$apply();
       }
-      
+
       function getUsersObjectFromChat(chat) {
         var usersObj = {};
 
@@ -39,7 +39,7 @@
 
         return usersObj;
       }
-      
+
       chatService.subcribeToMessages(messageCallback, $scope.id);
 
       chatService.getChat($scope.id).then(function(chat) {

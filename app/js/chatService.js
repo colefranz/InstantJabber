@@ -17,18 +17,32 @@
 
         socket.on('your-contacts', function(dbContacts) {
           contacts = dbContacts;
-          _.forEach(activeInformationCallbacks, activeInformationCallback);
+          notifySubscribers();
         });
 
         socket.on('new-requests', function(dbRequests) {
           requests = dbRequests;
-          _.forEach(activeInformationCallbacks, activeInformationCallback);
+          notifySubscribers();
         });
 
         socket.on('your-chats', function(dbChats) {
           chats = dbChats;
-          _.forEach(activeInformationCallbacks, activeInformationCallback);
+          notifySubscribers();
         });
+
+        function notifySubscribers() {
+          _.forEach(activeInformationCallbacks, activeInformationCallback);
+        }
+
+        function notifyChatSubscribers(chatID, message) {
+          _.forEach(subscriptions[chatID], function(callback) {
+            callback(message);
+          });
+
+          _.forEach(subscriptions.all, function(callback) {
+            callback(message, chatID);
+          });
+        }
 
         function activeInformationCallback(callback) {
           callback({
@@ -119,7 +133,7 @@
 
         /**
          * Send request to add a contact to your list.
-         * 
+         *
          * expects
          * id: id of the user to add
          */
@@ -129,7 +143,7 @@
 
         /**
          * Respond to a users contact request
-         * 
+         *
          * expects
          * requester: id of the user who sent the request
          * acceptedRequest: boolean value if they accept or not
@@ -143,17 +157,28 @@
          * send to all watchers
          */
         socket.on('message', function(chatID, message) {
+          var index;
+
           if (chatID === undefined) {
             return;
           }
-          
-          _.forEach(subscriptions[chatID], function(callback) {
-            callback(message);
-          });
 
-          _.forEach(subscriptions.all, function(callback) {
-            callback(message);
-          });
+          index = _.map(scope.chats, function(chat) {
+            return chat._id;
+          }).indexOf(chatID);
+
+          // if the chat is already accounted for then just notify
+          // the subscribers. if this is a new chat, we need to get
+          // it from the server and notify of the new chat first.
+          if (index === -1) {
+            self.getChat(chatID).then(function(chat) {
+              chats.push(chat);
+              notifySubscribers();
+              notifyChatSubscribers(chatID, message);
+            });
+          } else {
+             notifyChatSubscribers(chatID, message);
+          }
         });
 
         self.getChatForID = function(userID) {
