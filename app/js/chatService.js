@@ -194,6 +194,20 @@
           return deferred.promise;
         };
 
+        self.updateChatName = function(chatID, name) {
+          socket.emit('update-chat-name', chatID, name);
+        };
+
+        socket.on('update-chat-name', function(chatID, chatName) {
+          var index = _.map(chats, function(chat) {
+            return chat._id;
+          }).indexOf(chatID);
+          console.log(chatID, chats, index);
+
+          chats[index].name = chatName;
+          notifySubscribers();
+        });
+
         //TODO REMOVE
         // for development purposes to delete entire database.
         self.gitResetHard = function() {

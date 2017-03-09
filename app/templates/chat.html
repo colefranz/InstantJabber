@@ -1,11 +1,17 @@
-<div id="chat" tabindex="-1">
-  <h1>{{chat.name}}</h1>
-  <p ng-repeat="message in chat.log">
-    {{users[message.user]}}: {{message.msg}} ({{message.timestamp}})
-  </p>
-  <form ng-submit="sendChat()">
-  <input type="text"
-      ng-model="chatBoxText"
-      placeholder="Type here to chat" />
-  </form>
+<div id="chat">
+  <header>
+    <input id="chat-name" type="text" ng-model="chat.name" />
+    <label for="chat-header" ng-if="chatNameSelected">Press enter to save name</label>
+  </header>
+  <div id="chat-body">
+    <p ng-repeat="message in chat.log">
+      {{users[message.user]}}: {{message.msg}}
+      <span class="timestamp">{{message.timestamp}}<span>
+    </p>
+    <form ng-submit="sendChat()">
+    <input type="text"
+        ng-model="chatBoxText"
+        placeholder="Type here to chat" />
+    </form>
+  </div>
 </div>

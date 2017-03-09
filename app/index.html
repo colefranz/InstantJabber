@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, shrink-to-fit=no, initial-scale=1">
 
     <title>Instant Jabber</title>
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="bower_components/angular/angular.min.js"></script>
     <script src="bower_components/angular-route/angular-route.min.js"></script>
     <script src="bower_components/angular-touch/angular-touch.min.js"></script>
@@ -26,9 +27,7 @@
       <!--I imagine that this will be toggleable-->
       <div side-bar ng-if="isLoggedIn"></div>
       <!--main body for application - changes based on url-->
-      <div class="container">
-        <div ng-view class="jumbotron"></div>
-      </div>
+      <div ng-view class="container"></div>
     </div>
   </body>
 </html>

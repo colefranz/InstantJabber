@@ -23,6 +23,10 @@
           }
         };
 
+        $scope.updateChatName = function() {
+          chatService.updateChatName($scope.id, $scope.chat.name);
+        };
+
         function messageCallback(message) {
           $timeout(function() {
             $scope.chat.log.push(message);

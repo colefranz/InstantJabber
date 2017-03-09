@@ -152,6 +152,24 @@
     return deferred.promise;
   };
 
+  exports.updateChatName = function(chatID, name) {
+    let chats = database.collection('chats'),
+        deferred = Q.defer();
+
+    chats.findOneAndUpdate(
+      {_id: ObjectID(chatID)},
+      {$set: {name: name}},
+      {projection: {users: 1}}
+    ).then(function(doc) {
+      createUserArrayFromIdArray(doc.value.users).then(function(users) {
+        doc.users = users;
+        deferred.resolve(doc);
+      });
+    });
+
+    return deferred.promise;
+  };
+
   exports.saveNewChatMessage = function(chatID, message) {
     let chats = database.collection('chats'),
         deferred = Q.defer();

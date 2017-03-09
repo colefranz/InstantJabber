@@ -102,6 +102,19 @@
           });
         });
 
+        socket.on('update-chat-name', function(chatID, name) {
+          dbUtils.updateChatName(chatID, name).then(function(chat) {
+            // message the efffected users
+            chat.users.forEach(function(user) {
+              let userSocket = io.sockets.connected[user.socket];
+
+              if (userSocket) {
+                userSocket.emit('update-chat-name', chatID, name);
+              }
+            });
+          });
+        });
+
         socket.on('disconnect', function() {
           dbUtils.logout(userID);
         });

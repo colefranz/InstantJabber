@@ -3,11 +3,12 @@
 
 //TODO someone with artistic talent please list-style
 // colours go here
-@color-main: purple;
+@color-main: #99ee55;
 @color-secondary: gold;
 @color-main-button: lighten(@color-main, 20%);
 @color-secondary-button: lighten(@color-secondary, 20%);
 @color-main-tinted: tint(@color-main, 10%);
+@supplementary-font-color: #777888;
 
 * {
   box-sizing: border-box;
@@ -29,6 +30,7 @@ ul {
   bottom: 0;
   left: 0;
   display: flex;
+  background: @color-main;
 
   #sidebar-wrapper {
     background: @color-secondary;
@@ -38,7 +40,7 @@ ul {
       display: flex;
       padding: 0;
     }
-    
+
     .sidebar-options {
       li {
         padding: 5px;
@@ -77,7 +79,7 @@ ul {
             background: darken(@color-secondary-button, 40%);
           }
         }
-        
+
         form {
           align-content: center;
 
@@ -103,9 +105,58 @@ ul {
       li {
         padding: 5px;
       }
-      
+
       .sidebar-nav-header {
         text-transform: uppercase;
+      }
+    }
+  }
+
+  #chat {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    padding: 15px;
+
+    header {
+      #chat-name {
+        font-size: 3em;
+      }
+
+      #chat-name, #chat-name:focus, #chat-name:active {
+        border: none;
+        outline: none;
+        background: transparent;
+      }
+
+      label {
+        font-weight: 200;
+        color: @supplementary-font-color;
+      }
+    }
+
+    #chat-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      flex: 1 0 auto;
+
+      p {
+        .timestamp {
+          visibility: hidden;
+          opacity: 0;
+          color: @supplementary-font-color;
+          font-size: 0.9em;
+          transition: all 0.2s ease;
+        }
+
+        &:hover {
+          .timestamp {
+            visibility: visible;
+            opacity: 1;
+          }
+        }
       }
     }
   }
