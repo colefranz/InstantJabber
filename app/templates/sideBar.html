@@ -26,7 +26,10 @@
     </li>
   </ul>
   <ul class="sidebar-nav">
-    <li class="sidebar-nav-header">contact requests</li>
+    <li class="sidebar-nav-header"
+        ng-if="requests.length > 0">
+          contact requests
+        </li>
     <li class="sidebar-brand"
         ng-repeat="request in requests">
       <span>{{request.info.name}}</span>
@@ -34,11 +37,18 @@
       <button ng-click="addContactResponse(request.id, false)">Decline</button>
     </li>
     <li class="sidebar-nav-header">chats</li>
+    <li ng-if="chats.length === 0">
+      Select a contact to start a chat!
+    </li>
     <li class="sidebar-brand"
         ng-repeat="chat in chats track by chat._id">
       <a ng-href="/chat-{{chat._id}}">{{chat.name}}</a>
     </li>
     <li class="sidebar-nav-header">contacts</li>
+    <li ng-if="contacts.length === 0"
+        ng-click="showAddContacts()">
+      Lets make some friends!
+    </li>
     <li class="sidebar-brand"
         ng-repeat="contact in contacts">
       <a ng-click="openChat(contact.id)">{{contact.info.name}}</a>

@@ -73,14 +73,10 @@
 
         socket.on('add-contact-request', function(id) {
           dbUtils.addContactRequest(userID, id).then(function() {
-            dbUtils.getUser(id).then(function(user) {
-              let userSocket = io.sockets.connected[user.socket];
-
-              if (userSocket) {
-                dbUtils.getRequests(id).then(function(usersIds) {
-                  userSocket.emit('new-requests', usersIds);
-                });
-              }
+            getUserSocket(id).then(function(userSocket) {
+              dbUtils.getRequests(id).then(function(usersIds) {
+                userSocket.emit('new-requests', usersIds);
+              });
             });
           });
         });
@@ -91,6 +87,11 @@
             console.log('FINISHED ADD-CONTACT-RESPONSE FOR: ', userID);
             if (info.contacts !== undefined) {
               socket.emit('your-contacts', info.contacts);
+              getUserSocket(requester).then(function(userSocket) {
+                dbUtils.getContacts(requester).then(function(contacts) {
+                  userSocket.emit('your-contacts', contacts);
+                });
+              });
             }
             if (info.requests !== undefined) {
               socket.emit('new-requests', info.requests);
@@ -140,6 +141,21 @@
     }
   });
 
+  function getUserSocket(id) {
+    let deferred = Q.defer();
+
+    dbUtils.getUser(id).then(function(user) {
+      let userSocket = io.sockets.connected[user.socket];
+
+      if (userSocket) {
+        deferred.resolve(userSocket);
+      } else {
+        deferred.reject();
+      }
+    });
+
+    return deferred.promise;
+  }
   // if asked for a file, look for it in app
   app.use(express.static(path.join(__dirname, 'app')));
 

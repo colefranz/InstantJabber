@@ -22,6 +22,11 @@
           scope.addContactVisible = !scope.addContactVisible;
         };
 
+        scope.showAddContacts = function() {
+          scope.accountDropdownVisible = true;
+          scope.addContactVisible = true;
+        };
+
         scope.addContactResponse = function(requester, acceptedRequest) {
           chatService.addContactResponse(requester, acceptedRequest);
         };
