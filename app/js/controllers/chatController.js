@@ -63,9 +63,9 @@
           }
         };
 
-        function messageCallback(message) {
+        function chatUpdatedCallback(chat) {
           $timeout(function() {
-            $scope.chat.log.push(message);
+            $scope.chat = chat;
           }, 0);
         }
 
@@ -79,7 +79,7 @@
           return usersObj;
         }
 
-        chatService.subcribeToMessages(messageCallback, $scope.id);
+        chatService.subcribeToChatUpdates(chatUpdatedCallback, $scope.id);
 
         chatService.getChat($scope.id).then(function(chat) {
           $scope.chat = chat;
@@ -87,7 +87,7 @@
         });
 
         $scope.$on('$destroy', function() {
-          chatService.deregisterFromMessages(messageCallback, $scope.id);
+          chatService.deregisterFromChatUpdates(chatUpdatedCallback, $scope.id);
         });
       };
     }

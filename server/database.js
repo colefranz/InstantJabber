@@ -173,11 +173,11 @@
     chats.findOneAndUpdate(
       {_id: ObjectID(chatID)},
       {$set: {name: name}},
-      {projection: {users: 1}}
+      {returnOriginal: false}
     ).then(function(doc) {
       createUserArrayFromIdArray(doc.value.users).then(function(users) {
-        doc.users = users;
-        deferred.resolve(doc);
+        doc.value.users = users;
+        deferred.resolve(doc.value);
       });
     });
 
@@ -191,10 +191,11 @@
     chats.findOneAndUpdate(
       {_id: ObjectID(chatID)},
       {$push: {log: message}},
-      {projection: {users: 1}}
+      {returnOriginal: false}
     ).then(function(doc) {
       createUserArrayFromIdArray(doc.value.users).then(function(users) {
-        deferred.resolve(users);
+        doc.value.users = users;
+        deferred.resolve(doc.value);
       });
     });
 

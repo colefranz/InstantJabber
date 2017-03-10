@@ -7,7 +7,7 @@
     function($q, socket) {
       function ChatService() {
         var self = this,
-            subscriptions = {
+            chatSubscriptions = {
               all: []
             },
             contacts = [],
@@ -42,13 +42,13 @@
           _.forEach(activeInformationCallbacks, activeInformationCallback);
         }
 
-        function notifyChatSubscribers(chatID, message) {
-          _.forEach(subscriptions[chatID], function(callback) {
-            callback(message);
+        function notifyChatSubscribers(chat) {
+          _.forEach(chatSubscriptions[chat._id], function(callback) {
+            callback(chat);
           });
 
-          _.forEach(subscriptions.all, function(callback) {
-            callback(message, chatID);
+          _.forEach(chatSubscriptions.all, function(callback) {
+            callback(chat);
           });
         }
 
@@ -107,15 +107,15 @@
          * chatID: the chatID to subscribe to, if blank subscribes
          *         to all messages
          */
-        self.subcribeToMessages = function(callback, id) {
+        self.subcribeToChatUpdates = function(callback, id) {
           if (id === undefined) {
-            subscriptions.all.push(callback);
+            chatSubscriptions.all.push(callback);
           } else {
-            if (subscriptions[id] === undefined) {
-              subscriptions[id] = [];
+            if (chatSubscriptions[id] === undefined) {
+              chatSubscriptions[id] = [];
             }
 
-            subscriptions[id].push(callback);
+            chatSubscriptions[id].push(callback);
           }
         };
 
@@ -128,11 +128,11 @@
          *
          * chatID: the chatID to unsubscribe from
          */
-        self.deregisterFromMessages = function(callback, id) {
-          if (subscriptions[id] !== undefined) {
-            _.forEach(subscriptions[id], function(item, i) {
+        self.deregisterFromChatUpdates = function(callback, id) {
+          if (chatSubscriptions[id] !== undefined) {
+            _.forEach(chatSubscriptions[id], function(item, i) {
               if (item === callback) {
-                subscriptions[id].splice(i, 1);
+                chatSubscriptions[id].splice(i, 1);
               }
               return true;
             });
@@ -164,29 +164,26 @@
          * handler for recieving a new message
          * send to all watchers
          */
-        socket.on('message', function(chatID, message) {
+        socket.on('chat-updated', function(chat) {
           var index;
 
-          if (chatID === undefined) {
+          if (chat._id === undefined) {
             return;
           }
 
-          index = _.findIndex(chats, function(chat) {
-            return chat._id === chatID;
+          index = _.findIndex(chats, function(ch) {
+            return ch._id === chat._id;
           });
 
-          // if the chat is already accounted for then just notify
-          // the subscribers. if this is a new chat, we need to get
-          // it from the server and notify of the new chat first.
+          // if the chat is new add it to the lists
           if (index === -1) {
-            self.getChat(chatID).then(function(chat) {
-              chats.push(chat);
-              notifySubscribers();
-              notifyChatSubscribers(chatID, message);
-            });
+            chats.push(chat);
           } else {
-             notifyChatSubscribers(chatID, message);
+            chats[index] = chat;
           }
+
+          notifySubscribers();
+          notifyChatSubscribers(chat);
         });
 
         self.getChatForID = function(userID) {
@@ -205,15 +202,6 @@
         self.updateChatName = function(chatID, name) {
           socket.emit('update-chat-name', chatID, name);
         };
-
-        socket.on('update-chat-name', function(chatID, chatName) {
-          var index = _.findIndex(chats, function(chat) {
-            return chat._id === chatID;
-          });
-
-          chats[index].name = chatName;
-          notifySubscribers();
-        });
 
         self.addUsersToChat = function(chatID, idArray) {
           socket.emit('add-users-to-chat', chatID, idArray);

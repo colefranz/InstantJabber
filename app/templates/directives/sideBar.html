@@ -41,7 +41,7 @@
       Select a contact to start a chat!
     </li>
     <li class="sidebar-brand"
-        ng-repeat="chat in chats track by chat._id">
+        ng-repeat="chat in chats">
       <a ng-href="/chat-{{chat._id}}">{{chat.name}}</a>
     </li>
     <li class="sidebar-nav-header">contacts</li>

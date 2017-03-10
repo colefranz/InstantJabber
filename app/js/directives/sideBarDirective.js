@@ -37,7 +37,7 @@
           manageSentMessage();
         };
 
-        chatService.subcribeToMessages(function(message, chatID) {
+        chatService.subcribeToChatUpdates(function(chat) {
           // toast notification or something
         });
 

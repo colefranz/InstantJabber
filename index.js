@@ -29,7 +29,7 @@
 
       handleLoginOrCreationAttempt = function(wasLoggedIn) {
         socket.emit('login-result', wasLoggedIn);
-        console.log(wasLoggedIn);
+
         if (wasLoggedIn) {
           manageLoggedInListeners();
         }
@@ -101,11 +101,12 @@
 
         socket.on('message', function(chatID, message) {
           var formattedMessage = new Message(userID, message);
-          dbUtils.saveNewChatMessage(chatID, formattedMessage).then(function(users) {
+          dbUtils.saveNewChatMessage(chatID, formattedMessage).then(function(chat) {
             // message the efffected users
-            users.forEach(function(user) {
+
+            chat.users.forEach(function(user) {
               getUserSocket(user.id).then(function(userSocket) {
-                userSocket.emit('message', chatID, formattedMessage);
+                userSocket.emit('chat-updated', chat);
               });
             });
           });
@@ -115,11 +116,9 @@
           dbUtils.updateChatName(chatID, name).then(function(chat) {
             // message the efffected users
             chat.users.forEach(function(user) {
-              let userSocket = io.sockets.connected[user.socket];
-
-              if (userSocket) {
-                userSocket.emit('update-chat-name', chatID, name);
-              }
+              getUserSocket(user.id).then(function(userSocket) {
+                userSocket.emit('chat-updated', chat);
+              });
             });
           });
         });
