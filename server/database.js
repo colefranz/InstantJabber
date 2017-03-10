@@ -419,13 +419,12 @@
 
     chats.findOneAndUpdate(
       {_id: ObjectID(chatID)},
-      {$pushAll: {users: idArray}},
+      {$addToSet: {users: idArray}},
       {
-        returnOriginal: false,
-        projection: {users: 1}
+        returnOriginal: false
       }
     ).then(function(doc) {
-      deferred.resolve(doc.value.users);
+      deferred.resolve(doc.value);
     });
 
     return deferred.promise;

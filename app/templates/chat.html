@@ -9,7 +9,10 @@
         <label for="add-to-group-{{$index}}">{{contact.info.name}}</label>
         <input type="checkbox" ng-model="contact.selected" id="add-to-group-{{$index}}" />
       </li>
-      <li ng-click="addSelectedToChat()">Add!</li>
+      <li>
+        <button ng-click="addSelectedToChat()">Add!</button>
+        <button ng-click="addToChatVisible = false">Cancel</button>
+      </li>
     </ul>
   </header>
   <div id="chat-body">

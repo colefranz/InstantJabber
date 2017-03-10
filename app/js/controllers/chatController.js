@@ -60,6 +60,7 @@
               return user.id;
             });
             chatService.addUsersToChat($scope.id, usersToAdd);
+            $scope.addToChatVisible = false;
           }
         };
 

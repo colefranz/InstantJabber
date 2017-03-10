@@ -102,29 +102,20 @@
         socket.on('message', function(chatID, message) {
           var formattedMessage = new Message(userID, message);
           dbUtils.saveNewChatMessage(chatID, formattedMessage).then(function(chat) {
-            // message the efffected users
-
-            chat.users.forEach(function(user) {
-              getUserSocket(user.id).then(function(userSocket) {
-                userSocket.emit('chat-updated', chat);
-              });
-            });
+            notifyAffectedUsers(chat.users, 'chat-updated', chat);
           });
         });
 
         socket.on('update-chat-name', function(chatID, name) {
           dbUtils.updateChatName(chatID, name).then(function(chat) {
-            // message the efffected users
-            chat.users.forEach(function(user) {
-              getUserSocket(user.id).then(function(userSocket) {
-                userSocket.emit('chat-updated', chat);
-              });
-            });
+            notifyAffectedUsers(chat.users, 'chat-updated', chat);
           });
         });
 
         socket.on('add-users-to-chat', function(chatID, idArray) {
-          dbUtils.addUsersToChat(chatID, idArray);
+          dbUtils.addUsersToChat(chatID, idArray).then(function(chat) {
+            notifyAffectedUsers(chat.users, 'chat-updated', chat);
+          });
         });
 
         socket.on('disconnect', function() {
@@ -157,6 +148,15 @@
 
     return deferred.promise;
   }
+
+  function notifyAffectedUsers(users, message, data) {
+    users.forEach(function(user) {
+      getUserSocket(user.id).then(function(userSocket) {
+        userSocket.emit(message, data);
+      });
+    });
+  }
+
   // if asked for a file, look for it in app
   app.use(express.static(path.join(__dirname, 'app')));
 
