@@ -138,6 +138,20 @@
     return deferred.promise;
   };
 
+  exports.getUser = function(id) {
+    let users = database.collection('users'),
+        deferred = Q.defer();
+
+    users.findOne(
+      {id: id}
+    ).then(function(doc) {
+      deferred.resolve(doc);
+    });
+
+    return deferred.promise;
+
+  };
+
   exports.getChat = function(id) {
     let chats = database.collection('chats'),
         deferred = Q.defer();
@@ -274,39 +288,46 @@
     return deferred.promise;
   };
 
+  // should probably add support for if this is rejected
+  // that there is some visual feedback to the user
   exports.addContactRequest = function(requester, requestee) {
-    let users = database.collection('users');
+    let users = database.collection('users'),
+        deferred = Q.defer();
 
     if (requester === requestee) {
       console.log('You cant add yourself!');
-      return false;
-    }
-
-    users.findOne({id: requestee}).then(function(doc) {
-      if (doc === undefined) {
-        console.log('That person doesn\'t exist!');
-        return false;
-      }
-
-      users.findOne({id: requester}).then(function(doc) {
-          console.log(doc);
-        if (doc !== undefined && doc.contacts.indexOf(requestee) === -1) {
-          let contactRequests = database.collection('contact-requests');
-          // look for the document, if it doesn't exist make it so
-          contactRequests.findOneAndReplace({
-            requester: requester,
-            requestee: requestee
-          }, {
-            requester: requester,
-            requestee: requestee
-          }, {upsert: true}, function(err, doc) {
-            console.log('Added contact request');
-          });
+      deferred.reject();
+    } else {
+      users.findOne({id: requestee}).then(function(doc) {
+        if (doc === undefined) {
+          console.log('That person doesn\'t exist!');
+          deferred.reject();
         } else {
-          console.log('that aint in here || already friends');
+          users.findOne({id: requester}).then(function(doc) {
+              console.log(doc);
+            if (doc !== undefined && doc.contacts.indexOf(requestee) === -1) {
+              let contactRequests = database.collection('contact-requests');
+              // look for the document, if it doesn't exist make it so
+              contactRequests.findOneAndReplace({
+                requester: requester,
+                requestee: requestee
+              }, {
+                requester: requester,
+                requestee: requestee
+              }, {upsert: true}, function(err, doc) {
+                console.log('Added contact request');
+                deferred.resolve();
+              });
+            } else {
+              console.log('that aint in here || already friends');
+              deferred.reject();
+            }
+          });
         }
       });
-    });
+    }
+
+    return deferred.promise;
   };
 
   exports.getRequests = function(id) {

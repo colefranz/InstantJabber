@@ -112,49 +112,54 @@ ul {
     }
   }
 
-  #chat {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    width: 100%;
+  .container {
     padding: 15px;
+    margin: 0px;
 
-    header {
-      #chat-name {
-        font-size: 3em;
-      }
-
-      #chat-name, #chat-name:focus, #chat-name:active {
-        border: none;
-        outline: none;
-        background: transparent;
-      }
-
-      label {
-        font-weight: 200;
-        color: @supplementary-font-color;
-      }
-    }
-
-    #chat-body {
+    #chat {
       display: flex;
       flex-direction: column;
-      justify-content: flex-end;
-      flex: 1 0 auto;
+      align-content: flex-start;
+      height: 100%;
+      width: 100%;
 
-      p {
-        .timestamp {
-          visibility: hidden;
-          opacity: 0;
-          color: @supplementary-font-color;
-          font-size: 0.9em;
-          transition: all 0.2s ease;
+      header {
+        #chat-name {
+          font-size: 3em;
         }
 
-        &:hover {
+        #chat-name, #chat-name:focus, #chat-name:active {
+          border: none;
+          outline: none;
+          background: transparent;
+        }
+
+        label {
+          font-weight: 200;
+          color: @supplementary-font-color;
+        }
+      }
+
+      #chat-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        flex: 1 0 auto;
+
+        p {
           .timestamp {
-            visibility: visible;
-            opacity: 1;
+            visibility: hidden;
+            opacity: 0;
+            color: @supplementary-font-color;
+            font-size: 0.9em;
+            transition: all 0.2s ease;
+          }
+
+          &:hover {
+            .timestamp {
+              visibility: visible;
+              opacity: 1;
+            }
           }
         }
       }

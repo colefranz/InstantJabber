@@ -72,7 +72,17 @@
         });
 
         socket.on('add-contact-request', function(id) {
-          dbUtils.addContactRequest(userID, id);
+          dbUtils.addContactRequest(userID, id).then(function() {
+            dbUtils.getUser(id).then(function(user) {
+              let userSocket = io.sockets.connected[user.socket];
+
+              if (userSocket) {
+                dbUtils.getRequests(id).then(function(usersIds) {
+                  userSocket.emit('new-requests', usersIds);
+                });
+              }
+            });
+          });
         });
 
         socket.on('add-contact-response', function(requester, acceptedRequest) {

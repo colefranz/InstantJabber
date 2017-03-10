@@ -32,7 +32,6 @@
 
         element.on('mouseenter', function() {
           // say that we read the chat.
-          console.log('focused!');
         });
       },
       templateUrl: 'templates/chat.html',
