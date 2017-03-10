@@ -398,9 +398,7 @@
       requester: requester,
       requestee: requestee
     }).then(function(result) {
-      exports.getRequests(requestee).then(function(requests) {
-        requestDefer.resolve(requests);
-      });
+      exports.getRequests(requestee).then(requestDefer.resolve);
     });
 
     return deferred.spread(function(contacts, requests) {
@@ -409,6 +407,27 @@
         requests: requests
       };
     });
+  };
+
+  /**
+   * add an array of users to an existing chat
+   */
+  exports.addUsersToChat = function(chatID, idArray) {
+    let chats = database.collection('chats'),
+        deferred = Q.defer();
+
+    chats.findOneAndUpdate(
+      {_id: ObjectID(chatID)},
+      {$pushAll: {users: idArray}},
+      {
+        returnOriginal: false,
+        projection: {users: 1}
+      }
+    ).then(function(doc) {
+      deferred.resolve(doc.value.users);
+    });
+
+    return deferred.promise;
   };
 
   exports.gitResetHard = function gitResetHard() {

@@ -104,11 +104,9 @@
           dbUtils.saveNewChatMessage(chatID, formattedMessage).then(function(users) {
             // message the efffected users
             users.forEach(function(user) {
-              let userSocket = io.sockets.connected[user.socket];
-
-              if (userSocket) {
+              getUserSocket(user.id).then(function(userSocket) {
                 userSocket.emit('message', chatID, formattedMessage);
-              }
+              });
             });
           });
         });
@@ -124,6 +122,10 @@
               }
             });
           });
+        });
+
+        socket.on('add-users-to-chat', function(chatID, idArray) {
+          dbUtils.addUsersToChat(chatID, idArray);
         });
 
         socket.on('disconnect', function() {

@@ -13,9 +13,11 @@
       chatService
     ) {
       return function($scope) {
-        $scope.messages = [];
         $scope.id = $route.current.params.id;
         $scope.chatBoxText = '';
+        $scope.addToChatVisible = false;
+        $scope.contacts = [];
+
         $scope.sendChat = function() {
           if ($scope.chatBoxText !== '') {
             chatService.sendChat($scope.id, $scope.chatBoxText);
@@ -25,6 +27,40 @@
 
         $scope.updateChatName = function() {
           chatService.updateChatName($scope.id, $scope.chat.name);
+        };
+
+        $scope.openAddToChat = function() {
+          if ($scope.addToChatVisible === true) {
+            return;
+          }
+
+          // find all contacts that aren't a part of the chat already
+          $scope.contacts = _.filter(chatService.getContacts(), function(contact) {
+            var index = _.findIndex($scope.chat.users, function(user) {
+              return user.id === contact.id;
+            });
+
+            return index === -1;
+          });
+
+          _.forEach($scope.contacts, function(contact) {
+            contact.selected = false;
+          });
+
+          $scope.addToChatVisible = true;
+        };
+
+        $scope.addSelectedToChat = function() {
+          var usersToAdd = _.filter($scope.contacts, function(user) {
+            return user.selected;
+          });
+
+          if (usersToAdd.length > 0) {
+            usersToAdd = _.map(usersToAdd, function(user) {
+              return user.id;
+            });
+            chatService.addUsersToChat($scope.id, usersToAdd);
+          }
         };
 
         function messageCallback(message) {

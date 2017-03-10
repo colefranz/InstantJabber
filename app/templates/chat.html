@@ -2,6 +2,15 @@
   <header>
     <input id="chat-name" type="text" ng-model="chat.name" />
     <label for="chat-header" ng-if="chatNameSelected">Press enter to save name</label>
+    <button id="add-to-chat-button"
+        ng-click="openAddToChat()">Add more to this chat!</button>
+    <ul ng-show="addToChatVisible">
+      <li ng-repeat="contact in contacts track by $index">
+        <label for="add-to-group-{{$index}}">{{contact.info.name}}</label>
+        <input type="checkbox" ng-model="contact.selected" id="add-to-group-{{$index}}" />
+      </li>
+      <li ng-click="addSelectedToChat()">Add!</li>
+    </ul>
   </header>
   <div id="chat-body">
     <p ng-repeat="message in chat.log">

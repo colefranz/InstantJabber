@@ -30,6 +30,14 @@
           notifySubscribers();
         });
 
+        self.getChats = function() {
+          return chats;
+        };
+
+        self.getContacts = function() {
+          return contacts;
+        };
+
         function notifySubscribers() {
           _.forEach(activeInformationCallbacks, activeInformationCallback);
         }
@@ -163,9 +171,9 @@
             return;
           }
 
-          index = _.map(chats, function(chat) {
-            return chat._id;
-          }).indexOf(chatID);
+          index = _.findIndex(chats, function(chat) {
+            return chat._id === chatID;
+          });
 
           // if the chat is already accounted for then just notify
           // the subscribers. if this is a new chat, we need to get
@@ -199,12 +207,24 @@
         };
 
         socket.on('update-chat-name', function(chatID, chatName) {
-          var index = _.map(chats, function(chat) {
-            return chat._id;
-          }).indexOf(chatID);
-          console.log(chatID, chats, index);
+          var index = _.findIndex(chats, function(chat) {
+            return chat._id === chatID;
+          });
 
           chats[index].name = chatName;
+          notifySubscribers();
+        });
+
+        self.addUsersToChat = function(chatID, idArray) {
+          socket.emit('add-users-to-chat', chatID, idArray);
+        };
+
+        socket.on('add-users-to-chat', function(chatID, users) {
+          var index = _.findIndex(chats, function(chat) {
+            return chat._id === chatID;
+          });
+
+          chats[index].users = users;
           notifySubscribers();
         });
 
