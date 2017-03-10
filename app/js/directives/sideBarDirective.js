@@ -7,7 +7,7 @@
     function($timeout, chatService, authService) {
     return {
       replace: true,
-      templateUrl: 'templates/sideBar.html',
+      templateUrl: 'templates/directives/sideBar.html',
       link: function(scope) {
         scope.accountDropdownVisible = false;
         scope.addContactVisible = false;

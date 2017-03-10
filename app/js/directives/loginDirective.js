@@ -7,7 +7,7 @@
     function(authService) {
     return {
       replace: true,
-      templateUrl: 'templates/login.html',
+      templateUrl: 'templates/directives/login.html',
       link: function(scope, element) {
         const loginTypes = {
           user: 'user',
