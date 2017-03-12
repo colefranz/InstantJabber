@@ -1,0 +1,17 @@
+<div id="emoji-picker">
+  <div ng-click="emojiDropdownVisible = !emojiDropdownVisible">{{emojis.emoticon[0]}}</div>
+  <div class="emoticon-dropdown"
+      ng-class="{active: emojiDropdownVisible}">
+    <ul class="emoji-blocks">
+      <li ng-repeat="(group, emotes) in emojis"
+          title="{{group}}"
+          ng-click="setActiveGroup(group)">
+          {{emotes[0]}}
+      </li>
+    </ul>
+    <ul class="emoji-selection">
+      <li ng-repeat="emote in emojis[activeGroup]"
+          ng-click="addText(emote)">{{emote}}</li>
+    </ul>
+  </div>
+</div>

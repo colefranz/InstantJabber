@@ -165,6 +165,44 @@ ul {
           }
         }
       }
+
+      #emoji-picker {
+        position: relative;
+        display: inline-block;
+        width: 400px;
+
+        ul {
+          padding: 0px;
+        }
+
+        .emoticon-dropdown {
+          position: absolute;
+          top: -140px;
+          width: 100%;
+          opacity: 0;
+          visibility: hidden;
+          transition: all 0.5s ease;
+          margin: 0px;
+          padding: 0px;
+          max-height: 120px;
+
+          &.active {
+            opacity: 1;
+            visibility: visible;
+          }
+
+          .emoji-blocks {
+            display: flex;
+            width: 100%;
+          }
+
+          .emoji-selection {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+          }
+        }
+      }
     }
   }
 }
