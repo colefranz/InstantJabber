@@ -2,10 +2,12 @@
   <div ng-click="emojiDropdownVisible = !emojiDropdownVisible">{{emojis.emoticon[0]}}</div>
   <div class="emoticon-dropdown"
       ng-class="{active: emojiDropdownVisible}">
-    <ul class="emoji-blocks">
-      <li ng-repeat="(group, emotes) in emojis"
+    <ul class="emoji-block-group">
+      <li class="emoji-group"
+          ng-repeat="(group, emotes) in emojis"
           title="{{group}}"
-          ng-click="setActiveGroup(group)">
+          ng-click="setActiveGroup(group)"
+          ng-class="{active: group === activeGroup}">
           {{emotes[0]}}
       </li>
     </ul>

@@ -34,16 +34,20 @@
         });
 
         scope.addText = function(text) {
-          var currentText = messageInput.value,
-              currentSelection = messageInput.selectionStart || currentText.length,
-              newText = [
-                currentText.slice(0, currentSelection),
-                text,
-                currentText.slice(currentSelection)
-              ].join('');
-              
-          messageInput.value = newText;
-        }
+          var currentSelection,
+              newText;
+
+          messageInput.focus();
+
+          currentSelection = messageInput.selectionStart || scope.chatBoxText.length;
+          newText = [
+            scope.chatBoxText.slice(0, currentSelection),
+            text,
+            scope.chatBoxText.slice(currentSelection)
+          ].join('');
+
+          scope.chatBoxText = newText;
+        };
 
         element.on('mouseenter', function() {
           // say that we read the chat.

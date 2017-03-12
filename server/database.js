@@ -419,7 +419,7 @@
 
     chats.findOneAndUpdate(
       {_id: ObjectID(chatID)},
-      {$addToSet: {users: idArray}},
+      {$pushAll: {users: idArray}},
       {
         returnOriginal: false
       }

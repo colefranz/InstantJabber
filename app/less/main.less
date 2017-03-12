@@ -169,31 +169,51 @@ ul {
       #emoji-picker {
         position: relative;
         display: inline-block;
-        width: 400px;
+        width: 75%;
+        max-width: 250px;
 
         ul {
           padding: 0px;
+          li {
+            cursor: pointer;
+            user-select: none;
+            text-align: center;
+          }
         }
 
         .emoticon-dropdown {
           position: absolute;
-          top: -140px;
-          width: 100%;
+          top: auto;
+          background: @color-secondary;
+          border-radius: 3px;
+          border: 1px solid darken(@color-secondary, 20%);
+          padding: 3px;
+          bottom: 100%;
+          left: 0;
+          right: 0;
           opacity: 0;
           visibility: hidden;
-          transition: all 0.5s ease;
-          margin: 0px;
-          padding: 0px;
-          max-height: 120px;
+          transition: all 0.2s ease;
+          max-height: 150px;
+          overflow-y: auto;
 
           &.active {
             opacity: 1;
             visibility: visible;
           }
 
-          .emoji-blocks {
+          .emoji-block-group {
             display: flex;
             width: 100%;
+
+            .emoji-group {
+              flex: 1 0 auto;
+              background: lighten(@color-secondary, 20%);
+
+              &.active, &:hover {
+                background: @color-secondary;
+              }
+            }
           }
 
           .emoji-selection {

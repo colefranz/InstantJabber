@@ -3,7 +3,7 @@
 
   angular.module('jabber')
 
-  .directive('emojiPicker', [function() {
+  .directive('emojiPicker', ['$document', function($document) {
     return {
       replace: true,
       restrict: 'E',
@@ -38,9 +38,17 @@
           })();
 
           scope.setActiveGroup = function(groupName) {
-            console.log('???');
             scope.activeGroup = groupName;
-          }
+          };
+
+          element.on('mousedown touchstart', function(event) {
+            event.stopPropagation();
+          });
+
+          $document.on('mousedown touchstart', function(event) {
+            scope.emojiDropdownVisible = false;
+            scope.$digest();
+          });
         }
       },
       templateUrl: 'templates/directives/emojiPicker.html'
