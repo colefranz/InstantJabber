@@ -3,86 +3,108 @@
 
   angular.module('jabber')
 
-  .factory('authService', ['socket', function(socket) {
-    function AuthService() {
-      var self = this,
-          loginStateChangedHandlers = [],
-          userIsLoggedIn = false,
-          userID;
+  .factory('authService', ['$http',
+    '$window',
+    '$q',
+    'socketService',
+    function(
+      $http,
+      $window,
+      $q,
+      socketService
+    ) {
+      function AuthService() {
+        var self = this,
+            loginStateChangedHandlers = [],
+            userIsLoggedIn = false,
+            userID,
+            socket = socketService.get();
 
-      
-      self.isLoggedIn = function() {
-        return userIsLoggedIn;
-      };
 
-      self.getUserID = function() {
-        return userID;
-      };
+        self.isLoggedIn = function() {
+          return userIsLoggedIn;
+        };
 
-      /**
-       * login to the server
-       *
-       * expects
-       * creds: {
-       *   id,
-       *   pass
-       * }
-       */
+        self.getUserID = function() {
+          return userID;
+        };
 
-      self.login = function(creds) {
-        socket.emit('login', creds);
+        /**
+         * login to the server
+         *
+         * expects
+         * creds: {
+         *   id,
+         *   pass
+         * }
+         */
 
-        socket.on('login-result', function(wasLoggedIn) {
-          if (wasLoggedIn) {
-            userID = creds.id;
-          }
-          
-          userIsLoggedIn = wasLoggedIn;
-          socket.removeAllListeners('login-result');
-          loginStateChanged(wasLoggedIn);
+        self.login = function(creds) {
+          authenticate(creds, '/user-login');
+        };
+
+        /**
+         * attempt to create an account
+         *
+         * expects
+         * creds: {
+         *   id,
+         *   pass,
+         *   name
+         * }
+         */
+
+        self.create = function(creds) {
+          authenticate(creds, '/create');
+        };
+
+        self.registerLoginStateObserver = function(callback) {
+          loginStateChangedHandlers.push(callback);
+          callback(userIsLoggedIn);
+        };
+
+        self.logout = function() {
+          $window.localStorage.setItem('instant-jabber-token', undefined);
+          loginStateChanged(false);
+        }
+
+        function authenticate(creds, path) {
+          $http.post(path, JSON.stringify(creds)).then(
+            function(res) {
+              $window.localStorage.setItem('instant-jabber-token', res.data.token);
+              userID = creds.id;
+              loginStateChanged(true, res.data.token);
+            }, function(res) {
+              loginStateChanged(false);
+            }
+          );
+        }
+
+
+        function loginStateChanged(isLoggedIn, token) {
+          userIsLoggedIn = isLoggedIn;
+
+          _.forEach(loginStateChangedHandlers, function(handler) {
+            handler(isLoggedIn, token);
+          });
+        }
+
+        socket.on('authenticated', function() {
+          loginStateChanged(true);
         });
-      };
 
-      /**
-       * attempt to create an account
-       *
-       * expects
-       * creds: {
-       *   id,
-       *   pass,
-       *   name
-       * }
-       */
-
-      self.create = function(creds) {
-        socket.emit('create-account', creds);
-
-        socket.on('login-result', function(wasLoggedIn) {
-          if (wasLoggedIn) {
-            userID = creds.id;
-          }
-
-          userIsLoggedIn = wasLoggedIn;
-          socket.removeAllListeners('login-result');
-          loginStateChanged(wasLoggedIn);
+        socket.on('unauthorized', function() {
+          loginStateChanged(false);
         });
-      };
 
-      self.registerLoginStateObserver = function(callback) {
-        loginStateChangedHandlers.push(callback);
-        callback(userIsLoggedIn)
-      };
-      
-
-      function loginStateChanged(isLoggedIn) {
-        _.forEach(loginStateChangedHandlers, function(handler) {
-          handler(isLoggedIn);
+        socket.on('user-info', function(user) {
+          userID = user.id;
         });
+
+        return self;
       }
-      
-      return self;
-    }
 
-    return new AuthService();
-  }]);
+      return new AuthService();
+    }
+  ]);
 })(angular);

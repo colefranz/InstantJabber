@@ -79,26 +79,29 @@
     database = db;
   });
 
-  exports.login = function(creds, socketID) {
+  exports.setSocket = function(userID, socket) {
+    let users = database.collection('users');
+
+    users.findOneAndUpdate(
+      {id: userID},
+      { $set: {socket: socket}}
+    );
+  };
+
+  exports.login = function(creds, token) {
     let users = database.collection('users'),
         deferred = Q.defer();
 
     users.findOneAndUpdate(
       {id: creds.id},
-      { $set: {socket: socketID}}
+      { $set: {token: token}}
     ).then(function(docs) {
-      deferred.resolve(docs.value !== null);
+      docs.value !== null ? deferred.resolve() : deferred.reject();
     });
 
     return deferred.promise;
   };
 
-  // ******
-  // we will want to add this again if we want to see who is
-  // online at any given time, but I don't think we need to
-  // do that for this project?
-  // - whatever it's back in, we will see lol
-  // ******
   exports.logout = function(userID) {
     let users = database.collection('users');
 

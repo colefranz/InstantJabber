@@ -3,17 +3,22 @@
 
   angular.module('jabber')
 
-  .factory('chatService', ['$q', 'socket',
-    function($q, socket) {
+  .factory('chatService', ['$q', 'socketService',
+    function($q, socketService) {
       function ChatService() {
         var self = this,
             chatSubscriptions = {
               all: []
             },
+            socket = socketService.get(),
             contacts = [],
             chats = [],
             requests = [],
             activeInformationCallbacks = [];
+
+        self.destroy = function() {
+
+        };
 
         socket.on('your-contacts', function(dbContacts) {
           contacts = dbContacts;
@@ -28,6 +33,37 @@
         socket.on('your-chats', function(dbChats) {
           chats = dbChats;
           notifySubscribers();
+        });
+
+        socket.on('add-users-to-chat', function(chatID, users) {
+          var index = _.findIndex(chats, function(chat) {
+            return chat._id === chatID;
+          });
+
+          chats[index].users = users;
+          notifySubscribers();
+        });
+
+        socket.on('chat-updated', function(chat) {
+          var index;
+
+          if (chat._id === undefined) {
+            return;
+          }
+
+          index = _.findIndex(chats, function(ch) {
+            return ch._id === chat._id;
+          });
+
+          // if the chat is new add it to the lists
+          if (index === -1) {
+            chats.push(chat);
+          } else {
+            chats[index] = chat;
+          }
+
+          notifySubscribers();
+          notifyChatSubscribers(chat);
         });
 
         self.getChats = function() {
@@ -160,32 +196,6 @@
           socket.emit('add-contact-response', requester, acceptedRequest);
         };
 
-        /**
-         * handler for recieving a new message
-         * send to all watchers
-         */
-        socket.on('chat-updated', function(chat) {
-          var index;
-
-          if (chat._id === undefined) {
-            return;
-          }
-
-          index = _.findIndex(chats, function(ch) {
-            return ch._id === chat._id;
-          });
-
-          // if the chat is new add it to the lists
-          if (index === -1) {
-            chats.push(chat);
-          } else {
-            chats[index] = chat;
-          }
-
-          notifySubscribers();
-          notifyChatSubscribers(chat);
-        });
-
         self.getChatForID = function(userID) {
           var deferred = $q.defer(),
               responseHandler = function(chatID) {
@@ -206,15 +216,6 @@
         self.addUsersToChat = function(chatID, idArray) {
           socket.emit('add-users-to-chat', chatID, idArray);
         };
-
-        socket.on('add-users-to-chat', function(chatID, users) {
-          var index = _.findIndex(chats, function(chat) {
-            return chat._id === chatID;
-          });
-
-          chats[index].users = users;
-          notifySubscribers();
-        });
 
         //TODO REMOVE
         // for development purposes to delete entire database.

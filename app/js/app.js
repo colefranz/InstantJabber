@@ -13,29 +13,22 @@
     ) {
       $rootScope.$on('$routeChangeStart', function(event) {
         if (!authService.isLoggedIn()){
-          $location.path('/');
+          $location.path('/login');
         }
       });
     }
   ])
 
-  // create somewhere for all services to get access to our websocket.
-  .factory('socket', [function() {
-    return io();
-  }])
-
   // serve up a different page and controller depending on
   // the path.
   .config(['$routeProvider', '$locationProvider',
     function($routeProvider, $locationProvider) {
-      $routeProvider.when('/', {
-        templateUrl: 'templates/home.html',
-        controller: 'homeController'
+      $routeProvider.when('/login', {
+        template: '<login></login>'
       }).when('/chat-:id', {
         template: '<chat></chat>'
       }).otherwise({
-        templateUrl: 'templates/home.html',
-        controller: 'homeController'
+        templateUrl: 'templates/home.html'
       });
 
       $locationProvider.html5Mode(true);
@@ -48,14 +41,18 @@
     '$location',
     '$scope',
     '$timeout',
+    '$window',
     'authService',
     'chatService',
+    'socketService',
     function(
       $location,
       $scope,
       $timeout,
+      $window,
       authService,
-      chatService
+      chatService,
+      socketService
     ) {
       $scope.chats = [];
       $scope.contacts = [];
@@ -80,18 +77,24 @@
         }, 0);
       }
 
-      function handleLoginStateChange(isLoggedIn) {
+      function handleLoginStateChange(isLoggedIn, token) {
         $timeout(function() {
           $scope.isLoggedIn = isLoggedIn;
 
           if (!isLoggedIn) {
-            // handle failure
+            $location.path('/login');
+            chatService.destroy();
+          } else {
+            $location.path('/');
           }
         }, 0);
       }
 
+
       //initialize
       (function initialize() {
+        var token = $window.localStorage.getItem('instant-jabber-token');
+        socketService.authenticate(token);
         authService.registerLoginStateObserver(handleLoginStateChange);
         chatService.subscribeToActiveInformation(handleInformation);
       })();

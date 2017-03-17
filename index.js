@@ -2,132 +2,136 @@
   'use strict';
 
   let express = require('express'),
+      bodyParser = require('body-parser'),
       path = require('path'),
       dbUtils = require('./server/database'),
       Message = require('./server/message').Message,
       Q = require('q'),
+      jwt = require('jsonwebtoken'),
+      iojwt  = require('socketio-jwt'),
+      secret = 'topsecretserversecretsuperspookysecretfromsecretsvillesecretsecret',
 
       app = express(),
       server = require('http').createServer(app),
       io = require('socket.io')(server);
 
-  io.sockets.on('connection', function(socket) {
+  // io.use(iojwt.authorize({
+  //   secret: secret,
+  //   handshake: true
+  // }));
+
+  io.sockets
+  .on('connection', iojwt.authorize({
+    secret: secret,
+    timeout: 9999999
+  }))
+  .on('authenticated', function(socket) {
     var userID,
+        auth,
         handleLoginOrCreationAttempt,
         manageLoggedInListeners;
 
+    if (!socket.decoded_token) {
+      socket.disconnect();
+    }
+
+    userID = socket.decoded_token.id;
+
     try {
-      socket.on('login', function(creds) {
-        userID = creds.id;
-        dbUtils.login(creds, socket.id).then(handleLoginOrCreationAttempt);
+      dbUtils.setSocket(userID, socket.id);
+
+      dbUtils.getUser(userID).then(function(user) {
+        console.log('INFO:', user.info);
+        socket.emit('user-info', user);
       });
 
-      socket.on('create-account', function(creds) {
-        userID = creds.id;
-        dbUtils.createAccount(creds, socket.id).then(handleLoginOrCreationAttempt);
+      dbUtils.getContacts(userID).then(function(contacts) {
+        console.log('CONTACTS:', contacts);
+        socket.emit('your-contacts', contacts);
       });
 
-      handleLoginOrCreationAttempt = function(wasLoggedIn) {
-        socket.emit('login-result', wasLoggedIn);
+      dbUtils.getRequests(userID).then(function(userIds) {
+        console.log('REQUESTS:', userIds);
+        socket.emit('new-requests', userIds);
+      });
 
-        if (wasLoggedIn) {
-          manageLoggedInListeners();
-        }
-      };
+      dbUtils.getChats(userID).then(function(chats) {
+        socket.emit('your-chats', chats);
+      });
 
-      manageLoggedInListeners = function() {
-        // once we have logged in we can stop listening
-        socket.removeAllListeners('login');
-        socket.removeAllListeners('create-account');
-
-        // socket.emit('new-messages', database.getNewMessages(userID));
-
-        // get contacts
-        // TODO get chats
-        dbUtils.getContacts(userID).then(function(contacts) {
-          console.log('CONTACTS:', contacts);
-          socket.emit('your-contacts', contacts);
+      socket.on('get-chat', function(chatID) {
+        dbUtils.getChat(chatID).then(function(chat) {
+          socket.emit('get-chat', chat);
         });
+      });
 
-        dbUtils.getRequests(userID).then(function(userIds) {
-          console.log('REQUESTS:', userIds);
-          socket.emit('new-requests', userIds);
+      socket.on('get-or-create-chat', function(idArray) {
+        idArray.push(userID);
+        dbUtils.getOrCreateChat(idArray).then(function(chat) {
+          socket.emit('get-or-create-chat', chat._id);
         });
+      });
 
-        dbUtils.getChats(userID).then(function(chats) {
-          socket.emit('your-chats', chats);
-        });
-
-        socket.on('get-chat', function(chatID) {
-          dbUtils.getChat(chatID).then(function(chat) {
-            socket.emit('get-chat', chat);
-          });
-        });
-
-        socket.on('get-or-create-chat', function(idArray) {
-          idArray.push(userID);
-          dbUtils.getOrCreateChat(idArray).then(function(chat) {
-            socket.emit('get-or-create-chat', chat._id);
-          });
-        });
-
-        socket.on('add-contact-request', function(id) {
-          dbUtils.addContactRequest(userID, id).then(function() {
-            getUserSocket(id).then(function(userSocket) {
-              dbUtils.getRequests(id).then(function(usersIds) {
-                userSocket.emit('new-requests', usersIds);
-              });
+      socket.on('add-contact-request', function(id) {
+        dbUtils.addContactRequest(userID, id).then(function() {
+          getUserSocket(id).then(function(userSocket) {
+            dbUtils.getRequests(id).then(function(usersIds) {
+              userSocket.emit('new-requests', usersIds);
             });
           });
         });
+      });
 
-        socket.on('add-contact-response', function(requester, acceptedRequest) {
-          dbUtils.addContactResponse(userID, requester, acceptedRequest)
-          .then(function(info) {
-            console.log('FINISHED ADD-CONTACT-RESPONSE FOR: ', userID);
-            if (info.contacts !== undefined) {
-              socket.emit('your-contacts', info.contacts);
-              getUserSocket(requester).then(function(userSocket) {
-                dbUtils.getContacts(requester).then(function(contacts) {
-                  userSocket.emit('your-contacts', contacts);
-                });
+      socket.on('add-contact-response', function(requester, acceptedRequest) {
+        dbUtils.addContactResponse(userID, requester, acceptedRequest)
+        .then(function(info) {
+          console.log('FINISHED ADD-CONTACT-RESPONSE FOR: ', userID);
+          if (info.contacts !== undefined) {
+            socket.emit('your-contacts', info.contacts);
+            getUserSocket(requester).then(function(userSocket) {
+              dbUtils.getContacts(requester).then(function(contacts) {
+                userSocket.emit('your-contacts', contacts);
               });
-            }
-            if (info.requests !== undefined) {
-              socket.emit('new-requests', info.requests);
-            }
-          });
+            });
+          }
+          if (info.requests !== undefined) {
+            socket.emit('new-requests', info.requests);
+          }
         });
+      });
 
-        socket.on('message', function(chatID, message) {
-          var formattedMessage = new Message(userID, message);
-          dbUtils.saveNewChatMessage(chatID, formattedMessage).then(function(chat) {
-            notifyAffectedUsers(chat.users, 'chat-updated', chat);
-          });
+      socket.on('message', function(chatID, message) {
+        var formattedMessage = new Message(userID, message);
+        dbUtils.saveNewChatMessage(chatID, formattedMessage).then(function(chat) {
+          notifyAffectedUsers(chat.users, 'chat-updated', chat);
         });
+      });
 
-        socket.on('update-chat-name', function(chatID, name) {
-          dbUtils.updateChatName(chatID, name).then(function(chat) {
-            notifyAffectedUsers(chat.users, 'chat-updated', chat);
-          });
+      socket.on('update-chat-name', function(chatID, name) {
+        dbUtils.updateChatName(chatID, name).then(function(chat) {
+          notifyAffectedUsers(chat.users, 'chat-updated', chat);
         });
+      });
 
-        socket.on('add-users-to-chat', function(chatID, idArray) {
-          dbUtils.addUsersToChat(chatID, idArray).then(function(chat) {
-            notifyAffectedUsers(chat.users, 'chat-updated', chat);
-          });
+      socket.on('add-users-to-chat', function(chatID, idArray) {
+        dbUtils.addUsersToChat(chatID, idArray).then(function(chat) {
+          notifyAffectedUsers(chat.users, 'chat-updated', chat);
         });
+      });
 
-        socket.on('disconnect', function() {
-          dbUtils.logout(userID);
-        });
-
-        //TODO REMOVE
-        // for development purposes to delete entire database.
-        socket.on('gitResetHard', function() {
-          dbUtils.gitResetHard();
-        });
+      let logout = function() {
+        dbUtils.logout(userID);
+        delete io.sockets.connected[socket.id];
       };
+
+      socket.on('logout', logout);
+      socket.on('disconnect', logout);
+
+      //TODO REMOVE
+      // for development purposes to delete entire database.
+      socket.on('gitResetHard', function() {
+        dbUtils.gitResetHard();
+      });
     } catch(e) {
       console.log(e);
     }
@@ -159,12 +163,36 @@
 
   // if asked for a file, look for it in app
   app.use(express.static(path.join(__dirname, 'app')));
+  app.use(bodyParser.json());
 
   // if that file isn't found serve up the html as we want
   // the app the handle every other route
   app.get('*', function(req, res) {
     res.sendFile(path.join(__dirname, 'app', 'index.html'));
   });
+
+  function getAuthenticationFunction(callback) {
+    return function(req, res) {
+      if (req.body.id === undefined || req.body.pass === undefined) {
+        res.send(400);
+      }
+
+      let token = jwt.sign(
+        req.body,
+        secret,
+        {expiresIn: 60*60*24*7} // expires in one week
+      );
+
+      callback(req.body, token).then(function() {
+        res.json({token: token});
+      }, function() {
+        res.send(400);
+      });
+    };
+  }
+
+  app.post('/user-login', getAuthenticationFunction(dbUtils.login));
+  app.post('/create', getAuthenticationFunction(dbUtils.createAccount));
 
   // begin listening for connections
   server.listen(3000, function() {

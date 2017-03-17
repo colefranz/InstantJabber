@@ -37,6 +37,10 @@
           manageSentMessage();
         };
 
+        scope.logout = function() {
+          authService.logout();
+        };
+
         chatService.subcribeToChatUpdates(function(chat) {
           // toast notification or something
         });

@@ -19,10 +19,10 @@
     "tests"
   ],
   "dependencies": {
-    "angular-route": "^1.6.2",
-    "angular": "^1.6.2",
+    "angular-route": "^1.6.3",
+    "angular": "^1.6.3",
     "bootstrap": "^3.3.7",
     "lodash": "^4.17.4",
-    "angular-touch": "^1.6.2"
+    "angular-touch": "^1.6.3"
   }
 }
