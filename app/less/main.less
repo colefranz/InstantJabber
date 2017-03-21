@@ -1,6 +1,6 @@
 //TODO someone with artistic talent please list-style
 // colours go here
-@color-main: #99ee55;
+@color-main: #EEEEEE;//#99ee55;
 @color-secondary: gold;
 @color-main-button: lighten(@color-main, 20%);
 @color-secondary-button: lighten(@color-secondary, 20%);
@@ -28,6 +28,10 @@ ul {
   left: 0;
   display: flex;
   background: @color-main;
+
+  > div:first-child {
+    width: 100%;
+  }
 
   #sidebar-wrapper {
     background: @color-secondary;
@@ -112,9 +116,9 @@ ul {
   }
 
   .container {
-    padding: 15px;
+    /*padding: 15px;
     margin: 0px;
-
+*/
     #chat {
       display: flex;
       flex-direction: column;

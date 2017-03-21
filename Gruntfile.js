@@ -26,6 +26,7 @@ module.exports = function(grunt) {
         },
         files: {
           'app/dev/css/main.css': 'app/less/main.less',
+          'app/dev/css/login.css': 'app/less/login.less',
           'app/dev/css/bootstrap.css': 'app/bower_components/bootstrap/less/bootstrap.less'
         }
       }

@@ -10,9 +10,30 @@
       templateUrl: 'templates/directives/login.html',
       link: function(scope, element) {
         const loginTypes = {
-          user: 'user',
-          guest: 'guest',
-          create: 'create'
+          user: {
+            type: 'user',
+            name: 'Existing users',
+            description: 'Already have an account? Sign in here.',
+            button: 'Sign in'
+          },
+          guest: {
+            type: 'guest',
+            name: 'Guests',
+            description: 'Join a chat without creating an account.',
+            button: 'Sign in as a guest'
+          },
+          create: {
+            type: 'create',
+            name: 'New users',
+            description: 'Don\'t have an account? Create one here.',
+            button: 'Sign up'
+          },
+          none: {
+            type: 'none',
+            name: '',
+            description: '',
+            button: ''
+          }
         };
 
         scope.form = {
@@ -20,9 +41,9 @@
           pass: 'test'
         };
 
-        scope.loginType = 'none';
+        scope.loginType = loginTypes.none;
         scope.loginTypes = loginTypes;
-
+        
         scope.switchLogin = function(type) {
           scope.loginType = type;
         };

@@ -15,6 +15,7 @@
     <script src="dev/jabber.min.js"></script>
     <link rel="stylesheet" type="text/css" href="dev/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="dev/css/main.css">
+    <link rel="stylesheet" type="text/css" href="dev/css/login.css">
     <base href="/">
   </head>
   <body ng-app="jabber" ng-controller="mainController">
@@ -23,7 +24,7 @@
       <!--I imagine that this will be toggleable-->
       <div side-bar ng-if="isLoggedIn"></div>
       <!--main body for application - changes based on url-->
-      <div ng-view class="container"></div>
+      <div ng-view></div>
     </div>
   </body>
 </html>

@@ -1,30 +1,50 @@
 <div id="login">
-  <div ng-if="loginType === 'none'">
-    <span>Login as </span>
-    <button ng-repeat="type in loginTypes"
-            ng-click="switchLogin(type)">{{type}}</button>
-  </div>
-  <div ng-if="loginType !== 'none'">
-    <button ng-click="switchLogin('none')">Back</button>
-  </div>
-  <div ng-if="loginType === 'create'">
-    <form ng-submit="handleCreateAttempt()">
-      <input ng-model="form.email" type="email" placeholder="Email" />
-      <input ng-model="form.pass" type="text" placeholder="Password" />
-      <input ng-model="form.name" type="text" placeholder="Full Name" />
-      <input type="submit" value="Create Account" />
-    </form>
-  </div>
-  <div ng-if="loginType === 'user'">
-    <form ng-submit="handleLoginAttempt()">
-      <input ng-model="form.email" type="email" placeholder="Email" />
-      <input ng-model="form.pass" type="text" placeholder="Password" />
-      <input type="submit" value="Login" />
-    </form>
-  </div>
-  <div ng-if="loginType === 'guest'">
-    <p>Continuing as a guest will allow you to participate in discussions,
-        but all of your information will be lost when you exit the seesion</p>
-    <button>Continue</button>
+  <!-- Login page header. -->
+  <nav class="navbar navbar-default">
+    <div class="container">
+      <h1><a href="/" title="Home">InstantJabber</a></h1>
+    </div>
+  </nav>
+  
+  <!-- Login methods. -->
+  <div class="container">
+    <!-- No login method selected. -->
+    <div ng-if="loginType === loginTypes.none">
+      <div class="row" id="methods">
+        <div ng-repeat="type in loginTypes">
+          <div class="col-sm-4" ng-show="type !== loginTypes.none">
+            <div class="method">
+              <h2>{{type.name}}</h2>
+              <p>{{type.description}}</p>
+              <p class="button"><a class="btn btn-success" ng-click="switchLogin(type)">{{type.button + " &raquo;"}}</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div ng-if="loginType !== loginTypes.none">
+      <button ng-click="switchLogin(loginTypes.none)">Back</button>
+    </div>
+    <div ng-if="loginType === loginTypes.create">
+      <form ng-submit="handleCreateAttempt()">
+        <input ng-model="form.email" type="email" placeholder="Email" />
+        <input ng-model="form.pass" type="text" placeholder="Password" />
+        <input ng-model="form.name" type="text" placeholder="Full Name" />
+        <input type="submit" value="Create Account" />
+      </form>
+    </div>
+    <div ng-if="loginType === loginTypes.user">
+      <form ng-submit="handleLoginAttempt()">
+        <input ng-model="form.email" type="email" placeholder="Email" />
+        <input ng-model="form.pass" type="text" placeholder="Password" />
+        <input type="submit" value="Login" />
+      </form>
+    </div>
+    <div ng-if="loginType === loginTypes.guest">
+      <p>Continuing as a guest will allow you to participate in discussions,
+          but all of your information will be lost when you exit the seesion</p>
+      <button>Continue</button>
+    </div>
   </div>
 </div>
