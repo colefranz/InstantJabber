@@ -1,11 +1,8 @@
 <div id="login">
   <!-- Login page header. -->
-  <nav class="navbar navbar-inverse">
+  <nav class="navbar navbar-default">
     <div class="container">
-      <a href="/" title="Home" class="navbar-brand">InstantJabber</a>
-      <form class="navbar-form">
-        <a href="/login" class="btn btn-success navbar-right">Sign in</a>
-      </form>
+      <a href="/" title="Home" class="navbar-brand" ng-click="switchLogin(loginTypes.none)">InstantJabber</a>
     </div>
   </nav>
   
@@ -13,7 +10,7 @@
   <div class="container">
     <!-- No login method selected. -->
     <div ng-if="loginType === loginTypes.none">
-      <h1>Choose a way to sign in:<br>&nbsp;</h1>
+      <h1>Choose a way to sign in:</h1>
       <div class="row">
         <div ng-repeat="type in loginTypes">
           <div class="col-sm-4" ng-show="type !== loginTypes.none">
@@ -28,9 +25,9 @@
     </div>
 
     <!-- Back button. -->
-    <div ng-if="loginType !== loginTypes.none">
+    <!--<div ng-if="loginType !== loginTypes.none">
       <button ng-click="switchLogin(loginTypes.none)">Back</button>
-    </div>
+    </div>-->
 
     <!-- New user. -->
     <div ng-if="loginType === loginTypes.create">
@@ -44,6 +41,9 @@
 
     <!-- Existing user. -->
     <div ng-if="loginType === loginTypes.user">
+      <h1>Sign in to your account</h1>
+      <p><a ng-click="switchLogin(loginTypes.none)" href="#">&laquo; Sign in differently</a></p>
+      
       <form ng-submit="handleLoginAttempt()">
         <input ng-model="form.email" type="email" placeholder="Email" />
         <input ng-model="form.pass" type="text" placeholder="Password" />
