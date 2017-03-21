@@ -10,7 +10,7 @@
   <div class="container">
     <!-- No login method selected. -->
     <div ng-if="loginType === loginTypes.none">
-      <h1>Choose a way to sign in:</h1>
+      <h1>Choose a sign-in method:</h1>
       <div class="methods row">
         <div ng-repeat="type in loginTypes">
           <div class="col-sm-4" ng-show="type !== loginTypes.none">
@@ -26,11 +26,38 @@
 
     <!-- New user. -->
     <div ng-if="loginType === loginTypes.create">
-      <form ng-submit="handleCreateAttempt()">
-        <input ng-model="form.email" type="email" placeholder="Email" />
-        <input ng-model="form.pass" type="text" placeholder="Password" />
-        <input ng-model="form.name" type="text" placeholder="Full Name" />
-        <input type="submit" value="Create Account" />
+      <h1>Create a new account</h1>
+      
+      <form class="form-horizontal" ng-submit="handleCreateAttempt()">
+        <div class="form-group">
+          <label for="regNameTextBox" class="control-label col-sm-2">Full name:</label>
+          <div class="col-sm-10">
+            <input id="regNameTextBox" class="form-control" ng-model="form.name" type="text" placeholder="Full Name" />
+          </div>
+          <p>TODO: Split into first and last? Maybe?</p>
+        </div>
+        <div class="form-group">
+          <label for="regEmailTextBox" class="control-label col-sm-2">Email:</label>
+          <div class="col-sm-10">
+            <input id="regEmailTextBox" class="form-control" ng-model="form.email" type="email" placeholder="Email" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="regPasswordTextBox" class="control-label col-sm-2">Password:</label>
+          <div class="col-sm-10">
+            <input id="regPasswordTextBox" class="form-control" ng-model="form.pass" type="text" placeholder="Password" />
+          </div>
+        </div>
+        <div class="form-group">
+          <p>TODO: Confirm password</p>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            <input class="btn btn-success" type="submit" value="Create Account" />
+            <button class="btn btn-default" ng-click="switchLogin(loginTypes.none)">Cancel</button>
+          </div>
+        </div>
+        <p>TODO: Error messages.</p>
       </form>
     </div>
 
@@ -40,23 +67,24 @@
       
       <form class="form-horizontal" ng-submit="handleLoginAttempt()">
         <div class="form-group">
-          <label for="emailTextBox" class="control-label col-sm-1">Email:</label>
-          <div class="col-sm-11">
+          <label for="emailTextBox" class="control-label col-sm-2">Email:</label>
+          <div class="col-sm-10">
             <input id="emailTextBox" class="form-control" ng-model="form.email" type="email" placeholder="Email" />
           </div>
         </div>
         <div class="form-group">
-          <label for="passwordTextBox" class="control-label col-sm-1">Password:</label>
-          <div class="col-sm-11">
+          <label for="passwordTextBox" class="control-label col-sm-2">Password:</label>
+          <div class="col-sm-10">
             <input id="passwordTextBox" class="form-control" ng-model="form.pass" type="text" placeholder="Password" />
           </div>
         </div>
         <div class="form-group">
-          <div class="col-sm-offset-1 col-sm-11">
+          <div class="col-sm-offset-2 col-sm-10">
             <input class="btn btn-success" type="submit" value="Sign in" />
-            <button class="btn btn-default" ng-click="switchLogin(loginTypes.none)">Use a different sign-in method</button>
+            <button class="btn btn-default" ng-click="switchLogin(loginTypes.none)">Cancel</button>
           </div>
         </div>
+        <p>TODO: Error messages.</p>
       </form>
     </div>
 
@@ -69,7 +97,7 @@
       </div>
       <form>
         <button class="btn btn-success">Continue anyways</button>
-        <button class="btn btn-default" ng-click="switchLogin(loginTypes.none)">Use a different sign-in method</button>
+        <button class="btn btn-default" ng-click="switchLogin(loginTypes.none)">Cancel</button>
       </form>
     </div>
   </div>
