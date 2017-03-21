@@ -1,8 +1,11 @@
 <div id="login">
   <!-- Login page header. -->
-  <nav class="navbar navbar-default">
+  <nav class="navbar navbar-inverse">
     <div class="container">
-      <h1><a href="/" title="Home">InstantJabber</a></h1>
+      <a href="/" title="Home" class="navbar-brand">InstantJabber</a>
+      <form class="navbar-form">
+        <a href="/login" class="btn btn-success navbar-right">Sign in</a>
+      </form>
     </div>
   </nav>
   
@@ -10,7 +13,8 @@
   <div class="container">
     <!-- No login method selected. -->
     <div ng-if="loginType === loginTypes.none">
-      <div class="row" id="methods">
+      <h1>Choose a way to sign in:<br>&nbsp;</h1>
+      <div class="row">
         <div ng-repeat="type in loginTypes">
           <div class="col-sm-4" ng-show="type !== loginTypes.none">
             <div class="method">
@@ -23,9 +27,12 @@
       </div>
     </div>
 
+    <!-- Back button. -->
     <div ng-if="loginType !== loginTypes.none">
       <button ng-click="switchLogin(loginTypes.none)">Back</button>
     </div>
+
+    <!-- New user. -->
     <div ng-if="loginType === loginTypes.create">
       <form ng-submit="handleCreateAttempt()">
         <input ng-model="form.email" type="email" placeholder="Email" />
@@ -34,6 +41,8 @@
         <input type="submit" value="Create Account" />
       </form>
     </div>
+
+    <!-- Existing user. -->
     <div ng-if="loginType === loginTypes.user">
       <form ng-submit="handleLoginAttempt()">
         <input ng-model="form.email" type="email" placeholder="Email" />
@@ -41,6 +50,8 @@
         <input type="submit" value="Login" />
       </form>
     </div>
+
+    <!-- Guest. -->
     <div ng-if="loginType === loginTypes.guest">
       <p>Continuing as a guest will allow you to participate in discussions,
           but all of your information will be lost when you exit the seesion</p>

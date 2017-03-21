@@ -12,20 +12,20 @@
         const loginTypes = {
           user: {
             type: 'user',
-            name: 'Existing users',
-            description: 'Already have an account? Sign in here.',
+            name: 'Existing user',
+            description: 'Already have an account? Sign in here using your email and password.',
             button: 'Sign in'
           },
           guest: {
             type: 'guest',
-            name: 'Guests',
-            description: 'Join a chat without creating an account.',
+            name: 'Guest',
+            description: 'Join a chat without creating an account. Your discussions will not be saved.',
             button: 'Sign in as a guest'
           },
           create: {
             type: 'create',
-            name: 'New users',
-            description: 'Don\'t have an account? Create one here.',
+            name: 'New user',
+            description: 'Don\'t have an account? Creating a new account is quick and simple.',
             button: 'Sign up'
           },
           none: {
