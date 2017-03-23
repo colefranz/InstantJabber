@@ -43,12 +43,29 @@
 
         scope.loginType = loginTypes.none;
         scope.loginTypes = loginTypes;
-        
+
+        scope.errors = {
+          email: {
+            class: '',
+            message: ''
+          }
+        };
+
         scope.switchLogin = function(type) {
           scope.loginType = type;
         };
 
         scope.handleLoginAttempt = function() {
+          // Ensure user entered an email and password.
+          scope.errors.email.class = '';
+          scope.errors.email.message = '';
+
+          if (!scope.form.email.trim()) {
+            scope.errors.email.class = 'has-error';
+            scope.errors.email.message = 'Enter your email address.';
+          }
+
+          // Authenticate.
           authService.login({
             id: scope.form.email,
             pass: scope.form.pass
