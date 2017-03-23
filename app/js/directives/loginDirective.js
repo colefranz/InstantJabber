@@ -14,7 +14,8 @@
             type: 'user',
             name: 'Existing user',
             description: 'Already have an account? Sign in here using your email and password.',
-            button: 'Sign in'
+            button: 'Sign in',
+            firstControl: '#emailTextBox'
           },
           guest: {
             type: 'guest',
@@ -26,7 +27,8 @@
             type: 'create',
             name: 'New user',
             description: 'Don\'t have an account? Creating a new account is quick and simple.',
-            button: 'Sign up'
+            button: 'Sign up',
+            firstControl: '#regEmailTextBox'
           },
           none: {
             type: 'none',
@@ -43,8 +45,8 @@
         };
 
         scope.existingUserForm = {
-          email: 'test@test.com',
-          pass: 'test'
+          email: '',
+          pass: ''
         };
 
         scope.loginType = loginTypes.none;
