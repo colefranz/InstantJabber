@@ -36,49 +36,87 @@
           }
         };
 
-        scope.form = {
+        const errorMessages = {
+          missingEmail: 'Enter your email address.',
+          missingPassword: 'Enter your password.',
+          incorrectPassword: 'The email or password is incorrect.'
+        };
+
+        scope.existingUserForm = {
           email: 'test@test.com',
           pass: 'test'
         };
 
         scope.loginType = loginTypes.none;
         scope.loginTypes = loginTypes;
-
+        
         scope.errors = {
-          email: {
-            class: '',
-            message: ''
-          }
+          email: false,
+          password: false
         };
+
+        authService.registerLoginStateObserver(function(isLoggedIn) {
+          resetErrors();
+
+          if (!isLoggedIn) {
+            scope.errors.email = Error('');
+            scope.errors.password = Error(errorMessages.incorrectPassword);
+            $('#passwordTextBox').focus();
+          }
+        });
 
         scope.switchLogin = function(type) {
           scope.loginType = type;
+          resetErrors();
         };
 
         scope.handleLoginAttempt = function() {
-          // Ensure user entered an email and password.
-          scope.errors.email.class = '';
-          scope.errors.email.message = '';
+          var controlToFocus = '';
+          resetErrors();
 
-          if (!scope.form.email.trim()) {
-            scope.errors.email.class = 'has-error';
-            scope.errors.email.message = 'Enter your email address.';
+          if (!scope.existingUserForm.email.trim()) {
+            scope.errors.email = Error(errorMessages.missingEmail);
+            controlToFocus = '#emailTextBox';
+          }
+          
+          if (!scope.existingUserForm.pass) {
+            scope.errors.password = Error(errorMessages.missingPassword);
+            if (!controlToFocus)
+              controlToFocus = '#passwordTextBox';
+          }
+          
+          if (controlToFocus)
+          {
+            $(controlToFocus).focus();
+            return;
           }
 
-          // Authenticate.
           authService.login({
-            id: scope.form.email,
-            pass: scope.form.pass
+            id: scope.existingUserForm.email,
+            pass: scope.existingUserForm.pass
           });
         };
 
         scope.handleCreateAttempt = function() {
           authService.create({
-            id: scope.form.email,
-            pass: scope.form.pass,
-            name: scope.form.name
+            id: scope.existingUserForm.email,
+            pass: scope.existingUserForm.pass,
+            name: scope.existingUserForm.name
           });
         };
+
+        // Use false to clear current error.
+        function Error(message) {
+          return {
+            cssClass: 'has-error',
+            message: message
+          };
+        }
+
+        function resetErrors() {
+          scope.errors.email = false;
+          scope.errors.password = false;
+        }
       }
     }
   }]);

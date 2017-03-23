@@ -41,6 +41,7 @@
 
         self.login = function(creds) {
           authenticate(creds, '/user-login');
+
         };
 
         /**
@@ -60,7 +61,6 @@
 
         self.registerLoginStateObserver = function(callback) {
           loginStateChangedHandlers.push(callback);
-          callback(userIsLoggedIn);
         };
 
         self.logout = function() {
