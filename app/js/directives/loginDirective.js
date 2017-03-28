@@ -44,6 +44,7 @@
           missingConfirmPassword: 'Confirm your password by typing it again.',
           incorrectPassword: 'The email or password is incorrect.',
           passwordMismatch: 'The passwords do not match.',
+          passwordComplexity: 'Passwords must be at least 8 characters long and contain at least one capital letter, one lowercase letter and one number or symbol.',
           emailTaken: 'An account with this email address already exists.'
         };
 
@@ -138,6 +139,11 @@
 
           if (!scope.newUserForm.pass) {
             scope.errors.password = Error(errorMessages.missingPasswordNewAccount);
+            if (!controlToFocus) controlToFocus = '#regPasswordTextBox';
+          }
+
+          if (scope.newUserForm.pass && !authService.passwordMeetsComplexityRequirements(scope.newUserForm.pass)) {
+            scope.errors.password = Error(errorMessages.passwordComplexity);
             if (!controlToFocus) controlToFocus = '#regPasswordTextBox';
           }
 

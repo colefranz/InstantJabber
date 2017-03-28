@@ -68,6 +68,33 @@
           loginStateChanged(false);
         }
 
+        self.passwordMeetsComplexityRequirements = function(password) {
+          var hasUppercase = false,
+              hasLowercase = false,
+              hasNumber = false,
+              hasSymbol = false,
+              i;
+          
+          if (password.length < 8)
+            return false;
+
+          for (i = 0; i < password.length; ++i) {
+            if (password.charCodeAt(i) >= 65 && password.charCodeAt(i) <= 90)
+              hasUppercase = true;
+            else if (password.charCodeAt(i) >= 97 && password.charCodeAt(i) <= 122)
+              hasLowercase = true;
+            else if (password.charCodeAt(i) >= 48 && password.charCodeAt(i) <= 57)
+              hasNumber = true;
+            else
+              hasSymbol = true;
+            
+            if (hasUppercase && hasLowercase && (hasNumber || hasSymbol))
+              break;
+          }
+
+          return hasUppercase && hasLowercase && (hasNumber || hasSymbol);
+        }
+
         function authenticate(creds, path) {
           $http.post(path, JSON.stringify(creds)).then(
             function(res) {
