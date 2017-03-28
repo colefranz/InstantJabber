@@ -89,8 +89,39 @@
   };
 
   exports.login = function(creds, token) {
+    const MAX_RETRIES = 5;
     let users = database.collection('users'),
         deferred = Q.defer();
+
+    users.findOne({id: creds.id}).then(function(doc) {
+      if (doc === null) {
+        console.log("Null user");
+        deferred.reject();
+        return;
+      }
+      console.log(doc);
+      // Reset lockout timer.
+      if (doc.failedLogins > 0 && Date().getTime() - doc.failedLoginTime > 10000) {
+        console.log("Resetting retry timer...");
+        //users.update({id: creds.id}, {$set: {failedLogins: 0}});
+      }
+
+      // Log in.
+      if (doc.failedLogins >= MAX_RETRIES) {
+        // Log in anyways.
+        console.log("Error: Account \"" + creds.id + "\" is locked out.");
+        deferred.reject();
+      } else if (doc.private.password === creds.pass) {
+        console.log("Logged in.");
+        users.update({id: creds.id}, {$set: {failedLogins: 0}});
+        deferred.resolve();
+      } else {
+        console.log("Wrong pwd");
+        users.update({id: creds.id}, {$inc: {failedLogins: 1}, $set: {failedLoginTime: Date().getTime()}});
+        deferred.reject();
+      }
+    });
+    /*    
 
     users.findOneAndUpdate(
       {id: creds.id, private: {password: creds.pass}},
@@ -98,7 +129,7 @@
     ).then(function(docs) {
       docs.value !== null ? deferred.resolve() : deferred.reject();
     });
-
+    */
     return deferred.promise;
   };
 
