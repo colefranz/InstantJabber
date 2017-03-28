@@ -93,7 +93,7 @@
         deferred = Q.defer();
 
     users.findOneAndUpdate(
-      {id: creds.id},
+      {id: creds.id, private: {password: creds.pass}},
       { $set: {token: token}}
     ).then(function(docs) {
       docs.value !== null ? deferred.resolve() : deferred.reject();
