@@ -42,7 +42,6 @@
           missingPassword: 'Enter your password.',
           missingPasswordNewAccount: 'Enter a password.',
           missingConfirmPassword: 'Confirm your password by typing it again.',
-          incorrectPassword: 'The email or password is incorrect.',
           passwordMismatch: 'The passwords do not match.',
           passwordComplexity: 'Passwords must be at least 8 characters long and contain at least one capital letter, one lowercase letter and one number or symbol.',
           emailTaken: 'An account with this email address already exists.'
@@ -70,13 +69,16 @@
           confirmPassword: false
         };
 
-        authService.registerLoginStateObserver(function(isLoggedIn) {
+        authService.registerLoginStateObserver(function(isLoggedIn, data) {
           resetErrors();
 
           if (!isLoggedIn) {
             if (scope.loginType === scope.loginTypes.user) {
               scope.errors.email = Error('');
-              scope.errors.password = Error(errorMessages.incorrectPassword);
+              
+              if (data.message)
+                scope.errors.password = Error(data.message);
+
               $('#passwordTextBox').focus();
             } else {
               scope.errors.email = Error(errorMessages.emailTaken);

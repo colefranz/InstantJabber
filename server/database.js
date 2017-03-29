@@ -93,19 +93,17 @@
         deferred = Q.defer();
 
     exports.isAccountLockedOut(creds).then(function() {
-      console.log("Account is locked out");
-      deferred.reject();
+      deferred.reject('This account is locked out. Please try again later.');
     }, function() {
       users.findOne({id: creds.id}).then(function(doc) {
         if (doc === null) {
-          deferred.reject();
+          deferred.reject('The email or password is incorrect.');
           return;
         }
       
         // Log in.
         if (doc.private.password === creds.pass) {
           users.update({id: creds.id}, {$set: {failedLogins: 0}}).then(function() {
-            console.log("loggedn in");
             deferred.resolve();
           });
         } else {
@@ -113,8 +111,7 @@
             $inc: {failedLogins: 1},
             $set: {failedLoginTime: new Date().getTime()}
           }).then(function() {
-            console.log("Wrong pwd");
-            deferred.reject();
+            deferred.reject('The email or password is incorrect.');
           });
         }
       });
@@ -124,7 +121,7 @@
   };
 
   exports.isAccountLockedOut = function(creds) {
-    const LOCKOUT_TIME_MS = 10 * 1000;
+    const LOCKOUT_TIME_MS = 60 * 1000; // One minute.
     const MAX_RETRIES = 5;
     let users = database.collection('users'),
         deferred = Q.defer();

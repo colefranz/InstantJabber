@@ -184,9 +184,12 @@
       );
 
       callback(req.body, token).then(function() {
-        res.json({token: token});
-      }, function() {
-        res.send(400);
+        res.json({status: true, token: token});
+      }, function(err) {
+        if (err)
+          res.json({status: false, message: err});
+        else
+         res.send(400);
       });
     };
   }

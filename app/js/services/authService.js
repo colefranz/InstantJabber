@@ -41,7 +41,6 @@
 
         self.login = function(creds) {
           authenticate(creds, '/user-login');
-
         };
 
         /**
@@ -98,9 +97,13 @@
         function authenticate(creds, path) {
           $http.post(path, JSON.stringify(creds)).then(
             function(res) {
-              $window.localStorage.setItem('instant-jabber-token', res.data.token);
-              userID = creds.id;
-              loginStateChanged(true, res.data.token);
+              if (res.data.status === true) {
+                $window.localStorage.setItem('instant-jabber-token', res.data.token);
+                userID = creds.id;
+                loginStateChanged(true, res.data.token);
+              }
+              else
+                loginStateChanged(false, res.data);
             }, function(res) {
               loginStateChanged(false);
             }
@@ -108,11 +111,11 @@
         }
 
 
-        function loginStateChanged(isLoggedIn, token) {
+        function loginStateChanged(isLoggedIn, data) {
           userIsLoggedIn = isLoggedIn;
 
           _.forEach(loginStateChangedHandlers, function(handler) {
-            handler(isLoggedIn, token);
+            handler(isLoggedIn, data);
           });
         }
 
