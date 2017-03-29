@@ -89,50 +89,67 @@
   };
 
   exports.login = function(creds, token) {
+    let users = database.collection('users'),
+        deferred = Q.defer();
+
+    exports.isAccountLockedOut(creds).then(function() {
+      console.log("Account is locked out");
+      deferred.reject();
+    }, function() {
+      users.findOne({id: creds.id}).then(function(doc) {
+        if (doc === null) {
+          deferred.reject();
+          return;
+        }
+      
+        // Log in.
+        if (doc.private.password === creds.pass) {
+          users.update({id: creds.id}, {$set: {failedLogins: 0}}).then(function() {
+            console.log("loggedn in");
+            deferred.resolve();
+          });
+        } else {
+          users.update({id: creds.id}, {
+            $inc: {failedLogins: 1},
+            $set: {failedLoginTime: new Date().getTime()}
+          }).then(function() {
+            console.log("Wrong pwd");
+            deferred.reject();
+          });
+        }
+      });
+    });
+    
+    return deferred.promise;
+  };
+
+  exports.isAccountLockedOut = function(creds) {
+    const LOCKOUT_TIME_MS = 10 * 1000;
     const MAX_RETRIES = 5;
     let users = database.collection('users'),
         deferred = Q.defer();
 
     users.findOne({id: creds.id}).then(function(doc) {
       if (doc === null) {
-        console.log("Null user");
-        deferred.reject();
+        deferred.reject(); // Doesn't exist, so cannot be locked out.
         return;
       }
-      console.log(doc);
-      // Reset lockout timer.
-      if (doc.failedLogins > 0 && Date().getTime() - doc.failedLoginTime > 10000) {
-        console.log("Resetting retry timer...");
-        //users.update({id: creds.id}, {$set: {failedLogins: 0}});
-      }
 
-      // Log in.
-      if (doc.failedLogins >= MAX_RETRIES) {
-        // Log in anyways.
-        console.log("Error: Account \"" + creds.id + "\" is locked out.");
-        deferred.reject();
-      } else if (doc.private.password === creds.pass) {
-        console.log("Logged in.");
-        users.update({id: creds.id}, {$set: {failedLogins: 0}});
+      if (doc.failedLogins > 0 &&
+        new Date().getTime() - doc.failedLoginTime > LOCKOUT_TIME_MS) {
+        // Reset lockout timer.
+        users.update({id: creds.id}, {$set: {failedLogins: 0}}).then(function() {
+          deferred.reject();
+        });
+      } else if (doc.failedLogins >= MAX_RETRIES)
         deferred.resolve();
-      } else {
-        console.log("Wrong pwd");
-        users.update({id: creds.id}, {$inc: {failedLogins: 1}, $set: {failedLoginTime: Date().getTime()}});
+      else
         deferred.reject();
-      }
     });
-    /*    
 
-    users.findOneAndUpdate(
-      {id: creds.id, private: {password: creds.pass}},
-      { $set: {token: token}}
-    ).then(function(docs) {
-      docs.value !== null ? deferred.resolve() : deferred.reject();
-    });
-    */
     return deferred.promise;
   };
-
+  
   exports.logout = function(userID) {
     let users = database.collection('users');
 
