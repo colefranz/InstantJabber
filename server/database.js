@@ -43,6 +43,8 @@
         },
         private: {
           password: xxxx
+          failedLogins: 0
+          failedLoginTime: time_in_ms
         }
       },
       {
@@ -103,13 +105,13 @@
       
         // Log in.
         if (doc.private.password === creds.pass) {
-          users.update({id: creds.id}, {$set: {failedLogins: 0}}).then(function() {
+          users.update({id: creds.id}, {$set: {'private.failedLogins': 0}}).then(function() {
             deferred.resolve();
           });
         } else {
           users.update({id: creds.id}, {
-            $inc: {failedLogins: 1},
-            $set: {failedLoginTime: new Date().getTime()}
+            $inc: {'private.failedLogins': 1},
+            $set: {'private.failedLoginTime': new Date().getTime()}
           }).then(function() {
             deferred.reject('The email or password is incorrect.');
           });
@@ -132,13 +134,13 @@
         return;
       }
 
-      if (doc.failedLogins > 0 &&
-        new Date().getTime() - doc.failedLoginTime > LOCKOUT_TIME_MS) {
+      if (doc.private.failedLogins > 0 &&
+        new Date().getTime() - doc.private.failedLoginTime > LOCKOUT_TIME_MS) {
         // Reset lockout timer.
-        users.update({id: creds.id}, {$set: {failedLogins: 0}}).then(function() {
+        users.update({id: creds.id}, {$set: {"private.failedLogins": 0}}).then(function() {
           deferred.reject();
         });
-      } else if (doc.failedLogins >= MAX_RETRIES)
+      } else if (doc.private.failedLogins >= MAX_RETRIES)
         deferred.resolve();
       else
         deferred.reject();
