@@ -76,7 +76,7 @@
             if (scope.loginType === scope.loginTypes.user) {
               scope.errors.email = Error('');
               
-              if (data.message)
+              if (data && data.message)
                 scope.errors.password = Error(data.message);
 
               $('#passwordTextBox').focus();

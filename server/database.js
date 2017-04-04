@@ -175,7 +175,9 @@
             name: creds.name
           },
           private: {
-            password: creds.pass
+            password: creds.pass,
+            failedLogins: 0,
+            failedLoginTime: new Date().getTime()
           }
         }, function(err) {
           deferred.resolve(err === null);

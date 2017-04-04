@@ -34,7 +34,7 @@
     if (!socket.decoded_token) {
       socket.disconnect();
     }
-
+    
     userID = socket.decoded_token.id;
 
     try {

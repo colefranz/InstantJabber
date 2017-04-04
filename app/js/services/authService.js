@@ -113,7 +113,7 @@
 
         function loginStateChanged(isLoggedIn, data) {
           userIsLoggedIn = isLoggedIn;
-
+          
           _.forEach(loginStateChangedHandlers, function(handler) {
             handler(isLoggedIn, data);
           });
