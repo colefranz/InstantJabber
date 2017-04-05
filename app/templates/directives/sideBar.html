@@ -1,11 +1,20 @@
-<div id="sidebar-wrapper">
-  <!--<button class="toggle-button">Toggle</button>-->
-  <ul class="dropdown">
-    <button ng-click="toggleAccountDropdownVisibility()">
-      Account
-    </button>
-    <div class="account-dropdown"
-        ng-show="accountDropdownVisible">
+<div id="sidebar" class="col-sm-3">
+  <!-- User tile. -->
+  <nav class="navbar navbar-inverse">
+    <div class="container">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+          <a href="#" class="navbar-brand" ng-click="toggleAccountDropdownVisibility()">{{userName}} <span class="caret"></span></a>
+          <ul class="dropdown-menu" ng-show="accountDropdownVisible">
+            <li><a href="#" ng-click="toggleAccountDropdownVisibility()">Account settings</a></li>
+            <li><a href="#" ng-click="logout()">Sign out</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!--
       <div class="dropdown-item"
           ng-click="toggleAddContactVisibility()">Add Contact</div>
       <form ng-show="addContactVisible"
@@ -14,11 +23,7 @@
         <input type="submit" value="Send" />
         <span ng-class="{active: sentMessageVisible}">Sent!</span>
       </form>
-      <div class="dropdown-item">Account Settings</div>
-      <div class="dropdown-item"
-          ng-click="logout()">Log Out</div>
-    </div>
-  </ul>
+    </div>-->
   <ul class="sidebar-nav">
     <li class="sidebar-nav-header"
         ng-if="requests.length > 0">

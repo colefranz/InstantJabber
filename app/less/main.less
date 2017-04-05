@@ -11,34 +11,48 @@ ul {
   list-style: none;
 }
 
+.navbar-extension {
+    display: none;
+}
+
 #main {
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  display: flex;
 
-  > div:first-child {
-    width: 100%;
-  }
-
-  #sidebar-wrapper {
+  #sidebar {
     background: @color-main;
-    padding: 6px;
-    width: 275px;
-    max-width: 275px;
+    padding: 0;
 
-    > ul {
-      display: flex;
-      padding: 0;
+    nav {
+        border: 0;
+        height: auto;
+        border-radius: 0;
+
+        .container {
+            width: 100%;
+        }
+
+        .dropdown {
+            min-height: 50px;
+        }
+
+        .dropdown-menu {
+            display: block;
+        }
+    }
+
+    > .container {
+        overflow-y: auto;
     }
 
     .dropdown {
-      flex-direction: column;
+      //flex-direction: column;
 
       .account-dropdown {
-        padding: 4px;
+        //padding: 4px;
         display: flex;
         flex-direction: column;
 
@@ -88,112 +102,126 @@ ul {
     }
   }
 
-  .container {
     #chat {
-      display: flex;
-      flex-direction: column;
-      align-content: flex-start;
-      height: 100%;
-      width: 100%;
+        padding: 0;
+        overflow-y: auto;
 
-      header {
-        #chat-name {
-          font-size: 3em;
-        }
-
-        #chat-name, #chat-name:focus, #chat-name:active {
-          border: none;
-          outline: none;
-          background: transparent;
-        }
-
-        label {
-          font-weight: 200;
-          color: @supplementary-font-color;
-        }
-      }
-
-      #chat-body {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        flex: 1 0 auto;
-
-        p {
-          .timestamp {
-            visibility: hidden;
-            opacity: 0;
-            color: @supplementary-font-color;
-            font-size: 0.9em;
-            transition: all 0.2s ease;
-          }
-
-          &:hover {
-            .timestamp {
-              visibility: visible;
-              opacity: 1;
-            }
-          }
-        }
-      }
-
-      #emoji-picker {
-        position: relative;
-        display: inline-block;
-        width: 75%;
-        max-width: 250px;
-
-        ul {
-          padding: 0px;
-          li {
-            cursor: pointer;
-            user-select: none;
-            text-align: center;
-          }
-        }
-
-        .emoticon-dropdown {
-          position: absolute;
-          top: auto;
-          background: @color-main;
-          border-radius: 3px;
-          border: 1px solid darken(@color-main, 20%);
-          padding: 3px;
-          bottom: 100%;
-          left: 0;
-          right: 0;
-          opacity: 0;
-          visibility: hidden;
-          transition: all 0.2s ease;
-          max-height: 150px;
-          overflow-y: auto;
-
-          &.active {
-            opacity: 1;
-            visibility: visible;
-          }
-
-          .emoji-block-group {
-            display: flex;
+        > .container {
             width: 100%;
+        }
 
-            .emoji-group {
-              flex: 1 0 auto;
-              background: lighten(@color-main, 20%);
+        nav {
+            border: 0;
+            border-radius: 0;
+        }
 
-              &.active, &:hover {
+        header {
+            #chat-name {
+                font-size: 3em;
+            }
+
+            #chat-name, #chat-name:focus, #chat-name:active {
+                border: none;
+                outline: none;
+                background: transparent;
+            }
+
+            label {
+                font-weight: 200;
+                color: @supplementary-font-color;
+            }
+        }
+
+        #chat-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            flex: 1 0 auto;
+
+            p {
+                .timestamp {
+                    visibility: hidden;
+                    opacity: 0;
+                    color: @supplementary-font-color;
+                    font-size: 0.9em;
+                    transition: all 0.2s ease;
+                }
+
+                &:hover {
+                    .timestamp {
+                        visibility: visible;
+                        opacity: 1;
+                    }
+                }
+            }
+        }
+
+        #emoji-picker {
+            position: relative;
+            display: inline-block;
+            width: 75%;
+            max-width: 250px;
+
+            ul {
+                padding: 0px;
+                li {
+                    cursor: pointer;
+                    user-select: none;
+                    text-align: center;
+                }
+            }
+
+            .emoticon-dropdown {
+                position: absolute;
+                top: auto;
                 background: @color-main;
-              }
-            }
-          }
+                border-radius: 3px;
+                border: 1px solid darken(@color-main, 20%);
+                padding: 3px;
+                bottom: 100%;
+                left: 0;
+                right: 0;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.2s ease;
+                max-height: 150px;
+                overflow-y: auto;
 
-          .emoji-selection {
-            display: flex;
-            flex-wrap: wrap;
-            width: 100%;
-          }
+                &.active {
+                    opacity: 1;
+                    visibility: visible;
+                }
+
+                .emoji-block-group {
+                    display: flex;
+                    width: 100%;
+
+                    .emoji-group {
+                        flex: 1 0 auto;
+                        background: lighten(@color-main, 20%);
+
+                        &.active, &:hover {
+                            background: @color-main;
+                            }
+                    }
+                }
+
+                .emoji-selection {
+                    display: flex;
+                    flex-wrap: wrap;
+                    width: 100%;
+                }
+            }
         }
-      }
     }
-  }
+}
+
+@media (min-width: 768px) {
+    #sidebar, #chat, .ng-scope {
+        height: 100%;
+    }
+
+    .navbar-extension {
+        display: block;
+    }
 }

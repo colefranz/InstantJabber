@@ -12,6 +12,7 @@
         scope.accountDropdownVisible = false;
         scope.addContactVisible = false;
         scope.contactEmail = 'test1@test.com';
+        scope.userName = chatService.getName();
 
         scope.toggleAccountDropdownVisibility = function() {
           scope.accountDropdownVisible = !scope.accountDropdownVisible;
