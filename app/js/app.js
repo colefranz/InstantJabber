@@ -64,10 +64,6 @@
         });
       };
 
-      $scope.gitResetHard = function() {
-        chatService.gitResetHard();
-      };
-
       function handleInformation(information) {
         $timeout(function() {
           $scope.chats = information.chats;
