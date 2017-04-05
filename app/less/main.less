@@ -1,9 +1,5 @@
-//TODO someone with artistic talent please list-style
-// colours go here
-@color-main: #EEEEEE;//#99ee55;
-@color-secondary: gold;
+@color-main: #EEEEEE;
 @color-main-button: lighten(@color-main, 20%);
-@color-secondary-button: lighten(@color-secondary, 20%);
 @color-main-tinted: tint(@color-main, 10%);
 @supplementary-font-color: #777888;
 
@@ -27,14 +23,13 @@ ul {
   bottom: 0;
   left: 0;
   display: flex;
-  //background: @color-main;
 
   > div:first-child {
     width: 100%;
   }
 
   #sidebar-wrapper {
-    background: @color-secondary;
+    background: @color-main;
     padding: 6px;
     width: 275px;
     max-width: 275px;
@@ -71,15 +66,15 @@ ul {
 
         .dropdown-item {
           padding: 3px;
-          background: @color-secondary-button;
+          background: @color-main-button;
           cursor: pointer;
 
           &:hover {
-            background: darken(@color-secondary-button, 20%);
+            background: darken(@color-main-button, 20%);
           }
 
           &:active {
-            background: darken(@color-secondary-button, 40%);
+            background: darken(@color-main-button, 40%);
           }
         }
 
@@ -182,9 +177,9 @@ ul {
         .emoticon-dropdown {
           position: absolute;
           top: auto;
-          background: @color-secondary;
+          background: @color-main;
           border-radius: 3px;
-          border: 1px solid darken(@color-secondary, 20%);
+          border: 1px solid darken(@color-main, 20%);
           padding: 3px;
           bottom: 100%;
           left: 0;
@@ -206,10 +201,10 @@ ul {
 
             .emoji-group {
               flex: 1 0 auto;
-              background: lighten(@color-secondary, 20%);
+              background: lighten(@color-main, 20%);
 
               &.active, &:hover {
-                background: @color-secondary;
+                background: @color-main;
               }
             }
           }
