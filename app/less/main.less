@@ -15,25 +15,22 @@ ul {
     display: none;
 }
 
-#main {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+.container {
+    width: 100%;
+}
 
+#main {
   #sidebar {
     background: @color-main;
     padding: 0;
+    display: flex;
+    flex-direction: column;
 
     nav {
         border: 0;
         height: auto;
         border-radius: 0;
-
-        .container {
-            width: 100%;
-        }
+        margin-bottom: 0;
 
         .dropdown {
             min-height: 50px;
@@ -44,75 +41,28 @@ ul {
         }
     }
 
-    > .container {
+    #sidebar-inner {
+        padding-top: 15px;
         overflow-y: auto;
-    }
-
-    .dropdown {
-      //flex-direction: column;
-
-      .account-dropdown {
-        //padding: 4px;
-        display: flex;
-        flex-direction: column;
-
-        .dropdown-item {
-          padding: 3px;
-          background: @color-main-button;
-          cursor: pointer;
-
-          &:hover {
-            background: darken(@color-main-button, 20%);
-          }
-
-          &:active {
-            background: darken(@color-main-button, 40%);
-          }
-        }
-
-        form {
-          align-content: center;
-
-          input[type="email"] {
-            width: 100%;
-          }
-
-          span {
-            visibility: hidden;
-            opacity: 0;
-            transition: all 0.8s ease;
-            &.active {
-              visibility: visible;
-              opacity: 1;
-            }
-          }
-        }
-      }
-    }
-
-    .sidebar-nav {
-      flex-direction: column;
-      li {
-        padding: 5px;
-      }
-
-      .sidebar-nav-header {
-        text-transform: uppercase;
-      }
+        flex-basis: 1;
     }
   }
 
     #chat {
         padding: 0;
-        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
 
-        > .container {
-            width: 100%;
+        #chat-inner {
+            overflow-y: auto;
+            flex-basis: 1;
+            padding-top: 15px;
         }
 
         nav {
             border: 0;
             border-radius: 0;
+            margin-bottom: 0;
         }
 
         header {
@@ -217,6 +167,15 @@ ul {
 }
 
 @media (min-width: 768px) {
+    #main {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow: hidden;
+    }
+
     #sidebar, #chat, .ng-scope {
         height: 100%;
     }
