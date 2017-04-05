@@ -1,4 +1,4 @@
-<div id="sidebar" class="col-sm-3">
+<div id="sidebar" class="col-sm-4 col-md-3">
   <!-- User tile. -->
   <nav class="navbar navbar-inverse">
     <div class="container">
@@ -16,29 +16,40 @@
 
   <div id="sidebar-inner">
     <div class="container">
-      <!--
-          <div class="dropdown-item"
-              ng-click="toggleAddContactVisibility()">Add Contact</div>
-          <form ng-show="addContactVisible"
-              ng-submit="addContact()">
-            <input type="email" ng-model="contactEmail" placeholder="Contact E-mail" />
-            <input type="submit" value="Send" />
-            <span ng-class="{active: sentMessageVisible}">Sent!</span>
-          </form>
-        </div>-->
-      
-      <h4>Conversations</h4>
+      <div class="sidebar-header"><h4>Conversations</h4></div>
       <ul class="nav nav-sidebar">
-        <li ng-if="chats.length === 0"><p>Select a contact to start a conversation</p></li>
+        <li ng-if="chats.length === 0">
+          <p>Select a contact to get started.</p>
+        </li>
         <li ng-repeat="chat in chats">
           <a ng-href="/chat-{{chat._id}}">{{chat.name}}</a>
         </li>
       </ul>
 
-      <h4>Contacts</h4>
+      <div class="sidebar-header">
+        <h4>Contacts</h4>
+        <button class="btn btn-success btn-sm" title="Add a contact" ng-click="showAddContacts()" ng-show="!addContactVisible">+</button>
+      </div>
       <ul class="nav nav-sidebar">
-        <li ng-if="contacts.length === 0" ng-click="showAddContacts()">
-          <a href="#">Add a contact</a>
+        <li ng-if="contacts.length === 0 && !addContactVisible">
+          <p>You don't have any contacts yet.</p>
+        </li>
+        <li ng-show="addContactVisible">
+          <div class="panel panel-default">
+            <div class="panel-heading">Send a contact request</div>
+            <div class="panel-body">
+              <form ng-submit="addContact()">
+                <div class="form-group" ng-class="errors.contact.cssClass">
+                  <input id="newContactEmailTextBox" class="form-control" type="email" ng-model="contactEmail" placeholder="Email" />
+                  <p class="help-block" ng-show="errors.contact.message">{{errors.contact.message}}</p>
+                </div>
+                <div class="form-group button-row">
+                  <input class="btn btn-success" type="submit" value="Send" />
+                  <input type="button" value="Cancel" class="btn btn-default" ng-click="toggleAddContactVisibility()" />
+                </div>
+              </form>
+            </div>
+          </div>
         </li>
         <li ng-repeat="contact in contacts">
           <a href="#" ng-click="openChat(contact.id)">{{contact.info.name}}</a>

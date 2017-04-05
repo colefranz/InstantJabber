@@ -9,11 +9,19 @@
       replace: true,
       templateUrl: 'templates/directives/sideBar.html',
       link: function(scope) {
+        const errorMessages = {
+          missingEmail: 'Enter an email address.',
+        };
+
         scope.accountDropdownVisible = false;
         scope.accountDropdownClass = 'dropdown';
         scope.addContactVisible = false;
-        scope.contactEmail = 'test1@test.com';
+        scope.contactEmail = '';
         scope.userName = chatService.getName();
+
+        scope.errors = {
+          contact: false
+        };
 
         scope.toggleAccountDropdownVisibility = function() {
           scope.accountDropdownVisible = !scope.accountDropdownVisible;
@@ -30,7 +38,6 @@
         };
 
         scope.showAddContacts = function() {
-          scope.accountDropdownVisible = true;
           scope.addContactVisible = true;
         };
 
@@ -39,9 +46,17 @@
         };
 
         scope.addContact = function() {
+          resetErrors();
+          scope.contactEmail = scope.contactEmail.trim();
+
+          if (scope.contactEmail === '') {
+            scope.errors.contact = Error(errorMessages.missingEmail);
+            return;
+          }
+
           chatService.addContactRequest(scope.contactEmail);
           scope.contactEmail = '';
-          manageSentMessage();
+          scope.toggleAddContactVisibility();
         };
 
         scope.logout = function() {
@@ -52,11 +67,16 @@
           // toast notification or something
         });
 
-        function manageSentMessage() {
-          scope.sentMessageVisible = true;
-          $timeout(function() {
-            scope.sentMessageVisible = false;
-          }, 2000);
+        // Use false to clear current error.
+        function Error(message) {
+          return {
+            cssClass: 'has-error',
+            message: message
+          };
+        }
+
+        function resetErrors() {
+          scope.errors.contact = false;
         }
       }
     };
