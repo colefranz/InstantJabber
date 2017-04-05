@@ -3,7 +3,7 @@
   <nav class="navbar navbar-inverse">
     <div class="container">
       <ul class="nav navbar-nav">
-        <li class="dropdown">
+        <li ng-class="accountDropdownClass">
           <a href="#" class="navbar-brand" ng-click="toggleAccountDropdownVisibility()">{{userName}} <span class="caret"></span></a>
           <ul class="dropdown-menu" ng-show="accountDropdownVisible">
             <li><a href="#" ng-click="toggleAccountDropdownVisibility()">Account settings</a></li>
@@ -26,6 +26,17 @@
             <span ng-class="{active: sentMessageVisible}">Sent!</span>
           </form>
         </div>-->
+      
+      <h3>Conversations</h3>
+      <ul class="nav nav-sidebar">
+        <li ng-if="chats.length === 0"><p>Select a contact to start a conversation</p></li>
+        <li ng-repeat="chat in chats">
+          <a ng-href="/chat-{{chat._id}}">{{chat.name}}</a>
+        </li>
+      </ul>
+
+      <h3>Contacts</h3>
+
       <ul class="sidebar-nav">
         <li class="sidebar-nav-header"
             ng-if="requests.length > 0">
@@ -37,14 +48,7 @@
           <button ng-click="addContactResponse(request.id, true)">Accept</button>
           <button ng-click="addContactResponse(request.id, false)">Decline</button>
         </li>
-        <li class="sidebar-nav-header">chats</li>
-        <li ng-if="chats.length === 0">
-          Select a contact to start a chat!
-        </li>
-        <li class="sidebar-brand"
-            ng-repeat="chat in chats">
-          <a ng-href="/chat-{{chat._id}}">{{chat.name}}</a>
-        </li>
+        
         <li class="sidebar-nav-header">contacts</li>
         <li ng-if="contacts.length === 0"
             ng-click="showAddContacts()">

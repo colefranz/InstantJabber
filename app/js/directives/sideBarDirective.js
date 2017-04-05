@@ -10,6 +10,7 @@
       templateUrl: 'templates/directives/sideBar.html',
       link: function(scope) {
         scope.accountDropdownVisible = false;
+        scope.accountDropdownClass = 'dropdown';
         scope.addContactVisible = false;
         scope.contactEmail = 'test1@test.com';
         scope.userName = chatService.getName();
@@ -17,6 +18,11 @@
         scope.toggleAccountDropdownVisibility = function() {
           scope.accountDropdownVisible = !scope.accountDropdownVisible;
           scope.addContactVisible = false;
+
+          if (scope.accountDropdownVisible)
+            scope.accountDropdownClass = 'dropup';
+          else
+            scope.accountDropdownClass = 'dropdown';
         };
 
         scope.toggleAddContactVisibility = function() {
