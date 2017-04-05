@@ -15,46 +15,46 @@
   </nav>
 
   <div id="sidebar-inner">
-  <div class="container">
-  <!--
-      <div class="dropdown-item"
-          ng-click="toggleAddContactVisibility()">Add Contact</div>
-      <form ng-show="addContactVisible"
-          ng-submit="addContact()">
-        <input type="email" ng-model="contactEmail" placeholder="Contact E-mail" />
-        <input type="submit" value="Send" />
-        <span ng-class="{active: sentMessageVisible}">Sent!</span>
-      </form>
-    </div>-->
-  <ul class="sidebar-nav">
-    <li class="sidebar-nav-header"
-        ng-if="requests.length > 0">
-          contact requests
+    <div class="container">
+      <!--
+          <div class="dropdown-item"
+              ng-click="toggleAddContactVisibility()">Add Contact</div>
+          <form ng-show="addContactVisible"
+              ng-submit="addContact()">
+            <input type="email" ng-model="contactEmail" placeholder="Contact E-mail" />
+            <input type="submit" value="Send" />
+            <span ng-class="{active: sentMessageVisible}">Sent!</span>
+          </form>
+        </div>-->
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-header"
+            ng-if="requests.length > 0">
+              contact requests
+            </li>
+        <li class="sidebar-brand"
+            ng-repeat="request in requests">
+          <span>{{request.info.name}}</span>
+          <button ng-click="addContactResponse(request.id, true)">Accept</button>
+          <button ng-click="addContactResponse(request.id, false)">Decline</button>
         </li>
-    <li class="sidebar-brand"
-        ng-repeat="request in requests">
-      <span>{{request.info.name}}</span>
-      <button ng-click="addContactResponse(request.id, true)">Accept</button>
-      <button ng-click="addContactResponse(request.id, false)">Decline</button>
-    </li>
-    <li class="sidebar-nav-header">chats</li>
-    <li ng-if="chats.length === 0">
-      Select a contact to start a chat!
-    </li>
-    <li class="sidebar-brand"
-        ng-repeat="chat in chats">
-      <a ng-href="/chat-{{chat._id}}">{{chat.name}}</a>
-    </li>
-    <li class="sidebar-nav-header">contacts</li>
-    <li ng-if="contacts.length === 0"
-        ng-click="showAddContacts()">
-      Lets make some friends!
-    </li>
-    <li class="sidebar-brand"
-        ng-repeat="contact in contacts">
-      <a ng-click="openChat(contact.id)">{{contact.info.name}}</a>
-    </li>
-  </ul>
-  </div>
+        <li class="sidebar-nav-header">chats</li>
+        <li ng-if="chats.length === 0">
+          Select a contact to start a chat!
+        </li>
+        <li class="sidebar-brand"
+            ng-repeat="chat in chats">
+          <a ng-href="/chat-{{chat._id}}">{{chat.name}}</a>
+        </li>
+        <li class="sidebar-nav-header">contacts</li>
+        <li ng-if="contacts.length === 0"
+            ng-click="showAddContacts()">
+          Lets make some friends!
+        </li>
+        <li class="sidebar-brand"
+            ng-repeat="contact in contacts">
+          <a ng-click="openChat(contact.id)">{{contact.info.name}}</a>
+        </li>
+      </ul>
+    </div>
   </div>
 </div>
