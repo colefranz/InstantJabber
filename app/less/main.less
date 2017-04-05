@@ -31,9 +31,14 @@ ul {
         height: auto;
         border-radius: 0;
         margin-bottom: 0;
+        
+        .nav {
+            width: 100%;
+        }
 
-        .dropdown {
-            min-height: 50px;
+        .dropdown, .dropup {
+            width: 100%;
+            
         }
 
         .dropdown a:focus {
@@ -44,6 +49,12 @@ ul {
             display: block;
             top: 100%;
             bottom: auto;
+        }
+
+        #account-dropdown {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
         }
     }
 
