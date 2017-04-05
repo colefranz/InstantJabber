@@ -16,6 +16,21 @@
 
   <div id="sidebar-inner">
     <div class="container">
+      <div ng-if="requests.length > 0">
+        <div class="sidebar-header"><h4>Contact requests</h4></div>
+        <ul class="nav nav-sidebar requests">
+          <li ng-repeat="request in requests" class="panel panel-default">
+            <div class="panel-body">
+              <p>{{request.info.name}}</p>
+              <div class="button-row">
+                <button class="btn btn-success" ng-click="addContactResponse(request.id, true)">Accept</button> 
+                <button class="btn btn-default" ng-click="addContactResponse(request.id, false)">Decline</button>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      
       <div class="sidebar-header"><h4>Conversations</h4></div>
       <ul class="nav nav-sidebar">
         <li ng-if="chats.length === 0">
@@ -53,19 +68,6 @@
         </li>
         <li ng-repeat="contact in contacts">
           <a href="#" ng-click="openChat(contact.id)">{{contact.info.name}}</a>
-        </li>
-      </ul>
-
-      <ul class="sidebar-nav">
-        <li class="sidebar-nav-header"
-            ng-if="requests.length > 0">
-              contact requests
-            </li>
-        <li class="sidebar-brand"
-            ng-repeat="request in requests">
-          <span>{{request.info.name}}</span>
-          <button ng-click="addContactResponse(request.id, true)">Accept</button>
-          <button ng-click="addContactResponse(request.id, false)">Decline</button>
         </li>
       </ul>
     </div>
