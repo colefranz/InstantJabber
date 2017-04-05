@@ -16,10 +16,6 @@
             requests = [],
             activeInformationCallbacks = [];
 
-        self.destroy = function() {
-
-        };
-
         socket.on('your-contacts', function(dbContacts) {
           contacts = dbContacts;
           notifySubscribers();

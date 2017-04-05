@@ -100,7 +100,7 @@
               if (res.data.status === true) {
                 $window.localStorage.setItem('instant-jabber-token', res.data.token);
                 userID = creds.id;
-                loginStateChanged(true, res.data.token);
+                $window.location.reload(); // Ew.  Don't know a better way, though.
               }
               else
                 loginStateChanged(false, res.data);

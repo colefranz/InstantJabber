@@ -83,7 +83,6 @@
 
           if (!isLoggedIn) {
             $location.path('/login');
-            chatService.destroy();
           } else {
             $location.path('/');
           }
