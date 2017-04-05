@@ -126,12 +126,6 @@
 
       socket.on('logout', logout);
       socket.on('disconnect', logout);
-
-      //TODO REMOVE
-      // for development purposes to delete entire database.
-      socket.on('gitResetHard', function() {
-        dbUtils.gitResetHard();
-      });
     } catch(e) {
       console.log(e);
     }

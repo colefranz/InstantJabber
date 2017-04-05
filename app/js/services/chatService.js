@@ -213,12 +213,6 @@
           socket.emit('add-users-to-chat', chatID, idArray);
         };
 
-        //TODO REMOVE
-        // for development purposes to delete entire database.
-        self.gitResetHard = function() {
-          socket.emit('gitResetHard');
-        };
-
         return self;
       }
 
