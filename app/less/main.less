@@ -80,6 +80,23 @@ ul {
             margin-bottom: 5px;
             margin-right: 15px;
             flex-grow: 1;
+
+            a, a:visited {
+                text-decoration: inherit;
+                color: inherit;
+
+                .caret {
+                    visibility: hidden;
+                }
+            }
+
+            a:hover {
+                color: #222222;
+
+                .caret {
+                    visibility: visible;
+                }
+            }
         }
     }
 

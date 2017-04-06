@@ -15,11 +15,14 @@
             chats = [],
             requests = [],
             activeInformationCallbacks = [],
-            userInfo;
+            userInfo,
+            userOptions,
+            userID;
 
         socket.on('user-info', function(user) {
-          console.log(user);
           userInfo = user.info;
+          userOptions = user.options;
+          userID = user.id;
         });
 
         socket.on('your-contacts', function(dbContacts) {
@@ -68,8 +71,16 @@
           notifyChatSubscribers(chat);
         });
 
-        self.getName = function() {
-          return userInfo.name;
+        self.getUserInfo = function() {
+          return userInfo;
+        };
+
+        self.getUserOptions = function() {
+          return userOptions;
+        };
+
+        self.getUserID = function() {
+          return userID;
         };
 
         self.getChats = function() {

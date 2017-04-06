@@ -41,6 +41,11 @@
           name: 'Cole',
           others: ???
         },
+        options: {
+          requestsVisible: true,
+          chatsVisible: true,
+          contactsVisible: true
+        },
         private: {
           password: xxxx
           failedLogins: 0
@@ -174,6 +179,11 @@
           info: {
             name: creds.name
           },
+          options: {
+            requestsVisible: true,
+            chatsVisible: true,
+            contactsVisible: true
+          },
           private: {
             password: creds.pass,
             failedLogins: 0,
@@ -188,6 +198,39 @@
     });
 
     return deferred.promise;
+  };
+
+  exports.changeRequestsVisibility = function(userID, visible) {
+    let users = database.collection('users');
+
+    users.findOneAndUpdate(
+      {id: userID},
+      {$set: {'options.requestsVisible': visible}}
+    ).then(function(docs) {
+      console.log('User ' + userID + ': ' + 'Changed requests visibility to ' + visible + '.');
+    });
+  };
+
+  exports.changeChatsVisibility = function(userID, visible) {
+    let users = database.collection('users');
+
+    users.findOneAndUpdate(
+      {id: userID},
+      {$set: {'options.chatsVisible': visible}}
+    ).then(function(docs) {
+      console.log('User ' + userID + ': ' + 'Changed chats visibility to ' + visible + '.');
+    });
+  };
+
+  exports.changeContactsVisibility = function(userID, visible) {
+    let users = database.collection('users');
+
+    users.findOneAndUpdate(
+      {id: userID},
+      {$set: {'options.contactsVisible': visible}}
+    ).then(function(docs) {
+      console.log('User ' + userID + ': ' + 'Changed contacts visibility to ' + visible + '.');
+    });
   };
 
   exports.getUser = function(id) {

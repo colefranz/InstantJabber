@@ -17,8 +17,8 @@
   <div id="sidebar-inner">
     <div class="container">
       <div ng-if="requests.length > 0">
-        <div class="sidebar-header"><h4>Contact requests</h4></div>
-        <ul class="nav nav-sidebar requests">
+        <div class="sidebar-header" ng-class="sidebar.requests.cssClass"><h4><a href="#" ng-click="toggleRequestVisibility()">Contact requests <span class="caret"></span></a></h4></div>
+        <ul class="nav nav-sidebar requests" ng-show="sidebar.requests.visible">
           <li ng-repeat="request in requests" class="panel panel-default">
             <div class="panel-body">
               <p>{{request.info.name}}</p>
@@ -31,8 +31,8 @@
         </ul>
       </div>
       
-      <div class="sidebar-header"><h4>Conversations</h4></div>
-      <ul class="nav nav-sidebar">
+      <div class="sidebar-header" ng-class="sidebar.chats.cssClass"><h4><a href="#" ng-click="toggleChatsVisibility()">Conversations <span class="caret"></span></a></h4></div>
+      <ul class="nav nav-sidebar" ng-show="sidebar.chats.visible">
         <li ng-if="chats.length === 0">
           <p>Select a contact to get started.</p>
         </li>
@@ -41,11 +41,11 @@
         </li>
       </ul>
 
-      <div class="sidebar-header">
-        <h4>Contacts</h4>
+      <div class="sidebar-header" ng-class="sidebar.contacts.cssClass">
+        <h4><a href="#" ng-click="toggleContactsVisibility()">Contacts <span class="caret"></span></a></h4>
         <button class="btn btn-success btn-sm" title="Add a contact" ng-click="showAddContacts()" ng-show="!addContactVisible">+</button>
       </div>
-      <ul class="nav nav-sidebar">
+      <ul class="nav nav-sidebar" ng-show="sidebar.contacts.visible">
         <li ng-if="contacts.length === 0 && !addContactVisible">
           <p>You don't have any contacts yet.</p>
         </li>

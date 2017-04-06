@@ -119,6 +119,18 @@
         });
       });
 
+      socket.on('save-requests-visibility', function(userID, visible) {
+        dbUtils.changeRequestsVisibility(userID, visible);
+      });
+
+      socket.on('save-chats-visibility', function(userID, visible) {
+        dbUtils.changeChatsVisibility(userID, visible);
+      });
+
+      socket.on('save-contacts-visibility', function(userID, visible) {
+        dbUtils.changeContactsVisibility(userID, visible);
+      });
+
       let logout = function() {
         dbUtils.logout(userID);
         delete io.sockets.connected[socket.id];
