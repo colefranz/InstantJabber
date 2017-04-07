@@ -1,9 +1,9 @@
 <div id="chat" class="col-sm-9">
-  <header>
+  <header id="chat-head">
     <input id="chat-name" type="text" ng-model="chat.name" />
     <label for="chat-header" ng-if="chatNameSelected">Press enter to save name</label>
-    <button id="add-to-chat-button"
-        ng-click="openAddToChat()">Add more to this chat!</button>
+    <button class="btn btn-success"id="add-to-chat-button"
+        ng-click="openAddToChat()">+</button>
     <ul ng-show="addToChatVisible">
       <li ng-repeat="contact in contacts track by $index">
         <label for="add-to-group-{{$index}}">{{contact.info.name}}</label>
@@ -21,9 +21,10 @@
       <span class="timestamp">{{message.timestamp}}<span>
     </p>
     <form ng-submit="sendChat()">
-    <input type="text"
+    <input id="chatbar" type="text"
         ng-model="chatBoxText"
-        placeholder="Type here to chat" />
+        placeholder="Type here to chat" 
+        value =""/>
     <emoji-picker></emoji-picker>
     </form>
   </div>

@@ -1,16 +1,15 @@
+
 <div id="login">
-  <!-- Login page header. -->
-  <nav class="navbar navbar-default">
-    <div class="container">
-      <a href="/" title="Home" class="navbar-brand" ng-click="switchLogin(loginTypes.none)">InstantJabber</a>
-    </div>
-  </nav>
   
+  
+  <div id="hello">
   <!-- Login methods. -->
   <div class="container">
     <!-- No login method selected. -->
     <div ng-if="loginType === loginTypes.none">
-      <h1>Choose a sign-in method:</h1>
+      <center><h1>Star InstantJabber</h1>
+      <h3>Great Online Communication for Students</h3></center>
+
       <div class="methods row">
         <div ng-repeat="type in loginTypes">
           <div class="col-sm-4" ng-show="type !== loginTypes.none">
@@ -23,10 +22,18 @@
         </div>
       </div>
     </div>
+  </div>
+
+<div id = "login2">
+      <div class="row">
+        <div class="col-sm-3">
+        </div>
+
+    <div class="col-sm-6">
 
     <!-- New user. -->
     <div ng-if="loginType === loginTypes.create">
-      <h1>Create a new account</h1>
+      <center><h2><b>Create a new account</b></h2></center>
       
       <form class="form-horizontal" ng-submit="handleCreateAttempt()">
         <div class="form-group">
@@ -57,42 +64,54 @@
             <p class="help-block" ng-show="errors.confirmPassword.message">{{errors.confirmPassword.message}}</p>
           </div>
         </div>
-        <div class="form-group">
+        <center><div class="form-group">
           <div class="col-sm-offset-2 col-sm-10">
             <input class="btn btn-success" type="submit" value="Create Account" />
             <button class="btn btn-default" ng-click="switchLogin(loginTypes.none)">Cancel</button>
-          </div>
+          </div></center>
         </div>
       </form>
     </div>
+  </div>
+</div>
+
+
+<div id = "login1">
+      <div class="row">
+        <div class="col-sm-3">
+        </div>
+
+    <div class="col-sm-6">
 
     <!-- Existing user. -->
     <div ng-if="loginType === loginTypes.user">
-      <h1>Sign in to your account</h1>
+      <center><h2><b>Sign in to your account</b></h2></center>
       
       <form class="form-horizontal" ng-submit="handleLoginAttempt()">
         <div class="form-group">
-          <label for="emailTextBox" class="control-label col-sm-1">Email:</label>
-          <div class="col-sm-11" ng-class="errors.email.cssClass">
+          <label for="emailTextBox" class="control-label col-sm-2">Email:</label>
+          <div class="col-sm-9" ng-class="errors.email.cssClass">
             <input id="emailTextBox" class="form-control" ng-model="existingUserForm.email" type="email" placeholder="Email" />
             <p class="help-block" ng-show="errors.email.message">{{errors.email.message}}</p>
           </div>
         </div>
         <div class="form-group">
-          <label for="passwordTextBox" class="control-label col-sm-1">Password:</label>
-          <div class="col-sm-11" ng-class="errors.password.cssClass">
+          <label for="passwordTextBox" class="control-label col-sm-2">Password:</label>
+          <div class="col-sm-9" ng-class="errors.password.cssClass">
             <input id="passwordTextBox" class="form-control" ng-model="existingUserForm.pass" type="password" placeholder="Password" />
             <p class="help-block" ng-show="errors.password.message">{{errors.password.message}}</p>
           </div>
         </div>
-        <div class="form-group">
+        <center><div class="form-group">
           <div class="col-sm-offset-1 col-sm-11">
             <input class="btn btn-success" type="submit" value="Sign in" />
             <button class="btn btn-default" ng-click="switchLogin(loginTypes.none)">Cancel</button>
-          </div>
+          </div></center>
         </div>
       </form>
     </div>
+  </div>
+
 
     <!-- Guest. -->
     <div ng-if="loginType === loginTypes.guest">
@@ -108,3 +127,6 @@
     </div>
   </div>
 </div>
+
+
+
