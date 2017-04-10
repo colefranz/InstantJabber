@@ -39,6 +39,7 @@
         socket: undefined or HSDADUICBN12387adas
         info: { // basically only the public information goes here
           name: 'Cole',
+          online: true,
           others: ???
         },
         options: {
@@ -110,7 +111,7 @@
       
         // Log in.
         if (doc.private.password === creds.pass) {
-          users.update({id: creds.id}, {$set: {'private.failedLogins': 0}}).then(function() {
+          users.update({id: creds.id}, {$set: {'private.failedLogins': 0, 'info.online': true}}).then(function() {
             deferred.resolve();
           });
         } else {
@@ -159,7 +160,7 @@
 
     users.findOneAndUpdate(
       {id: userID},
-      {$unset: {socket: ''}},
+      {$unset: {socket: ''}, $set: {'info.online': false}},
       {returnOriginal: false}
     ).then(function(docs) {
       console.log('logged out');
@@ -177,7 +178,8 @@
           contacts: [],
           socket: socketID,
           info: {
-            name: creds.name
+            name: creds.name,
+            online: true
           },
           options: {
             requestsVisible: true,

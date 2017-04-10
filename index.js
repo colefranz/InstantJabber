@@ -54,6 +54,10 @@
         console.log('REQUESTS:', userIds);
         socket.emit('new-requests', userIds);
       });
+      
+      dbUtils.getUser(userID).then(function(user) {
+        socket.broadcast.emit('user-online', user.id);
+      });
 
       dbUtils.getChats(userID).then(function(chats) {
         socket.emit('your-chats', chats);
@@ -131,9 +135,12 @@
         dbUtils.changeContactsVisibility(userID, visible);
       });
 
-      let logout = function() {
-        dbUtils.logout(userID);
-        delete io.sockets.connected[socket.id];
+      let logout = function(userID) {
+        dbUtils.getUser(userID).then(function(user) {
+          socket.broadcast.emit('user-offline', user.id);
+          dbUtils.logout(userID);
+          delete io.sockets.connected[socket.id];
+        });
       };
 
       socket.on('logout', logout);

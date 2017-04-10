@@ -102,8 +102,16 @@
           scope.toggleAddContactVisibility();
         };
 
+        scope.getOnlineClass = function(isOnline) {
+          if (isOnline)
+            return 'online';
+          else
+            return 'offline';
+        }
+
         scope.logout = function() {
           authService.logout();
+          socket.emit('logout', userID);
         };
         
         chatService.subcribeToChatUpdates(function(chat) {

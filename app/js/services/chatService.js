@@ -3,8 +3,8 @@
 
   angular.module('jabber')
 
-  .factory('chatService', ['$q', 'socketService',
-    function($q, socketService) {
+  .factory('chatService', ['$q', 'socketService', '$timeout',
+    function($q, socketService, $timeout) {
       function ChatService() {
         var self = this,
             chatSubscriptions = {
@@ -69,6 +69,32 @@
 
           notifySubscribers();
           notifyChatSubscribers(chat);
+        });
+
+        socket.on('user-online', function(id) {
+          // Update contacts.
+          var i;
+          for (i = 0; i < contacts.length; ++i) {
+            if (contacts[i].id === id) {
+              contacts[i].info.online = true;
+              console.log('online: ', id);
+            }
+          }
+
+          notifySubscribers();
+        });
+
+        socket.on('user-offline', function(id) {
+          // Update contacts.
+          var i;
+          for (i = 0; i < contacts.length; ++i) {
+            if (contacts[i].id === id) {
+              contacts[i].info.online = false;
+              console.log('offline: ', id);
+            }
+          }
+
+          notifySubscribers();
         });
 
         self.getUserInfo = function() {
