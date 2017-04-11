@@ -198,6 +198,8 @@
       } else {
         deferred.reject();
       }
+    }, function() {
+      deferred.reject();
     });
 
     return deferred.promise;
@@ -241,6 +243,38 @@
       } else {
         deferred.reject();
       }
+    });
+
+    return deferred.promise;
+  };
+
+  exports.upgradeGuest = function(creds, socketID) {
+    let users = database.collection('users'),
+        deferred = Q.defer();
+    users.findOne({id: creds.id}, {}).then(function(docs) {
+      if (docs === null) {
+        users.findOneAndUpdate({id: creds.guestID}, {
+          $set: {
+            id: creds.id,
+            socket: socketID,
+            isGuest: true,
+            info: {
+              name: creds.name
+            },
+            private: {
+              password: creds.pass,
+              failedLogins: 0,
+              failedLoginTime: new Date().getTime()
+            }
+          }
+        }, function(err) {
+          deferred.resolve(err === null);
+        });
+      } else {
+        deferred.reject();
+      }
+    }, function() {
+      deferred.reject();
     });
 
     return deferred.promise;

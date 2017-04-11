@@ -54,8 +54,8 @@
          * }
          */
 
-        self.create = function(creds) {
-          authenticate('/create', creds);
+        self.handleAccountAction = function(action, creds) {
+          authenticate('/' + action, creds);
         };
 
         self.createGuest = function() {
@@ -106,6 +106,7 @@
                 $window.localStorage.setItem('instant-jabber-token', res.data.token);
                 userID = res.data.id;
                 $window.location.reload(); // Ew.  Don't know a better way, though.
+                // loginStateChanged(true, res.data);
               }
               else
                 loginStateChanged(false, res.data);

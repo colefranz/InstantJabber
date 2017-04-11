@@ -244,6 +244,7 @@
   app.post('/user-login', getAuthenticationFunction(dbUtils.login));
   app.post('/create', getAuthenticationFunction(dbUtils.createAccount));
   app.post('/guest', handleGuest);
+  app.post('/upgrade', getAuthenticationFunction(dbUtils.upgradeGuest));
 
   // begin listening for connections
   server.listen(3000, function() {

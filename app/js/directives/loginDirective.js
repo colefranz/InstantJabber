@@ -3,8 +3,8 @@
 
   angular.module('jabber')
 
-  .directive('login', ['authService',
-    function(authService) {
+  .directive('login', ['authService', 'loginUtils',
+    function(authService, loginUtils) {
     return {
       replace: true,
       templateUrl: 'templates/directives/login.html',
@@ -36,77 +36,50 @@
           }
         };
 
-        const errorMessages = {
-          missingName: 'Enter your name.',
-          missingEmail: 'Enter your email address.',
-          missingPassword: 'Enter your password.',
-          missingPasswordNewAccount: 'Enter a password.',
-          missingConfirmPassword: 'Confirm your password by typing it again.',
-          passwordMismatch: 'The passwords do not match.',
-          passwordComplexity: 'Passwords must be at least 8 characters long and contain at least one capital letter, one lowercase letter and one number or symbol.',
-          emailTaken: 'An account with this email address already exists.'
-        };
+        authService.registerLoginStateObserver(function(isLoggedIn, data) {
+          loginUtils.getCleanErrors();
+
+          if (!isLoggedIn) {
+            scope.errors.email = loginUtils.error('');
+
+            if (data && data.message)
+              scope.errors.password = loginUtils.error(data.message);
+
+            $('#passwordTextBox').focus();
+          }
+        });
 
         scope.existingUserForm = {
           email: '',
           pass: ''
         };
 
-        scope.newUserForm = {
-          name: '',
-          email: '',
-          pass: '',
-          confirmPass: ''
-        };
-
         scope.loginType = loginTypes.none;
         scope.loginTypes = loginTypes;
+        scope.errors = loginUtils.getCleanErrors();
 
-        scope.errors = {
-          name: false,
-          email: false,
-          password: false,
-          confirmPassword: false
+        scope.resetLogin = function() {
+          scope.switchLogin(scope.loginTypes.none);
         };
-
-        authService.registerLoginStateObserver(function(isLoggedIn, data) {
-          resetErrors();
-
-          if (!isLoggedIn) {
-            if (scope.loginType === scope.loginTypes.user) {
-              scope.errors.email = Error('');
-
-              if (data && data.message)
-                scope.errors.password = Error(data.message);
-
-              $('#passwordTextBox').focus();
-            } else {
-              scope.errors.email = Error(errorMessages.emailTaken);
-              $('#regEmailTextBox').focus();
-            }
-          }
-        });
 
         scope.switchLogin = function(type) {
           scope.loginType = type;
-          resetErrors();
-          scope.newUserForm.pass = '';
-          scope.newUserForm.confirmPass = '';
+          scope.errors = loginUtils.getCleanErrors();
           scope.existingUserForm.pass = '';
         };
 
         scope.handleLoginAttempt = function() {
           var controlToFocus = '';
-          resetErrors();
+          scope.errors = loginUtils.getCleanErrors();
           scope.existingUserForm.email = scope.existingUserForm.email.trim();
 
           if (!scope.existingUserForm.email) {
-            scope.errors.email = Error(errorMessages.missingEmail);
+            scope.errors.email = loginUtils.error(loginUtils.errorMessages.missingEmail);
             controlToFocus = '#emailTextBox';
           }
 
           if (!scope.existingUserForm.pass) {
-            scope.errors.password = Error(errorMessages.missingPassword);
+            scope.errors.password = loginUtils.error(loginUtils.errorMessages.missingPassword);
             if (!controlToFocus) controlToFocus = '#passwordTextBox';
           }
 
@@ -122,80 +95,9 @@
           });
         };
 
-        scope.handleCreateAttempt = function() {
-          var controlToFocus = '';
-          resetErrors();
-
-          scope.newUserForm.name = scope.newUserForm.name.trim();
-          scope.newUserForm.email = scope.newUserForm.email.trim();
-
-          if (!scope.newUserForm.name) {
-            scope.errors.name = Error(errorMessages.missingName);
-            controlToFocus = '#regNameTextBox';
-          }
-
-          if (!scope.newUserForm.email) {
-            scope.errors.email = Error(errorMessages.missingEmail);
-            if (!controlToFocus) controlToFocus = '#regEmailTextBox';
-          }
-
-          if (!scope.newUserForm.pass) {
-            scope.errors.password = Error(errorMessages.missingPasswordNewAccount);
-            if (!controlToFocus) controlToFocus = '#regPasswordTextBox';
-          }
-
-          if (scope.newUserForm.pass && !authService.passwordMeetsComplexityRequirements(scope.newUserForm.pass)) {
-            scope.errors.password = Error(errorMessages.passwordComplexity);
-            if (!controlToFocus) controlToFocus = '#regPasswordTextBox';
-          }
-
-          if (scope.newUserForm.pass && !scope.newUserForm.confirmPass) {
-            scope.errors.confirmPassword = Error(errorMessages.missingConfirmPassword);
-            if (!controlToFocus) controlToFocus = '#regConfirmPasswordTextBox';
-          }
-
-          if ((scope.newUserForm.pass !== '' ||
-            scope.newUserForm.confirmPass !== '') &&
-            scope.newUserForm.pass !== scope.newUserForm.confirmPass) {
-            scope.errors.confirmPassword = Error(errorMessages.passwordMismatch);
-            if (!scope.errors.password) scope.errors.password = Error('');
-            if (!controlToFocus) controlToFocus = '#regConfirmPasswordTextBox';
-          }
-
-          if (controlToFocus !== '') {
-            $(controlToFocus).focus();
-            return;
-          }
-
-          authService.create({
-            id: scope.newUserForm.email,
-            pass: scope.newUserForm.pass,
-            name: scope.newUserForm.name
-          });
-        };
-
         scope.createGuest = function() {
-          authService.createGuest({
-            id: scope.newUserForm.email,
-            pass: scope.newUserForm.pass,
-            name: scope.newUserForm.name
-          });
+          authService.createGuest();
         };
-
-        // Use false to clear current error.
-        function Error(message) {
-          return {
-            cssClass: 'has-error',
-            message: message
-          };
-        }
-
-        function resetErrors() {
-          scope.errors.name = false;
-          scope.errors.email = false;
-          scope.errors.password = false;
-          scope.errors.confirmPassword = false;
-        }
       }
     }
   }]);
