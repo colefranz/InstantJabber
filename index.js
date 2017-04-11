@@ -5,6 +5,7 @@
       bodyParser = require('body-parser'),
       path = require('path'),
       dbUtils = require('./server/database'),
+      guestUtils = require('./server/guestUtils'),
       Message = require('./server/message').Message,
       Q = require('q'),
       jwt = require('jsonwebtoken'),
@@ -34,7 +35,7 @@
     if (!socket.decoded_token) {
       socket.disconnect();
     }
-    
+
     userID = socket.decoded_token.id;
 
     try {
@@ -137,7 +138,6 @@
       };
 
       socket.on('logout', logout);
-      socket.on('disconnect', logout);
     } catch(e) {
       console.log(e);
     }
@@ -190,7 +190,7 @@
       );
 
       callback(req.body, token).then(function() {
-        res.json({status: true, token: token});
+        res.json({status: true, token: token, creds: req.body});
       }, function(err) {
         if (err)
           res.json({status: false, message: err});
@@ -200,8 +200,50 @@
     };
   }
 
+  function getGuestName() {
+    let deffered = Q.defer(),
+        randomName,
+        handleSuccess = function(name) {
+          deffered.resolve(name);
+        },
+        handleFailure = function() {
+          tryNewName();
+        },
+        tryNewName = function() {
+          dbUtils.checkUniqueGuest(guestUtils.createGuestName()).then(
+            handleSuccess,
+            handleFailure
+          );
+        };
+
+    tryNewName();
+
+    return deffered.promise;
+  }
+
+  function handleGuest(req, res) {
+    getGuestName().then(function(name) {
+      let uniqID = name,
+        token = jwt.sign(
+          {id: uniqID},
+          secret,
+          {expiresIn: 60*60*24*7} // expires in one week
+        );
+
+      dbUtils.createGuest(uniqID, token).then(function() {
+        res.json({status: true, token: token, creds: {id: uniqID}});
+      }, function(err) {
+        if (err)
+          res.json({status: false, message: err});
+        else
+         res.send(400);
+      });
+    });
+  }
+
   app.post('/user-login', getAuthenticationFunction(dbUtils.login));
   app.post('/create', getAuthenticationFunction(dbUtils.createAccount));
+  app.post('/guest', handleGuest);
 
   // begin listening for connections
   server.listen(3000, function() {

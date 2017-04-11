@@ -107,7 +107,7 @@
           deferred.reject('The email or password is incorrect.');
           return;
         }
-      
+
         // Log in.
         if (doc.private.password === creds.pass) {
           users.update({id: creds.id}, {$set: {'private.failedLogins': 0}}).then(function() {
@@ -123,7 +123,7 @@
         }
       });
     });
-    
+
     return deferred.promise;
   };
 
@@ -153,7 +153,7 @@
 
     return deferred.promise;
   };
-  
+
   exports.logout = function(userID) {
     let users = database.collection('users');
 
@@ -162,7 +162,9 @@
       {$unset: {socket: ''}},
       {returnOriginal: false}
     ).then(function(docs) {
-      console.log('logged out');
+      if (docs.value.isGuest) {
+        logoutGuest(userID);
+      }
     });
   };
 
@@ -176,6 +178,7 @@
           id: creds.id,
           contacts: [],
           socket: socketID,
+          isGuest: false,
           info: {
             name: creds.name
           },
@@ -199,6 +202,100 @@
 
     return deferred.promise;
   };
+
+  exports.createGuest = function(id, socketID) {
+    let users = database.collection('users'),
+        deferred = Q.defer();
+
+    users.insertOne({
+      id: id,
+      contacts: [],
+      socket: socketID,
+      isGuest: true,
+      info: {
+        name: id
+      },
+      options: {
+        requestsVisible: true,
+        chatsVisible: true,
+        contactsVisible: true
+      },
+      private: {
+        failedLogins: 0,
+        failedLoginTime: new Date().getTime()
+      }
+    }, function(err) {
+      deferred.resolve(err === null);
+    });
+
+    return deferred.promise;
+  };
+
+  exports.checkUniqueGuest = function(name) {
+    let users = database.collection('users'),
+        deferred = Q.defer();
+
+    users.findOne({id: name}).then(function(docs) {
+      if (docs === null) {
+        deferred.resolve(name);
+      } else {
+        deferred.reject();
+      }
+    });
+
+    return deferred.promise;
+  };
+
+    function deleteIdFromOtherContacts(id) {
+    let users = database.collection('users');
+
+    users.updateMany(
+      { contacts: id },
+      {$pull: { contacts: id} }
+    ).then(function(err, doc) {
+      console.log('deleteIdFromChats', doc);
+    });
+  }
+
+  function deleteIdFromContactRequests(id) {
+    let contactRequests = database.collection('contact-requests');
+
+    contactRequests.deleteMany({
+      '$or': [
+        { requester: id },
+        { requestee: id}
+      ]
+    });
+  }
+
+  function deleteIdFromChats(id) {
+    let chats = database.collection('chats');
+
+    chats.updateMany(
+      { users: id },
+      {$pull: { users: id } }
+    ).then(function(doc) {
+      console.log('deleteIdFromChats', doc);
+    });
+  }
+
+  function logoutGuest(id) {
+    let users = database.collection('users');
+
+    users.findOneAndDelete(
+      {id: id},
+      {projection: {contacts: 1}}
+    ).then(function(doc) {
+      if (doc.value !== null) {
+        // delete all references to id in users.contacts
+        deleteIdFromOtherContacts(id);
+        // delete all references to id in contactRequests
+        deleteIdFromContactRequests(id);
+        // delete all references to id in chats
+        deleteIdFromChats(id);
+      }
+    });
+  }
 
   exports.changeRequestsVisibility = function(userID, visible) {
     let users = database.collection('users');

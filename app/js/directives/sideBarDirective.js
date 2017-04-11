@@ -83,7 +83,7 @@
           // Save.
           socket.emit('save-contacts-visibility', userID, scope.sidebar.contacts.visible);
         };
-         
+
         scope.addContactResponse = function(requester, acceptedRequest) {
           chatService.addContactResponse(requester, acceptedRequest);
         };
@@ -105,7 +105,7 @@
         scope.logout = function() {
           authService.logout();
         };
-        
+
         chatService.subcribeToChatUpdates(function(chat) {
           // toast notification or something
         });
@@ -113,7 +113,7 @@
         function getDropdownClass(visible) {
           if (visible)
             return "dropup";
-          
+
           return "dropdown";
         }
 

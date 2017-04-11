@@ -61,7 +61,7 @@
 
         scope.loginType = loginTypes.none;
         scope.loginTypes = loginTypes;
-        
+
         scope.errors = {
           name: false,
           email: false,
@@ -75,7 +75,7 @@
           if (!isLoggedIn) {
             if (scope.loginType === scope.loginTypes.user) {
               scope.errors.email = Error('');
-              
+
               if (data && data.message)
                 scope.errors.password = Error(data.message);
 
@@ -104,12 +104,12 @@
             scope.errors.email = Error(errorMessages.missingEmail);
             controlToFocus = '#emailTextBox';
           }
-          
+
           if (!scope.existingUserForm.pass) {
             scope.errors.password = Error(errorMessages.missingPassword);
             if (!controlToFocus) controlToFocus = '#passwordTextBox';
           }
-          
+
           if (controlToFocus)
           {
             $(controlToFocus).focus();
@@ -125,7 +125,7 @@
         scope.handleCreateAttempt = function() {
           var controlToFocus = '';
           resetErrors();
-          
+
           scope.newUserForm.name = scope.newUserForm.name.trim();
           scope.newUserForm.email = scope.newUserForm.email.trim();
 
@@ -168,6 +168,14 @@
           }
 
           authService.create({
+            id: scope.newUserForm.email,
+            pass: scope.newUserForm.pass,
+            name: scope.newUserForm.name
+          });
+        };
+
+        scope.createGuest = function() {
+          authService.createGuest({
             id: scope.newUserForm.email,
             pass: scope.newUserForm.pass,
             name: scope.newUserForm.name
