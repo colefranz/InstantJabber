@@ -246,15 +246,13 @@
     return deferred.promise;
   };
 
-    function deleteIdFromOtherContacts(id) {
+  function deleteIdFromOtherContacts(id) {
     let users = database.collection('users');
 
     users.updateMany(
       { contacts: id },
       {$pull: { contacts: id} }
-    ).then(function(err, doc) {
-      console.log('deleteIdFromChats', doc);
-    });
+    );
   }
 
   function deleteIdFromContactRequests(id) {
@@ -274,9 +272,7 @@
     chats.updateMany(
       { users: id },
       {$pull: { users: id } }
-    ).then(function(doc) {
-      console.log('deleteIdFromChats', doc);
-    });
+    );
   }
 
   function logoutGuest(id) {
