@@ -1,7 +1,7 @@
 
 <div id="login">
-  
-  
+
+
   <div id="hello">
   <!-- Login methods. -->
   <div class="container">
@@ -34,7 +34,7 @@
     <!-- New user. -->
     <div ng-if="loginType === loginTypes.create">
       <center><h2><b>Create a new account</b></h2></center>
-      
+
       <form class="form-horizontal" ng-submit="handleCreateAttempt()">
         <div class="form-group">
           <label for="regNameTextBox" class="control-label col-sm-2">Full name:</label>
@@ -86,7 +86,7 @@
     <!-- Existing user. -->
     <div ng-if="loginType === loginTypes.user">
       <center><h2><b>Sign in to your account</b></h2></center>
-      
+
       <form class="form-horizontal" ng-submit="handleLoginAttempt()">
         <div class="form-group">
           <label for="emailTextBox" class="control-label col-sm-2">Email:</label>
@@ -121,7 +121,7 @@
         <p>All active chats, contacts and data will be lost when your session ends.</p>
       </div>
       <form>
-        <button class="btn btn-success">Continue anyways</button>
+        <button class="btn btn-success" ng-click="createGuest()">Continue anyways</button>
         <button class="btn btn-default" ng-click="switchLogin(loginTypes.none)">Cancel</button>
       </form>
     </div>

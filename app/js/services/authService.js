@@ -40,7 +40,7 @@
          */
 
         self.login = function(creds) {
-          authenticate(creds, '/user-login');
+          authenticate('/user-login', creds);
         };
 
         /**
@@ -55,7 +55,11 @@
          */
 
         self.create = function(creds) {
-          authenticate(creds, '/create');
+          authenticate('/create', creds);
+        };
+
+        self.createGuest = function() {
+          authenticate('/guest');
         };
 
         self.registerLoginStateObserver = function(callback) {
@@ -63,9 +67,10 @@
         };
 
         self.logout = function() {
+          socket.emit('logout');
           $window.localStorage.setItem('instant-jabber-token', undefined);
           loginStateChanged(false);
-        }
+        };
 
         self.passwordMeetsComplexityRequirements = function(password) {
           var hasUppercase = false,
@@ -73,7 +78,7 @@
               hasNumber = false,
               hasSymbol = false,
               i;
-          
+
           if (password.length < 8)
             return false;
 
@@ -86,7 +91,7 @@
               hasNumber = true;
             else
               hasSymbol = true;
-            
+
             if (hasUppercase && hasLowercase && (hasNumber || hasSymbol))
               break;
           }
@@ -94,12 +99,12 @@
           return hasUppercase && hasLowercase && (hasNumber || hasSymbol);
         }
 
-        function authenticate(creds, path) {
+        function authenticate(path, creds) {
           $http.post(path, JSON.stringify(creds)).then(
             function(res) {
               if (res.data.status === true) {
                 $window.localStorage.setItem('instant-jabber-token', res.data.token);
-                userID = creds.id;
+                userID = res.data.id;
                 $window.location.reload(); // Ew.  Don't know a better way, though.
               }
               else
@@ -113,7 +118,7 @@
 
         function loginStateChanged(isLoggedIn, data) {
           userIsLoggedIn = isLoggedIn;
-          
+
           _.forEach(loginStateChangedHandlers, function(handler) {
             handler(isLoggedIn, data);
           });
