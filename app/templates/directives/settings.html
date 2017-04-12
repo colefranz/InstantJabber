@@ -1,12 +1,13 @@
 <div id="settings" class="col-sm-8 col-md-9">
-  <header class="settings-header"></header>
-  <input id="" type="text" />
+  <h1 class="settings-header">Settings</h1>
   <button ng-click="toggleUpgradeVisibility()"
+          ng-if="isGuest && !visibility.upgradeFromGuest"
           class="btn btn-default">
     Register This Account
   </button>
   <new-account-form
     ng-if="visibility.upgradeFromGuest"
     on-cancel="toggleUpgradeVisibility()",
-    account-action="upgrade"></new-account-form>
+    account-action="upgrade">
+  </new-account-form>
 </div>

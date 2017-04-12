@@ -3,8 +3,8 @@
 
   angular.module('jabber')
 
-  .directive('settings', [
-    function() {
+  .directive('settings', ['chatService',
+    function(chatService) {
     return {
       attribute: 'E',
       replace: true,
@@ -13,6 +13,7 @@
         scope.visibility = {
           upgradeFromGuest: false
         };
+        scope.isGuest = chatService.getIsGuest();
 
         scope.toggleUpgradeVisibility = function() {
           scope.visibility.upgradeFromGuest = !scope.visibility.upgradeFromGuest;

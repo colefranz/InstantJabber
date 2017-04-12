@@ -402,7 +402,15 @@
         deferred = Q.defer();
 
     users.findOne(
-      {id: id}
+      {id: id},
+      {
+        fields: {
+          info: 1,
+          options: 1,
+          id: 1,
+          isGuest: 1
+        }
+      }
     ).then(function(doc) {
       deferred.resolve(doc);
     });
