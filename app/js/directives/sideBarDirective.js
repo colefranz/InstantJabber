@@ -129,8 +129,13 @@
           socket.emit('logout', userID);
         };
 
-        scope.leaveChat = function(chatID) {
-          chatService.leaveChat(chatID, userID);
+        scope.toggleIsLeaving = function(chat) {
+          chat.isLeaving = !chat.isLeaving;
+        }
+
+        scope.leaveChat = function(chat) {
+          scope.toggleIsLeaving(chat);
+          chatService.leaveChat(chat._id, userID);
         };
 
         chatService.subcribeToChatUpdates(function(chat) {

@@ -32,12 +32,18 @@
       </div>
 
       <div class="sidebar-header" ng-class="sidebar.chats.cssClass"><h4><a href="#" ng-click="toggleChatsVisibility()">Conversations <span class="caret"></span></a></h4></div>
-      <ul class="nav nav-sidebar" ng-show="sidebar.chats.visible">
-        <li ng-if="chats.length === 0">
-          <p>Select a contact to get started.</p>
-        </li>
+      <p ng-if="chats.length === 0">Select a contact to get started.</p>
+      <ul class="sidebar-group" ng-show="sidebar.chats.visible">
         <li ng-repeat="chat in chats">
-          <a ng-href="/chat-{{chat._id}}">{{chat.name}}</a><button ng-click="leaveChat(chat._id)">Leave</button>
+          <div class="two-columns">
+            <a ng-href="/chat-{{chat._id}}">{{chat.name}}</a>
+            <div><button class="btn btn-danger btn-sm hover-to-show" ng-show="!chat.isLeaving" ng-click="toggleIsLeaving(chat)">Leave</button></div>
+          </div>
+          <div class="confirm" ng-show="chat.isLeaving">
+            <p>Are you sure you want to leave this chat?</p>
+            <button class="btn btn-sm btn-danger" ng-click="leaveChat(chat)">Yes</button>
+            <button class="btn btn-sm btn-default" ng-click="toggleIsLeaving(chat)">No</button>
+          </div>
         </li>
       </ul>
 
