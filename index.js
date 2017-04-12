@@ -152,6 +152,28 @@
         dbUtils.propogateUpdatedName(oldId, newId);
       });
 
+      socket.on('leave-chat', function(chatID, userID) {
+        dbUtils.removeUserFromChat(chatID, userID).then(function(deleted) {
+          // Notify the user that left.
+          socket.emit('leave-chat', chatID);
+          dbUtils.getChats(userID).then(function(chats) {
+            socket.emit('your-chats', chats);
+          });
+
+          if (!deleted) {
+            // Notify all affected users.
+            dbUtils.getChat(chatID).then(function(chat) {
+              chat.users.forEach(function(user) {
+                let userSocket = io.sockets.connected[user.socket];
+                if (userSocket) {
+                  userSocket.emit('chat-updated', chat);
+                }
+              });
+            });
+          }
+        });
+      });
+
       let logout = function(userID) {
         dbUtils.getUser(userID).then(function(user) {
           socket.broadcast.emit('user-offline', user.id);

@@ -49,6 +49,13 @@
           scope.chatBoxText = newText;
         };
 
+        scope.formatMessage = function(user, message) {
+          if (user)
+            return user + ': ' + message;
+          else
+            return message;
+        };
+
         element.on('mouseenter', function() {
           // say that we read the chat.
         });

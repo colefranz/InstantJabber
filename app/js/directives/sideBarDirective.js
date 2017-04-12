@@ -129,6 +129,10 @@
           socket.emit('logout', userID);
         };
 
+        scope.leaveChat = function(chatID) {
+          chatService.leaveChat(chatID, userID);
+        };
+
         chatService.subcribeToChatUpdates(function(chat) {
           // toast notification or something
         });

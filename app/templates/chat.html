@@ -17,7 +17,7 @@
   </header>
   <div id="chat-body">
     <p ng-repeat="message in chat.log">
-      {{users[message.user]}}: {{message.msg}}
+      {{formatMessage(users[message.user], message.msg)}}
       <span class="timestamp">{{message.timestamp}}<span>
     </p>
     <form ng-submit="sendChat()">

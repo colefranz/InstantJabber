@@ -37,7 +37,7 @@
           <p>Select a contact to get started.</p>
         </li>
         <li ng-repeat="chat in chats">
-          <a ng-href="/chat-{{chat._id}}">{{chat.name}}</a>
+          <a ng-href="/chat-{{chat._id}}">{{chat.name}}</a><button ng-click="leaveChat(chat._id)">Leave</button>
         </li>
       </ul>
 

@@ -698,4 +698,43 @@
 
     return deferred.promise;
   };
+
+  exports.removeUserFromChat = function(chatID, userID) {
+    let chats = database.collection('chats'),
+        deferred = Q.defer();
+    
+    chats.findOneAndUpdate(
+      {_id: ObjectID(chatID)},
+      {$pull: {users: userID}},
+      {returnOriginal: false}
+    ).then(function(doc) {
+      // Delete the whole chat if no users are there.
+      console.log(doc.value);
+      deleteChatWithoutUsers(chatID).then(function(removed) {
+        deferred.resolve(removed);
+      });
+    });
+    
+    return deferred.promise;
+  }
+
+  // Deletes the specified chat if it has no users associated with it.
+  // Returns: True if the chat was deleted or false otherwise.
+  function deleteChatWithoutUsers(chatID) {
+    let chats = database.collection('chats'),
+        deferred = Q.defer();
+
+    chats.findOne({_id: ObjectID(chatID)}).then(function(doc) {
+      if (doc !== null && doc.users.length === 0) {
+        chats.remove({_id: ObjectID(chatID)}).then(function() {
+          deferred.resolve(true);
+        });
+      } else {
+        deferred.resolve(false);
+      }
+    });
+
+    return deferred.promise;
+  }
+
 })(exports);

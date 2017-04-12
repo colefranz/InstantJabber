@@ -3,8 +3,8 @@
 
   angular.module('jabber')
 
-  .factory('chatService', ['$q', 'socketService', '$timeout',
-    function($q, socketService, $timeout) {
+  .factory('chatService', ['$q', 'socketService', '$timeout', '$route', '$location',
+    function($q, socketService, $timeout, $route, $location) {
       function ChatService() {
         var self = this,
             chatSubscriptions = {
@@ -55,7 +55,7 @@
 
         socket.on('chat-updated', function(chat) {
           var index;
-
+          console.log('updated');
           if (chat._id === undefined) {
             return;
           }
@@ -101,6 +101,12 @@
           notifySubscribers();
         });
 
+        socket.on('leave-chat', function(chatID) {
+          // Stop displaying the chat that was left.
+          if ($route.current.params.id === chatID)
+            $location.path('/');
+        });
+
         self.getUserID = function() {
           return userID;
         };
@@ -115,6 +121,10 @@
 
         self.getContacts = function() {
           return contacts;
+        };
+
+        self.leaveChat = function(chatID, userID) {
+          socket.emit('leave-chat', chatID, userID);
         };
 
         function notifySubscribers() {
