@@ -14,34 +14,51 @@
         };
 
         var socket = socketService.get(),
-          userInfo = chatService.getUserInfo(),
-          userOptions = chatService.getUserOptions(),
+          //userInfo = chatService.getUserInfo(),
+          //userOptions = chatService.getUserOptions(),
           userID = chatService.getUserID();
 
         scope.accountDropdownVisible = false;
         scope.accountDropdownClass = 'dropdown';
         scope.addContactVisible = false;
         scope.contactEmail = '';
-        scope.userName = userInfo.name;
-
+        scope.userName = '';
         scope.sidebar = {
           requests: {
-            visible: userOptions.requestsVisible,
-            cssClass: getDropdownClass(userOptions.requestsVisible)
+            visible: true,
+            cssClass: getDropdownClass(true)
           },
           chats: {
-            visible: userOptions.chatsVisible,
-            cssClass: getDropdownClass(userOptions.chatsVisible)
+            visible: true,
+            cssClass: getDropdownClass(true)
           },
           contacts: {
-            visible: userOptions.contactsVisible,
-            cssClass: getDropdownClass(userOptions.contactsVisible)
+            visible: true,
+            cssClass: getDropdownClass(true)
           }
         };
 
         scope.errors = {
           contact: false
         };
+        
+        chatService.subcribeToUserInfoUpdates(function(info, options) {
+          scope.userName = info.name;
+          scope.sidebar = {
+            requests: {
+              visible: options.requestsVisible,
+              cssClass: getDropdownClass(options.requestsVisible)
+            },
+            chats: {
+              visible: options.chatsVisible,
+              cssClass: getDropdownClass(options.chatsVisible)
+            },
+            contacts: {
+              visible: options.contactsVisible,
+              cssClass: getDropdownClass(options.contactsVisible)
+            }
+          };
+        });
 
         scope.toggleAccountDropdownVisibility = function() {
           scope.accountDropdownVisible = !scope.accountDropdownVisible;

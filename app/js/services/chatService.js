@@ -10,6 +10,7 @@
             chatSubscriptions = {
               all: []
             },
+            infoSubscriptions = [],
             socket = socketService.get(),
             contacts = [],
             chats = [],
@@ -25,6 +26,7 @@
           userOptions = user.options;
           userID = user.id;
           isGuest = user.isGuest;
+          notifyUserInfoSubscribers();
         });
 
         socket.on('your-contacts', function(dbContacts) {
@@ -99,14 +101,6 @@
           notifySubscribers();
         });
 
-        self.getUserInfo = function() {
-          return userInfo;
-        };
-
-        self.getUserOptions = function() {
-          return userOptions;
-        };
-
         self.getUserID = function() {
           return userID;
         };
@@ -134,6 +128,12 @@
 
           _.forEach(chatSubscriptions.all, function(callback) {
             callback(chat);
+          });
+        }
+
+        function notifyUserInfoSubscribers() {
+          _.forEach(infoSubscriptions, function(infoSubscription) {
+            infoSubscription(userInfo, userOptions)
           });
         }
 
@@ -202,6 +202,11 @@
 
             chatSubscriptions[id].push(callback);
           }
+        };
+
+        self.subcribeToUserInfoUpdates = function(callback) {
+          infoSubscriptions.push(callback);
+          notifyUserInfoSubscribers();
         };
 
         /**
