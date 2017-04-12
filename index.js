@@ -72,11 +72,19 @@
 
       socket.on('create-chat', function(idArray) {
         idArray.push(userID);
-        dbUtils.createChat(idArray).then(function(chat) {
-          socket.emit('create-chat', chat._id);
-          
-          dbUtils.getChats(userID).then(function(chats) {
-            socket.emit('your-chats', chats);
+        dbUtils.createChat(idArray).then(function(newChat) {
+          dbUtils.getChat(newChat._id).then(function(chat) {
+            socket.emit('create-chat', chat._id);
+            
+            // Display chat for all users involved.
+            chat.users.forEach(function(user) {
+              let userSocket = io.sockets.connected[user.socket];
+              if (userSocket) {
+                dbUtils.getChats(user.id).then(function(chats) {
+                  userSocket.emit('your-chats', chats);
+                });
+              }
+            });
           });
         });
       });
