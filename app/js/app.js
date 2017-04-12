@@ -66,6 +66,12 @@
         });
       };
 
+      $scope.createChat = function(id) {
+        chatService.createChatForUser(id).then(function(chatID) {
+          $location.path('/chat-' + chatID);
+        });
+      };
+
       function handleInformation(information) {
         $timeout(function() {
           $scope.chats = information.chats;

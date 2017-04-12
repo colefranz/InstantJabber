@@ -68,7 +68,7 @@
           } else {
             chats[index] = chat;
           }
-
+          
           notifySubscribers();
           notifyChatSubscribers(chat);
         });
@@ -245,15 +245,15 @@
           socket.emit('add-contact-response', requester, acceptedRequest);
         };
 
-        self.getChatForID = function(userID) {
+        self.createChatForUser = function(userID) {
           var deferred = $q.defer(),
               responseHandler = function(chatID) {
                 deferred.resolve(chatID);
-                socket.removeListener('get-or-create-chat', responseHandler);
+                socket.removeListener('create-chat', responseHandler);
               };
 
-          socket.emit('get-or-create-chat', [userID]);
-          socket.on('get-or-create-chat', responseHandler);
+          socket.emit('create-chat', [userID]);
+          socket.on('create-chat', responseHandler);
 
           return deferred.promise;
         };

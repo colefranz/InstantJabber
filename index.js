@@ -70,11 +70,26 @@
         });
       });
 
-      socket.on('get-or-create-chat', function(idArray) {
-        idArray.push(userID);
-        dbUtils.getOrCreateChat(idArray).then(function(chat) {
-          socket.emit('get-or-create-chat', chat._id);
-        });
+      socket.on('create-chat', function(idArray) {
+        getUserSocket(userID).then(function(userSocket) {
+                console.log('new');
+              });
+        
+/*        idArray.push(userID);
+        dbUtils.createChat(idArray).then(function(chat) {
+          socket.emit('create-chat', chat._id);
+          
+          idArray.forEach(function(userID) {
+            dbUtils.getChats(userID).then(function(chats) {
+              getUserSocket(userID).then(function(userSocket) {
+                console.log('new');
+                chats.push(chat);
+                userSocket.emit('your-chats', chats);
+              });
+            });
+          });
+
+        });*/
       });
 
       socket.on('add-contact-request', function(id) {
@@ -149,6 +164,7 @@
       };
 
       socket.on('logout', logout);
+      socket.on('disconnect', logout);
     } catch(e) {
       console.log(e);
     }
@@ -172,9 +188,10 @@
 
   function notifyAffectedUsers(users, message, data) {
     users.forEach(function(user) {
-      getUserSocket(user.id).then(function(userSocket) {
+      let userSocket = io.sockets.connected[user.socket];
+      if (userSocket) {
         userSocket.emit(message, data);
-      });
+      }
     });
   }
 

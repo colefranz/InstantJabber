@@ -517,11 +517,11 @@
     return deferred.promise;
   };
 
-  exports.getOrCreateChat = function(idArray) {
+  exports.createChat = function(idArray) {
     var chats = database.collection('chats'),
         deferred = Q.defer();
 
-    chats.findOne(
+    /*chats.findOne(
       {
         users: {
           $size: 2,
@@ -530,7 +530,7 @@
       },
       {fields: {_id: 1}}
     ).then(function(doc) {
-      if (doc === null) {
+      if (doc === null) {*/
         createUserArrayFromIdArray(idArray).then(function(users) {
           var chatName = '';
 
@@ -550,10 +550,10 @@
             deferred.resolve(doc.ops[0]);
           });
         });
-      } else {
+      /*} else {
         deferred.resolve(doc);
       }
-    });
+    });*/
 
     return deferred.promise;
   };

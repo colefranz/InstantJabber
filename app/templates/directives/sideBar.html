@@ -67,7 +67,7 @@
           </div>
         </li>
         <li ng-repeat="contact in contacts">
-          <a href="#" ng-click="openChat(contact.id)"><span ng-class="getOnlineClass(contact.info.online)"></span> {{contact.info.name}}</a>
+          <a href="#" ng-click="createChat(contact.id)"><span ng-class="getOnlineClass(contact.info.online)"></span> {{contact.info.name}}</a>
         </li>
       </ul>
     </div>
