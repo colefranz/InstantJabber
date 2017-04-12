@@ -132,6 +132,10 @@
         dbUtils.changeContactsVisibility(userID, visible);
       });
 
+      socket.on('notify-changed-name', function(oldId, newId) {
+        dbUtils.propogateUpdatedName(oldId, newId);
+      });
+
       let logout = function() {
         dbUtils.logout(userID);
         delete io.sockets.connected[socket.id];

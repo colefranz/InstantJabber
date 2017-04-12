@@ -108,6 +108,9 @@
           $http.post(path, JSON.stringify(creds)).then(
             function(res) {
               if (res.data.status === true) {
+                if (path === '/upgrade') {
+                  socket.emit('notify-changed-name', userID, creds.id);
+                }
                 $window.localStorage.setItem('instant-jabber-token', res.data.token);
                 userID = res.data.id;
                 $window.location.reload(); // Ew.  Don't know a better way, though.

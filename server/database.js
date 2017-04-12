@@ -327,6 +327,43 @@
     });
   }
 
+  function replaceIdInOtherContacts(oldId, newId) {
+    let users = database.collection('users');
+
+    users.updateMany(
+      { contacts: oldId },
+      { $set: { "contacts.$": newId} }
+    );
+  }
+
+  function replaceIdFromContactRequests(oldId, newId) {
+    let contactRequests = database.collection('contact-requests');
+
+    contactRequests.updateMany(
+      {requestee: oldId},
+      {requestee: newId}
+    );
+    contactRequests.updateMany(
+      {requester: oldId},
+      {requester: newId}
+    );
+  }
+
+  function replaceIdFromChats(oldId, newId) {
+    let chats = database.collection('chats');
+
+    chats.updateMany(
+      { users: oldId },
+      { $set: { "users.$": newId } }
+    );
+  }
+
+  exports.propogateUpdatedName = function(oldId, newId) {
+    replaceIdInOtherContacts(oldId, newId);
+    replaceIdFromContactRequests(oldId, newId);
+    replaceIdFromChats(oldId, newId);
+  };
+
   exports.changeRequestsVisibility = function(userID, visible) {
     let users = database.collection('users');
 
