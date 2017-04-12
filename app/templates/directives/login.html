@@ -34,43 +34,10 @@
     <!-- New user. -->
     <div ng-if="loginType === loginTypes.create">
       <center><h2><b>Create a new account</b></h2></center>
-
-      <form class="form-horizontal" ng-submit="handleCreateAttempt()">
-        <div class="form-group">
-          <label for="regNameTextBox" class="control-label col-sm-2">Full name:</label>
-          <div class="col-sm-10" ng-class="errors.name.cssClass">
-            <input id="regNameTextBox" class="form-control" ng-model="newUserForm.name" type="text" placeholder="Name" />
-            <p class="help-block" ng-show="errors.name.message">{{errors.name.message}}</p>
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="regEmailTextBox" class="control-label col-sm-2">Email:</label>
-          <div class="col-sm-10" ng-class="errors.email.cssClass">
-            <input id="regEmailTextBox" class="form-control" ng-model="newUserForm.email" type="email" placeholder="Email" />
-            <p class="help-block" ng-show="errors.email.message">{{errors.email.message}}</p>
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="regPasswordTextBox" class="control-label col-sm-2">Password:</label>
-          <div class="col-sm-10" ng-class="errors.password.cssClass">
-            <input id="regPasswordTextBox" class="form-control" ng-model="newUserForm.pass" type="password" placeholder="Password" />
-            <p class="help-block" ng-show="errors.password.message">{{errors.password.message}}</p>
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="regConfirmPasswordTextBox" class="control-label col-sm-2">Confirm password:</label>
-          <div class="col-sm-10" ng-class="errors.confirmPassword.cssClass">
-            <input id="regConfirmPasswordTextBox" class="form-control" ng-model="newUserForm.confirmPass" type="password" placeholder="Password" />
-            <p class="help-block" ng-show="errors.confirmPassword.message">{{errors.confirmPassword.message}}</p>
-          </div>
-        </div>
-        <center><div class="form-group">
-          <div class="col-sm-offset-2 col-sm-10">
-            <input class="btn btn-success" type="submit" value="Create Account" />
-            <button class="btn btn-default" ng-click="switchLogin(loginTypes.none)">Cancel</button>
-          </div></center>
-        </div>
-      </form>
+        <new-account-form
+          on-cancel="resetLogin()"
+          account-action="create">
+        </new-account-form>
     </div>
   </div>
 </div>
@@ -105,7 +72,7 @@
         <center><div class="form-group">
           <div class="col-sm-offset-1 col-sm-11">
             <input class="btn btn-success" type="submit" value="Sign in" />
-            <button class="btn btn-default" ng-click="switchLogin(loginTypes.none)">Cancel</button>
+            <button class="btn btn-default" ng-click="resetLogin()">Cancel</button>
           </div></center>
         </div>
       </form>
@@ -122,7 +89,7 @@
       </div>
       <form>
         <button class="btn btn-success" ng-click="createGuest()">Continue anyways</button>
-        <button class="btn btn-default" ng-click="switchLogin(loginTypes.none)">Cancel</button>
+        <button class="btn btn-default" ng-click="resetLogin()">Cancel</button>
       </form>
     </div>
   </div>

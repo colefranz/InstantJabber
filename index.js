@@ -55,7 +55,7 @@
         console.log('REQUESTS:', userIds);
         socket.emit('new-requests', userIds);
       });
-      
+
       dbUtils.getUser(userID).then(function(user) {
         socket.broadcast.emit('user-online', user.id);
       });
@@ -134,6 +134,10 @@
 
       socket.on('save-contacts-visibility', function(userID, visible) {
         dbUtils.changeContactsVisibility(userID, visible);
+      });
+
+      socket.on('notify-changed-name', function(oldId, newId) {
+        dbUtils.propogateUpdatedName(oldId, newId);
       });
 
       let logout = function(userID) {
@@ -251,6 +255,7 @@
   app.post('/user-login', getAuthenticationFunction(dbUtils.login));
   app.post('/create', getAuthenticationFunction(dbUtils.createAccount));
   app.post('/guest', handleGuest);
+  app.post('/upgrade', getAuthenticationFunction(dbUtils.upgradeGuest));
 
   // begin listening for connections
   server.listen(3000, function() {

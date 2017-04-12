@@ -27,6 +27,8 @@
         template: '<login></login>'
       }).when('/chat-:id', {
         template: '<chat></chat>'
+      }).when('/settings', {
+        template: '<settings></settings>'
       }).otherwise({
         templateUrl: 'templates/home.html'
       });

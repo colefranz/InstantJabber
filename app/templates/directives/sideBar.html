@@ -6,7 +6,7 @@
         <li  ng-class="accountDropdownClass">
           <a id="account-dropdown" href="#" class="navbar-brand" ng-click="toggleAccountDropdownVisibility()" title="{{userName}}">{{userName}} <span class="caret"></span></a>
           <ul class="dropdown-menu" ng-show="accountDropdownVisible">
-            <li><a href="#" ng-click="toggleAccountDropdownVisibility()">Account settings</a></li>
+            <li><a href="/settings" ng-click="toggleAccountDropdownVisibility()">Account Settings</a></li>
             <li><a href="#" ng-click="logout()">Sign out</a></li>
           </ul>
         </li>

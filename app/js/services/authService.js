@@ -16,6 +16,7 @@
       function AuthService() {
         var self = this,
             loginStateChangedHandlers = [],
+            authErrorHandlers = [],
             userIsLoggedIn = false,
             userID,
             socket = socketService.get();
@@ -54,12 +55,16 @@
          * }
          */
 
-        self.create = function(creds) {
-          authenticate('/create', creds);
+        self.handleAccountAction = function(action, creds) {
+          authenticate('/' + action, creds);
         };
 
         self.createGuest = function() {
           authenticate('/guest');
+        };
+
+        self.registerAuthErrorObserver = function(callback) {
+          authErrorHandlers.push(callback);
         };
 
         self.registerLoginStateObserver = function(callback) {
@@ -103,18 +108,27 @@
           $http.post(path, JSON.stringify(creds)).then(
             function(res) {
               if (res.data.status === true) {
+                if (path === '/upgrade') {
+                  socket.emit('notify-changed-name', userID, creds.id);
+                }
                 $window.localStorage.setItem('instant-jabber-token', res.data.token);
                 userID = res.data.id;
                 $window.location.reload(); // Ew.  Don't know a better way, though.
+                // loginStateChanged(true, res.data);
               }
               else
-                loginStateChanged(false, res.data);
+                handleAuthError(res.data);
             }, function(res) {
-              loginStateChanged(false);
+              handleAuthError();
             }
           );
         }
 
+        function handleAuthError(data) {
+          _.forEach(authErrorHandlers, function(handler) {
+            handler(data);
+          });
+        }
 
         function loginStateChanged(isLoggedIn, data) {
           userIsLoggedIn = isLoggedIn;

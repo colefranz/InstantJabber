@@ -17,12 +17,14 @@
             activeInformationCallbacks = [],
             userInfo,
             userOptions,
-            userID;
+            userID,
+            isGuest = false;
 
         socket.on('user-info', function(user) {
           userInfo = user.info;
           userOptions = user.options;
           userID = user.id;
+          isGuest = user.isGuest;
         });
 
         socket.on('your-contacts', function(dbContacts) {
@@ -107,6 +109,10 @@
 
         self.getUserID = function() {
           return userID;
+        };
+
+        self.getIsGuest = function() {
+          return isGuest;
         };
 
         self.getChats = function() {
