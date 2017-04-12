@@ -71,25 +71,14 @@
       });
 
       socket.on('create-chat', function(idArray) {
-        getUserSocket(userID).then(function(userSocket) {
-                console.log('new');
-              });
-        
-/*        idArray.push(userID);
+        idArray.push(userID);
         dbUtils.createChat(idArray).then(function(chat) {
           socket.emit('create-chat', chat._id);
           
-          idArray.forEach(function(userID) {
-            dbUtils.getChats(userID).then(function(chats) {
-              getUserSocket(userID).then(function(userSocket) {
-                console.log('new');
-                chats.push(chat);
-                userSocket.emit('your-chats', chats);
-              });
-            });
+          dbUtils.getChats(userID).then(function(chats) {
+            socket.emit('your-chats', chats);
           });
-
-        });*/
+        });
       });
 
       socket.on('add-contact-request', function(id) {

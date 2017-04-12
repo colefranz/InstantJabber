@@ -60,12 +60,6 @@
       $scope.contacts = [];
       $scope.isLoggedIn = false;
 
-      $scope.openChat = function(id) {
-        chatService.getChatForID(id).then(function(chatID) {
-          $location.path('/chat-' + chatID);
-        });
-      };
-
       $scope.createChat = function(id) {
         chatService.createChatForUser(id).then(function(chatID) {
           $location.path('/chat-' + chatID);
