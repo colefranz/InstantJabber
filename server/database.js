@@ -410,7 +410,8 @@
           info: 1,
           options: 1,
           id: 1,
-          isGuest: 1
+          isGuest: 1,
+          socket: 1
         }
       }
     ).then(function(doc) {

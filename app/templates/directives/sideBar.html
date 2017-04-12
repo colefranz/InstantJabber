@@ -23,8 +23,8 @@
             <div class="panel-body">
               <p>{{request.info.name}}</p>
               <div class="button-row">
-                <button class="btn btn-success" ng-click="addContactResponse(request.id, true)">Accept</button>
-                <button class="btn btn-default" ng-click="addContactResponse(request.id, false)">Decline</button>
+                <button class="btn btn-success btn-sm" ng-click="addContactResponse(request.id, true)">Accept</button>
+                <button class="btn btn-default btn-sm" ng-click="addContactResponse(request.id, false)">Decline</button>
               </div>
             </div>
           </li>
@@ -63,8 +63,8 @@
                   <p class="help-block" ng-show="errors.contact.message">{{errors.contact.message}}</p>
                 </div>
                 <div class="form-group button-row">
-                  <input class="btn btn-success" type="submit" value="Send" />
-                  <input type="button" value="Cancel" class="btn btn-default" ng-click="toggleAddContactVisibility()" />
+                  <input class="btn btn-success btn-sm" type="submit" value="Send" />
+                  <input type="button" value="Cancel" class="btn btn-default btn-sm" ng-click="toggleAddContactVisibility()" />
                 </div>
               </form>
             </div>

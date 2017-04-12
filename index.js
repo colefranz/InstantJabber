@@ -193,6 +193,7 @@
     let deferred = Q.defer();
 
     dbUtils.getUser(id).then(function(user) {
+      console.log(user);
       let userSocket = io.sockets.connected[user.socket];
 
       if (userSocket) {
