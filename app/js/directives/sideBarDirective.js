@@ -14,8 +14,6 @@
         };
 
         var socket = socketService.get(),
-          //userInfo = chatService.getUserInfo(),
-          //userOptions = chatService.getUserOptions(),
           userID = chatService.getUserID();
 
         scope.accountDropdownVisible = false;
