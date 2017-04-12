@@ -37,7 +37,7 @@
         <li ng-repeat="chat in chats">
           <div class="two-columns">
             <a ng-href="/chat-{{chat._id}}">{{chat.name}}</a>
-            <div><button class="btn btn-danger btn-sm hover-to-show" ng-show="!chat.isLeaving" ng-click="toggleIsLeaving(chat)">Leave</button></div>
+            <div><button class="btn btn-default btn-sm hover-to-show" ng-show="!chat.isLeaving" ng-click="toggleIsLeaving(chat)">Leave</button></div>
           </div>
           <div class="confirm" ng-show="chat.isLeaving">
             <p>Are you sure you want to leave this chat?</p>
@@ -49,7 +49,7 @@
 
       <div class="sidebar-header" ng-class="sidebar.contacts.cssClass">
         <h4><a href="#" ng-click="toggleContactsVisibility()">Contacts <span class="caret"></span></a></h4>
-        <button class="btn btn-success btn-sm" title="Add a contact" ng-click="showAddContacts()" ng-show="!addContactVisible">+</button>
+        <button class="btn btn-default btn-sm" ng-click="showAddContacts()" ng-show="!addContactVisible">Add</button>
       </div>
       <ul class="nav nav-sidebar" ng-show="sidebar.contacts.visible">
         <li ng-if="contacts.length === 0 && !addContactVisible">
