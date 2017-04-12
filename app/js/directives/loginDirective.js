@@ -36,17 +36,14 @@
           }
         };
 
-        authService.registerLoginStateObserver(function(isLoggedIn, data) {
+        authService.registerAuthErrorObserver(function(isLoggedIn, data) {
           loginUtils.getCleanErrors();
+          scope.errors.email = loginUtils.error('');
 
-          if (!isLoggedIn) {
-            scope.errors.email = loginUtils.error('');
+          if (data && data.message)
+            scope.errors.password = loginUtils.error(data.message);
 
-            if (data && data.message)
-              scope.errors.password = loginUtils.error(data.message);
-
-            $('#passwordTextBox').focus();
-          }
+          $('#passwordTextBox').focus();
         });
 
         scope.existingUserForm = {

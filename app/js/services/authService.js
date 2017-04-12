@@ -16,6 +16,7 @@
       function AuthService() {
         var self = this,
             loginStateChangedHandlers = [],
+            authErrorHandlers = [],
             userIsLoggedIn = false,
             userID,
             socket = socketService.get();
@@ -60,6 +61,10 @@
 
         self.createGuest = function() {
           authenticate('/guest');
+        };
+
+        self.registerAuthErrorObserver = function(callback) {
+          authErrorHandlers.push(callback);
         };
 
         self.registerLoginStateObserver = function(callback) {
@@ -109,13 +114,18 @@
                 // loginStateChanged(true, res.data);
               }
               else
-                loginStateChanged(false, res.data);
+                handleAuthError(res.data);
             }, function(res) {
-              loginStateChanged(false);
+              handleAuthError();
             }
           );
         }
 
+        function handleAuthError(data) {
+          _.forEach(authErrorHandlers, function(handler) {
+            handler(data);
+          });
+        }
 
         function loginStateChanged(isLoggedIn, data) {
           userIsLoggedIn = isLoggedIn;

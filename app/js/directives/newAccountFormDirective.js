@@ -27,18 +27,16 @@
 
         scope.errors = loginUtils.getCleanErrors();
 
-        authService.registerLoginStateObserver(function(isLoggedIn, data) {
+        authService.registerAuthErrorObserver(function(data) {
           loginUtils.getCleanErrors();
 
-          if (!isLoggedIn) {
-            scope.errors.email = loginUtils.error(loginUtils.errorMessages.emailTaken);
-            $('#regEmailTextBox').focus();
-          }
+          scope.errors.email = loginUtils.error(loginUtils.errorMessages.emailTaken);
+          $('#regEmailTextBox').focus();
         });
 
         scope.handleCreateAttempt = function() {
           var controlToFocus = '';
-          loginUtils.getCleanErrors();
+          scope.errors = loginUtils.getCleanErrors();
 
           scope.fields.name = scope.fields.name.trim();
           scope.fields.email = scope.fields.email.trim();
