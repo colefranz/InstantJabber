@@ -51,10 +51,8 @@
         <h4><a href="#" ng-click="toggleContactsVisibility()">Contacts <span class="caret"></span></a></h4>
         <button class="btn btn-default btn-sm" ng-click="showAddContacts()" ng-show="!addContactVisible">Add</button>
       </div>
-      <ul class="nav nav-sidebar" ng-show="sidebar.contacts.visible">
-        <li ng-if="contacts.length === 0 && !addContactVisible">
-          <p>You don't have any contacts yet.</p>
-        </li>
+      <p ng-if="contacts.length === 0 && !addContactVisible">You don't have any contacts yet.</p>
+      <ul class="sidebar-group" ng-show="sidebar.contacts.visible">
         <li ng-show="addContactVisible">
           <div class="panel panel-default">
             <div class="panel-heading">Send a contact request</div>
