@@ -1,4 +1,4 @@
-<div id="sidebar" class="col-sm-4 col-md-3">
+<div id="sidebar" class="col-sm-4 col-md-3" ng-class="sidebarClass">
   <!-- User tile. -->
   <nav class="navbar navbar-inverse">
     <div class="container">
@@ -9,6 +9,9 @@
             <li><a href="/settings" ng-click="toggleAccountDropdownVisibility()">Account Settings</a></li>
             <li><a href="#" ng-click="logout()">Sign out</a></li>
           </ul>
+        </li>
+        <li>
+          <button class="btn navbar-btn btn-sm" ng-click="toggleSidebarVisibility()">Hide</button>
         </li>
       </ul>
     </div>

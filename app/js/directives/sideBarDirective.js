@@ -21,6 +21,9 @@
         scope.addContactVisible = false;
         scope.contactEmail = '';
         scope.userName = '';
+        scope.sidebarCollapsed = false;
+        scope.sidebarClass = 'sidebar-visible';
+
         scope.sidebar = {
           requests: {
             visible: true,
@@ -40,6 +43,15 @@
           contact: false
         };
         
+        scope.toggleSidebarVisibility = function() {
+          scope.sidebarCollapsed = !scope.sidebarCollapsed;
+          
+          if (scope.sidebarCollapsed)
+            scope.sidebarClass = 'sidebar-collapsed';
+          else
+            scope.sidebarClass = 'sidebar-visible';
+        };
+
         chatService.subcribeToUserInfoUpdates(function(info, options) {
           scope.userName = info.name;
           scope.sidebar = {

@@ -101,9 +101,15 @@ width: 100%;
         height: auto;
         border-radius: 0;
         margin-bottom: 0;
+        height: 50px;
 
-        .nav {
+        .navbar-nav {
+            display: flex;
             width: 100%;
+        }
+
+        .navbar-nav:first-child {
+            flex-grow: 1;
         }
 
         .dropdown, .dropup {
@@ -245,6 +251,10 @@ width: 100%;
             -moz-background-size: cover;
             background-size: cover;
             -o-background-size: cover;
+
+            .container {
+                width: 100%;
+            }
         }
 
         nav {
@@ -373,5 +383,61 @@ width: 100%;
 
     #sidebar, #chat {
         height: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    #sidebar nav button {
+        margin: 2px 0 0 0;
+    }
+    
+    #sidebar-inner {
+        float: left;
+    }
+    
+    .sidebar-collapsed {
+        height: auto;
+
+        #sidebar-inner {
+            display: none;
+        }
+    }
+    
+    #sidebar {
+        position: absolute;
+        top: 0;
+        z-index: 9999;
+        width: 100%;
+        box-shadow: #000000 0px 0px 5px;
+
+        nav {
+
+            button {
+                margin: 2px 0 0 0;
+            }
+        }
+
+
+        .hidden-on-mobile {
+            display: none;
+        }
+
+        .visible-on-mobile {
+            display: block;
+        }
+
+        ul.sidebar-group {
+            li .hover-to-show {
+                display: inline-block !important;
+            }
+        }
+    }
+
+    #chat {
+        height: 100%;
+    }
+
+    #chat-inner {
+        padding-top: 20% !important;
     }
 }
