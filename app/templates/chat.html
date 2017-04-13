@@ -1,5 +1,5 @@
-<div id="chat" class="col-sm-9">
-  <header id="chat-head">
+<div id="chat" class="col-sm-8 col-md-9">
+  <header>
     <input id="chat-name" type="text" ng-model="chat.name" />
     <label for="chat-header" ng-if="chatNameSelected">Press enter to save name</label>
     <button class="btn btn-success"id="add-to-chat-button" style="float:right;"
@@ -15,12 +15,18 @@
       </li>
     </ul>
   </header>
+
   <div id="chat-body">
-    <p class = "speech" ng-repeat="message in chat.log">
+    <ul id="chat-log">
+      <li ng-repeat="message in chat.log"><p class = "speech">
       {{formatMessage(users[message.user], message.msg)}}
       <span class="timestamp">{{message.timestamp}}<span>
-    </p>
-    <div id="typing_on"></div>
+    </p></li>
+      </ul>
+    </div>
+
+  <footer>
+    <!--<div id="typing_on"></div>-->
 
     <form ng-submit="sendChat()">
     <input id="chatbar" type="text"
@@ -30,5 +36,5 @@
         value =""/>
     <emoji-picker></emoji-picker>
     </form>
-  </div>
+  </footer>
 </div>

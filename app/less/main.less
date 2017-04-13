@@ -223,11 +223,11 @@ width: 100%;
 
     #chat {
         padding: 0;
-        //display: flex;
-        //flex-direction: column;
+        display: flex;
+        flex-direction: column;
 
-        .container {
-            width: 100%;
+        .ng-scope {
+            height: auto;
         }
 
         #chat-inner {
@@ -274,27 +274,35 @@ width: 100%;
         }
 
         #chat-body {
-
+            flex-grow: 1;
           //  display: flex;
-            flex-direction: column;
-           justify-content: flex-end;
-            flex: 1 0 auto;
+           // flex-direction: column;
+           ///justify-content: flex-end;
+            //flex: 1 0 auto;
 
-    position: fixed;
-    width: 75%;
-    max-height: calc(100% - 20px);
-    float: left;
-    overflow-x: hidden;
-    overflow-y: auto;
-    bottom: 0px;
-    /*
-    border-radius: 1px;
-    box-shadow: 0px 0px 0px 8px rgba(0,0,0,0.3);
-    */
-    border: 5px solid transparent;
+           // position: fixed;
+            //width: 75%;
+            //max-height: calc(100% - 20px);
+            //float: left;
+            overflow-y: auto;
+            //bottom: 0px;
+            /*
+            border-radius: 1px;
+            box-shadow: 0px 0px 0px 8px rgba(0,0,0,0.3);
+            */
+            //border: 5px solid transparent;
+            position: relative;
 
+            //background-color: white;
+            ul {
+                position: absolute;
+                bottom: 0;
+                width: 100%;
+                padding: 0;
+                max-height: 100%;
 
-    background-color: white;
+            }
+
             p {
                 .timestamp {
                     visibility: hidden;

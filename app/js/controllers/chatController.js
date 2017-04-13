@@ -68,6 +68,11 @@
         function chatUpdatedCallback(chat) {
           $timeout(function() {
             $scope.chat = chat;
+
+            // Scroll to bottom.
+            $timeout(function() {
+              $('#chat-log').parent().scrollTop($('#chat-log').parent()[0].scrollHeight);
+            },0);
           }, 0);
         }
 
