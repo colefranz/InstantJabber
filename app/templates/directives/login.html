@@ -26,7 +26,6 @@
       <center><h2><b>Create a new account</b></h2></center>
       <div class="col-sm-offset-1 col-sm-9 col-md-offset-1 col-md-8">
         <!-- New user. -->
-        
         <new-account-form
           on-cancel="resetLogin()"
           account-action="create">
@@ -64,16 +63,20 @@
     </div>
 
     <!-- Guest. -->
-    <div ng-if="loginType === loginTypes.guest">
-      <h1>Sign in as a guest</h1>
-      <p>Continuing as a guest allows you to participate in discussions without an account.</p>
-      <div class="alert alert-warning">
-        <p>All active chats, contacts and data will be lost when your session ends.</p>
+    <div class="row" ng-if="loginType === loginTypes.guest">
+      <div class="col-sm-offset-2 col-sm-8 col-md-offset-3 col-md-6">
+        <center><h2><b>Sign in as a guest</b></h2></center>
+        <p>Continuing as a guest allows you to participate in conversations without an account.</p>
+        <div class="alert alert-warning">
+          <p>All chats, contacts and data will be lost when your session ends.</p>
+        </div>
+        <center>
+          <form>
+            <button class="btn btn-success" ng-click="createGuest()">Continue anyways</button>
+            <button class="btn btn-default" ng-click="resetLogin()">Cancel</button>
+          </form>
+        </center>
       </div>
-      <form>
-        <button class="btn btn-success" ng-click="createGuest()">Continue anyways</button>
-        <button class="btn btn-default" ng-click="resetLogin()">Cancel</button>
-      </form>
     </div>
   </div>
 </div>
