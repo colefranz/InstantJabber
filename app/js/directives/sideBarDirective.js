@@ -139,6 +139,10 @@
           chatService.leaveChat(chat._id, userID);
         };
 
+        scope.deleteContact = function(contactID) {
+          chatService.deleteContact(contactID, userID);
+        }
+
         chatService.subcribeToChatUpdates(function(chat) {
           // toast notification or something
         });

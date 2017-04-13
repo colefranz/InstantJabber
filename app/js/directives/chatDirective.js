@@ -53,7 +53,7 @@
           if (user)
             return user + ': ' + message;
           else
-            return message;
+            return '<deleted>: ' + message;
         };
 
         element.on('mouseenter', function() {

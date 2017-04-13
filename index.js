@@ -77,14 +77,7 @@
             socket.emit('create-chat', chat._id);
             
             // Display chat for all users involved.
-            chat.users.forEach(function(user) {
-              let userSocket = io.sockets.connected[user.socket];
-              if (userSocket) {
-                dbUtils.getChats(user.id).then(function(chats) {
-                  userSocket.emit('your-chats', chats);
-                });
-              }
-            });
+            refreshChatsForMembers(chat);
           });
         });
       });
@@ -163,14 +156,28 @@
           if (!deleted) {
             // Notify all affected users.
             dbUtils.getChat(chatID).then(function(chat) {
-              chat.users.forEach(function(user) {
-                let userSocket = io.sockets.connected[user.socket];
-                if (userSocket) {
-                  userSocket.emit('chat-updated', chat);
-                }
-              });
+              refreshChatsForMembers(chat);
             });
           }
+        });
+      });
+
+      socket.on('delete-contact', function(contactID, userID) {
+        // Remove contact for each user.
+        dbUtils.deleteContact(contactID, userID).then(function() {
+          console.log('Deleted contact from ' + userID + ': ' + contactID + '.');
+          console.log('Deleted contact from ' + contactID + ': ' + userID + '.');
+
+          // Notify of contact list changes.
+          dbUtils.getContacts(userID).then(function(contacts) {
+            console.log(socket);
+            socket.emit('your-contacts', contacts);
+          });
+          dbUtils.getContacts(userID).then(function(contacts) {
+            getUserSocket(contactID).then(function(userSocket) {
+              userSocket.emit('your-contacts', contacts);
+            });
+          });
         });
       });
 
@@ -211,6 +218,17 @@
       let userSocket = io.sockets.connected[user.socket];
       if (userSocket) {
         userSocket.emit(message, data);
+      }
+    });
+  }
+
+  function refreshChatsForMembers(chat) {
+    chat.users.forEach(function(user) {
+      let userSocket = io.sockets.connected[user.socket];
+      if (userSocket) {
+        dbUtils.getChats(user.id).then(function(chats) {
+          userSocket.emit('your-chats', chats);
+        });
       }
     });
   }

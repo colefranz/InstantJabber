@@ -719,6 +719,27 @@
     return deferred.promise;
   }
 
+  exports.deleteContact = function(contactID, userID) {
+    let users = database.collection('users'),
+        deferred = Q.defer();
+
+    // Delete for user.
+    users.findOneAndUpdate(
+      {id: userID},
+      {$pull: {contacts: contactID}}
+    ).then(function() {
+      // Delete for contact.
+      users.findOneAndUpdate(
+        {id: contactID},
+        {$pull: {contacts: userID}}
+      ).then(function() {
+        deferred.resolve();
+      });
+    });
+
+    return deferred.promise;
+  }
+
   // Deletes the specified chat if it has no users associated with it.
   // Returns: True if the chat was deleted or false otherwise.
   function deleteChatWithoutUsers(chatID) {

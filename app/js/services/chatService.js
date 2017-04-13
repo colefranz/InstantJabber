@@ -127,6 +127,10 @@
           socket.emit('leave-chat', chatID, userID);
         };
 
+        self.deleteContact = function(contactID, userID) {
+          socket.emit('delete-contact', contactID, userID);
+        };
+
         function notifySubscribers() {
           _.forEach(activeInformationCallbacks, activeInformationCallback);
         }
@@ -188,6 +192,17 @@
          * message: message to be sent
          */
         self.sendChat = function(chatID, message) {
+          var chat = findChat(chatID),
+              i;
+
+          if (chat === undefined)
+            return;
+
+          // Ensure all chat members are contacts.
+          for (i = 0; i < chat.users.length; ++i)
+            if (chat.users[i] !== userID && findContact(chat.users[i]) === undefined)
+              return;
+
           socket.emit('message', chatID, message);
         };
 
@@ -280,6 +295,24 @@
         self.addUsersToChat = function(chatID, idArray) {
           socket.emit('add-users-to-chat', chatID, idArray);
         };
+
+        function findChat(chatID) {
+          var i;
+          for (i = 0; i < chats.length; ++i)
+            if (chats[i]._id === chatID)
+              return chats[i];
+
+          return undefined;
+        }
+
+        function findContact(contactID) {
+          var i;
+          for (i = 0; i < chats.length; ++i)
+            if (contacts[i].id === contactID)
+              return contacts[i];
+
+          return undefined;
+        }
 
         return self;
       }
