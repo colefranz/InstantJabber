@@ -46,10 +46,12 @@
         scope.toggleSidebarVisibility = function() {
           scope.sidebarCollapsed = !scope.sidebarCollapsed;
           
-          if (scope.sidebarCollapsed)
+          if (scope.sidebarCollapsed) {
             scope.sidebarClass = 'sidebar-collapsed';
-          else
+          }
+          else {
             scope.sidebarClass = 'sidebar-visible';
+          }
         };
 
         chatService.subcribeToUserInfoUpdates(function(info, options) {
