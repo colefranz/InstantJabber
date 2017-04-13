@@ -7,12 +7,19 @@
   box-sizing: border-box;
 }
 
+html, body {
+    height: 100%;
+}
+
 .header{
     position: fixed;
     top: 0px;
     margin: auto;
     width: 100%;
+}
 
+.ng-scope {
+    height: 100%;
 }
 
 p.speech {
@@ -73,6 +80,7 @@ width: 100%;
     box-sizing: border-box;}
 
 #main {
+    height: 100%;
 
   #sidebar {
     background: @color-main;
@@ -372,14 +380,10 @@ width: 100%;
         right: 0;
         bottom: 0;
         left: 0;
-        overflow: hidden;
+        overflow-y: auto;
     }
 
-    #sidebar, #chat, .ng-scope {
+    #sidebar, #chat {
         height: 100%;
-    }
-
-    .navbar-extension {
-        display: block;
     }
 }
