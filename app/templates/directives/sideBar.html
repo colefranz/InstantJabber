@@ -74,9 +74,14 @@
           <div class="two-columns">
             <a href="#"><span ng-class="getOnlineClass(contact.info.online)"></span> {{contact.info.name}}</a>
             <div>
-              <button class="btn btn-default btn-sm hover-to-show" ng-click="deleteContact(contact.id)">Delete</button>
+              <button class="btn btn-default btn-sm hover-to-show" ng-click="toggleIsDeleting(contact)" ng-show="!contact.isDeleting">Delete</button>
               <button class="btn btn-default btn-sm" ng-click="createChat(contact.id)">New chat</button>
             </div>
+          </div>
+          <div class="confirm" ng-show="contact.isDeleting">
+            <p>Are you sure you want to delete this contact?</p>
+            <button class="btn btn-sm btn-danger" ng-click="deleteContact(contact)">Yes</button>
+            <button class="btn btn-sm btn-default" ng-click="toggleIsDeleting(contact)">No</button>
           </div>
         </li>
       </ul>
