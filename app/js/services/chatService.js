@@ -55,7 +55,6 @@
 
         socket.on('chat-updated', function(chat) {
           var index;
-          console.log('updated');
           if (chat._id === undefined) {
             return;
           }
@@ -193,14 +192,16 @@
          */
         self.sendChat = function(chatID, message) {
           var chat = findChat(chatID),
-              i;
+              i = 0;
 
           if (chat === undefined)
             return;
 
           // Ensure all chat members are contacts.
           for (i = 0; i < chat.users.length; ++i)
-            if (chat.users[i] !== userID && findContact(chat.users[i]) === undefined)
+            if (chat.users[i] !== userID && chat.users[i].id !== userID &&
+              findContact(chat.users[i]) === undefined &&
+              findContact(chat.users[i].id) === undefined)
               return;
 
           socket.emit('message', chatID, message);
@@ -307,7 +308,7 @@
 
         function findContact(contactID) {
           var i;
-          for (i = 0; i < chats.length; ++i)
+          for (i = 0; i < contacts.length; ++i)
             if (contacts[i].id === contactID)
               return contacts[i];
 
