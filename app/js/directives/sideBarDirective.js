@@ -92,6 +92,7 @@
         };
 
         scope.toggleContactsVisibility = function() {
+          scope.addContactVisible = false;
           scope.sidebar.contacts.visible = !scope.sidebar.contacts.visible;
           scope.sidebar.contacts.cssClass = getDropdownClass(scope.sidebar.contacts.visible);
 
