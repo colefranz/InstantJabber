@@ -39,7 +39,7 @@
       <ul class="sidebar-group" ng-show="sidebar.chats.visible">
         <li ng-repeat="chat in chats">
           <div class="two-columns">
-            <a ng-href="/chat-{{chat._id}}">{{chat.name}}</a>
+            <a ng-href="/chat-{{chat._id}}" ng-click="hideSidebar()">{{chat.name}}</a>
             <div><button class="btn btn-default btn-sm hover-to-show" ng-show="!chat.isLeaving" ng-click="toggleIsLeaving(chat)">Leave</button></div>
           </div>
           <div class="confirm" ng-show="chat.isLeaving">
@@ -78,7 +78,7 @@
             <a href="#"><span ng-class="getOnlineClass(contact.info.online)"></span> {{contact.info.name}}</a>
             <div>
               <button class="btn btn-default btn-sm hover-to-show" ng-click="toggleIsDeleting(contact)" ng-show="!contact.isDeleting">Delete</button>
-              <button class="btn btn-default btn-sm" ng-click="createChat(contact.id)">New chat</button>
+              <button class="btn btn-default btn-sm" ng-click="newChat(contact)">New chat</button>
             </div>
           </div>
           <div class="confirm" ng-show="contact.isDeleting">

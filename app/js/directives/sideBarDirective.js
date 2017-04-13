@@ -44,6 +44,7 @@
         };
         
         scope.toggleSidebarVisibility = function() {
+          scope.hideAccountDropdown();
           scope.sidebarCollapsed = !scope.sidebarCollapsed;
           
           if (scope.sidebarCollapsed) {
@@ -52,6 +53,11 @@
           else {
             scope.sidebarClass = 'sidebar-visible';
           }
+        };
+
+        scope.hideSidebar = function() {
+          if (!scope.sidebarCollapsed)
+            scope.toggleSidebarVisibility();
         };
 
         chatService.subcribeToUserInfoUpdates(function(info, options) {
@@ -73,9 +79,15 @@
         });
 
         scope.toggleAccountDropdownVisibility = function() {
+          scope.hideSidebar();
           scope.accountDropdownVisible = !scope.accountDropdownVisible;
           scope.addContactVisible = false;
           scope.accountDropdownClass = getDropdownClass(scope.accountDropdownVisible);
+        };
+
+        scope.hideAccountDropdown = function() {
+          if (scope.accountDropdownVisible)
+            scope.toggleAccountDropdownVisibility();
         };
 
         scope.toggleAddContactVisibility = function() {
@@ -160,7 +172,12 @@
         scope.deleteContact = function(contact) {
           scope.toggleIsDeleting(contact);
           chatService.deleteContact(contact.id, userID);
-        }
+        };
+
+        scope.newChat = function(contact) {
+          scope.hideSidebar();
+          scope.createChat(contact.id);
+        };
 
         chatService.subcribeToChatUpdates(function(chat) {
           // toast notification or something
