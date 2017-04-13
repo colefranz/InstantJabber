@@ -72,9 +72,10 @@
         </li>
         <li ng-repeat="contact in contacts">
           <div class="two-columns">
-            <a href="#" ng-click="createChat(contact.id)" title="New chat"><span ng-class="getOnlineClass(contact.info.online)"></span> {{contact.info.name}}</a>
+            <a href="#"><span ng-class="getOnlineClass(contact.info.online)"></span> {{contact.info.name}}</a>
             <div>
               <button class="btn btn-default btn-sm hover-to-show" ng-click="deleteContact(contact.id)">Delete</button>
+              <button class="btn btn-default btn-sm" ng-click="createChat(contact.id)">New chat</button>
             </div>
           </div>
         </li>
