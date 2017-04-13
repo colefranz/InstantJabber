@@ -67,6 +67,7 @@
       socket.on('get-chat', function(chatID) {
         dbUtils.getChat(chatID).then(function(chat) {
           socket.emit('get-chat', chat);
+          socket.emit('chat-updated', chat);
         });
       });
 
