@@ -31,6 +31,7 @@
 
         $scope.openAddToChat = function() {
           if ($scope.addToChatVisible === true) {
+            
             return;
           }
 

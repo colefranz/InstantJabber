@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, shrink-to-fit=no, initial-scale=1">
 
     <title>Instant Jabber</title>
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="bower_components/angular/angular.min.js"></script>
     <script src="bower_components/angular-route/angular-route.min.js"></script>
@@ -17,6 +18,22 @@
     <link rel="stylesheet" type="text/css" href="dev/css/main.css">
     <link rel="stylesheet" type="text/css" href="dev/css/login.css">
     <base href="/">
+
+    <script>
+        function isTyping() {
+                document.getElementById('typing_on').innerHTML = "User is typing...! "; }
+
+        function  notTyping (){
+       document.getElementById('typing_on').innerHTML = ""; }
+    </script>
+
+    <script>
+      var elem = document.getElementById('chat-body');
+      elem.scrollTop = elem.scrollHeight;
+
+    </script>
+
+
   </head>
   <body ng-app="jabber" ng-controller="mainController">
     <div id="main">
