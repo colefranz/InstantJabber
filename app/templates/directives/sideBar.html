@@ -1,17 +1,21 @@
-<div id="sidebar" class="col-sm-4 col-md-3" ng-class="sidebarClass">
+<div id="sidebar" class="col-sm-4 col-md-3 col-xs-12" ng-class="sidebarClass">
   <!-- User tile. -->
   <nav class="navbar navbar-inverse">
     <div class="container">
-      <ul class="nav navbar-nav">
-        <li  ng-class="accountDropdownClass">
-          <a id="account-dropdown" href="#" class="navbar-brand" ng-click="toggleAccountDropdownVisibility()" title="{{userName}}">{{userName}} <span class="caret"></span></a>
-          <ul class="dropdown-menu" ng-show="accountDropdownVisible">
-            <li><a href="/settings" ng-click="toggleAccountDropdownVisibility()">Account Settings</a></li>
-            <li><a href="#" ng-click="logout()">Sign out</a></li>
+      <ul class="flex">
+        <li class="full-width">
+          <ul class="nav navbar-nav">
+            <li  ng-class="accountDropdownClass">
+              <a id="account-dropdown" href="#" class="navbar-brand" ng-click="toggleAccountDropdownVisibility()" title="{{userName}}">{{userName}} <span class="caret"></span></a>
+              <ul class="dropdown-menu" ng-show="accountDropdownVisible">
+                <li><a href="/settings" ng-click="toggleAccountDropdownVisibility()">Account Settings</a></li>
+                <li><a href="#" ng-click="logout()">Sign out</a></li>
+              </ul>
+            </li>
           </ul>
         </li>
         <li class="visible-on-mobile">
-          <button class="btn navbar-btn btn-sm" ng-click="toggleSidebarVisibility()">Menu</button>
+          <button class="btn navbar-btn btn-default btn-sm" style="margin-top: 10px;" ng-click="toggleSidebarVisibility()">Menu</button>
         </li>
       </ul>
     </div>

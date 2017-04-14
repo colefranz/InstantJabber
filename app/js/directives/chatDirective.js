@@ -12,13 +12,6 @@
             chatName = angular.element(inputs[0]),
             messageInput = inputs[1];
 
-        scope.chatNameSelected = false;
-
-        chatName.on('focus', function() {
-          scope.chatNameSelected = true;
-          scope.$digest();
-        });
-
         chatName.on('keydown', function(event) {
           if (event.keyCode === 13) {
             scope.updateChatName();
