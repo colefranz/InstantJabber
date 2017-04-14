@@ -102,15 +102,6 @@ span.online {
     border-radius: 10px;
 }
 
-#chatbar{
-width: 100%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    display: inline-block;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;}
-
 #main {
     height: 100%;
     width: 100%;
@@ -306,6 +297,35 @@ width: 100%;
             }
         }
 
+        #add-to-chat {
+            background-color: @color-main;
+            border-bottom: 1px solid #cccccc;
+
+            ul {
+                padding: 15px;
+                margin: 0;
+
+                li.contact {
+                    display: flex;
+
+                    input, label {
+                        margin: 0;
+                        padding: 0;
+                    }
+
+                    input {
+                        width: auto;
+                    }
+
+                    label {
+                        margin-top: 7px;
+                        padding-left: 10px;
+                        flex-grow: 1;
+                    }
+                }
+            }
+        }
+
         #chat-body {
             flex-grow: 1;
             overflow-y: auto;
@@ -337,12 +357,19 @@ width: 100%;
             }
         }
 
+        footer {
+            background-color: @color-main;
+            border-top: 1px solid #cccccc;
+            padding: 15px 15px 0 15px;
+        }
+
         #emoji-picker {
             position: relative;
             display: inline-block;
             width: 75%;
             max-width: 250px;
-
+            cursor: pointer;
+            
             ul {
                 padding: 0px;
                 li {
@@ -367,6 +394,9 @@ width: 100%;
                 transition: all 0.2s ease;
                 max-height: 150px;
                 overflow-y: auto;
+                width: 300px;
+                height: 200px;
+                z-index: 99999;
 
                 &.active {
                     opacity: 1;

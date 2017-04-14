@@ -9,7 +9,7 @@
             </div>
           </form>
         </li>
-        <li>
+        <li ng-show="!addToChatVisible">
           <button class="btn navbar-btn btn-default btn-sm"id="add-to-chat-button" ng-click="openAddToChat()">Invite</button>
         </li>
       </ul>
@@ -18,13 +18,22 @@
   
   <div id="add-to-chat" ng-show="addToChatVisible">
     <ul>
-      <li ng-repeat="contact in contacts track by $index">
-        <label for="add-to-group-{{$index}}">{{contact.info.name}}</label>
-        <input type="checkbox" ng-model="contact.selected" id="add-to-group-{{$index}}" />
-      </li>
       <li>
-        <button ng-click="addSelectedToChat()">Add!</button>
-        <button ng-click="addToChatVisible = false">Cancel</button>
+        <h4>Invite contacts to this conversation</h4>
+      </li>
+      <li ng-show="contacts.length === 0">
+        <p>All your contacts are already participating in this conversation.</p>
+      </li>
+      <li ng-repeat="contact in contacts track by $index" class="contact">
+        <input class="form-control" type="checkbox" ng-model="contact.selected" id="add-to-group-{{$index}}" />
+        <label class="control-label" for="add-to-group-{{$index}}">{{contact.info.name}}</label>
+      </li>
+      <li ng-show="contacts.length !== 0" style="margin-top: 10px;">
+        <button class="btn btn-success" ng-click="addSelectedToChat()">Add!</button>
+        <button class="btn btn-default" ng-click="addToChatVisible = false">Cancel</button>
+      </li>
+      <li ng-show="contacts.length === 0">
+        <button class="btn btn-default" ng-click="addToChatVisible = false">Close</button>
       </li>
     </ul>  
   </div>
@@ -38,15 +47,19 @@
   </div>
 
   <footer>
-    <div id="typing_on"></div>
+    <!--<div id="typing_on"></div>-->
 
     <form ng-submit="sendChat()">
-    <input id="chatbar" type="text"
-        onkeypress="setTimeout(isTyping(),4000); setInterval(notTyping,5000)"
-        ng-model="chatBoxText"
-        placeholder="Type here to chat"
-        value =""/>
-    <emoji-picker></emoji-picker>
+      <div class="form-group">
+        <div class="input-group">
+          <span class="input-group-addon" id="emoji"><emoji-picker></emoji-picker></span>
+          <input id="chatbar" type="text"
+              onkeypress="setTimeout(isTyping(),4000); setInterval(notTyping,5000)"
+              ng-model="chatBoxText"
+              placeholder="Type here to chat"
+              value ="" class="form-control" aria-describedby="emoji"/>
+        </div>
+      </div>
     </form>
   </footer>
 </div>
